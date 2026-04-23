@@ -792,3 +792,14 @@ nav button.active { color: #fff; border-bottom: 2px solid #e50914; }
 .nav-dashboard:hover {
   background: rgba(255, 255, 255, 0.1);
 }
+
+/* ====== SCROLL INFINITO ====== */
+.scroll-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 2rem;
+}
+/* O atributo [hidden] precisa sobrepor display:flex */
+#scroll-loading[hidden] { display: none !important; }
