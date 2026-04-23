@@ -793,13 +793,36 @@ nav button.active { color: #fff; border-bottom: 2px solid #e50914; }
   background: rgba(255, 255, 255, 0.1);
 }
 
-/* ====== SCROLL INFINITO ====== */
-.scroll-loading {
+/* ====== BOTÃO CARREGAR MAIS ====== */
+#btn-carregar-mais-wrap {
   display: flex;
   justify-content: center;
-  align-items: center;
-  gap: 8px;
-  padding: 2rem;
+  padding: 2rem 2rem 3rem;
 }
-/* O atributo [hidden] precisa sobrepor display:flex */
-#scroll-loading[hidden] { display: none !important; }
+
+#btn-carregar-mais {
+  background: #e50914;
+  color: #fff;
+  border: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 12px 48px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s, opacity 0.2s;
+  letter-spacing: 0.02em;
+}
+
+#btn-carregar-mais:hover:not(:disabled) {
+  background: #b8070f;
+  transform: translateY(-1px);
+}
+
+#btn-carregar-mais:disabled {
+  opacity: 0.6;
+  cursor: default;
+  transform: none;
+}
+
+#btn-carregar-mais[hidden] { display: none !important; }
