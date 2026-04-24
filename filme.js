@@ -43,7 +43,9 @@ function formatarData(ts) {
 
 function estrelasHtml(n) {
   let h = "";
-  for (let i = 1; i <= 5; i++) h += `<span class="${i <= n ? "cheia" : ""}">★</span>`;
+  for (let i = 1; i <= 5; i++) {
+    h += `<i data-lucide="star" class="${i <= n ? "cheia" : ""}"></i>`;
+  }
   return h;
 }
 
@@ -210,6 +212,7 @@ async function renderAvaliacoes(filmeId) {
     avResumo.innerHTML = "";
     avLista.innerHTML  = '<div class="av-vazio">Seja o primeiro a avaliar! 🎬</div>';
     return;
+    lucide.createIcons();
   }
 
   // Resumo
@@ -246,7 +249,7 @@ async function renderAvaliacoes(filmeId) {
           <div class="av-item-nome">${r.autor}</div>
           <div class="av-estrelas-mini">${estrelasHtml(r.estrelas)}</div>
         </div>
-        ${podeRemover ? `<button class="av-remover" onclick="avRemover('${filmeId}',${r.id})">✕</button>` : ""}
+        ${podeRemover ? `<button class="av-remover" onclick="avRemover('${filmeId}',${r.id})"><i data-lucide="x"></i></button>` : ""}
       </div>
       ${r.comentario ? `<div class="av-texto">${r.comentario}</div>` : ""}
       <div class="av-data">${formatarData(r.criado_em)}</div>
@@ -261,6 +264,7 @@ async function avRemover(filmeId, avId) {
     renderAvaliacoes(filmeId);
   } catch(e) {
     alert(e.message);
+    lucide.createIcons();
   }
 }
 
@@ -317,6 +321,7 @@ function inicializarFormAvaliacao(filmeId) {
       });
 
       renderAvaliacoes(filmeId);
+      lucide.createIcons();
 
       // Reset form
       avEstrelaAtual = 0;
@@ -356,7 +361,7 @@ async function abrirModal(item, tipo) {
 
   modalTitle.textContent    = titulo;
   modalOverview.textContent = "Carregando descrição...";
-  modalTrailer.innerHTML    = `<div class="modal-no-trailer"><span>🎬</span>Carregando trailer...</div>`;
+  modalTrailer.innerHTML    = `<div class="modal-no-trailer"><i data-lucide="film"></i>Carregando trailer...</div>`;
   modalPoster.innerHTML     = item.poster_path
     ? `<img src="${IMG_LG}${item.poster_path}" alt="${titulo}">`
     : `<div style="height:165px;display:flex;align-items:center;justify-content:center;color:#444;font-size:2rem;">🎬</div>`;
@@ -366,7 +371,7 @@ async function abrirModal(item, tipo) {
   modalFavBtn.classList.toggle("active", isFav(item.id));
   modalOverlay.classList.add("open");
   document.body.style.overflow = "hidden";
-
+lucide.createIcons();
   // Reset form de avaliação
   avEstrelaAtual = 0;
   const hint = document.getElementById("av-hint");
@@ -380,6 +385,7 @@ async function abrirModal(item, tipo) {
   // Carrega avaliações e inicializa formulário
   renderAvaliacoes(filmeId);
   inicializarFormAvaliacao(filmeId);
+  lucide.createIcons();
 
   // Busca detalhes e vídeos em paralelo
   const [details, videosPT, videosEN] = await Promise.all([
@@ -460,13 +466,13 @@ function criarCard(item, tipo) {
     posterWrap.appendChild(img);
   } else {
     const ph = document.createElement("div");
-    ph.className = "placeholder-img"; ph.textContent = "\uD83C\uDFAC";
+    ph.className = "placeholder-img"; ph.innerHTML = `<i data-lucide="film"></i>`;
     posterWrap.appendChild(ph);
   }
 
   const btn = document.createElement("button");
   btn.className = "fav-btn" + (isFav(item.id) ? " active" : "");
-  btn.title = "Favoritar"; btn.textContent = "\u2665";
+  btn.title = "Favoritar"; btn.innerHTML = `<i data-lucide="heart"></i>`;
   btn.addEventListener("click", e => {
     e.stopPropagation();
     toggleFav(item, tipo);
@@ -474,6 +480,7 @@ function criarCard(item, tipo) {
   });
   posterWrap.appendChild(btn);
   card.appendChild(posterWrap);
+  setTimeout(() => lucide.createIcons(), 0);
 
   // Info (parte de baixo)
   const info = document.createElement("div");
@@ -484,6 +491,7 @@ function criarCard(item, tipo) {
 
   card.addEventListener("click", () => abrirModal(item, tipo));
   return card;
+  lucide.createIcons();
 }
 
 function renderSecao(label, items, tipo) {
@@ -540,6 +548,7 @@ async function mudarAba(aba) {
     const secS = renderSecao("Séries Favoritas", favorites.filter(f => f._tipo === "tv"),    "tv");
     if (secM) content.appendChild(secM);
     if (secS) content.appendChild(secS);
+    lucide.createIcons();
   }
 }
 
@@ -583,6 +592,7 @@ searchInput.addEventListener("input", () => {
       if (secM) content.appendChild(secM);
       if (secS) content.appendChild(secS);
       if (!secM && !secS) showEmpty();
+      lucide.createIcons();
     }
   }, 400);
 });
@@ -595,3 +605,5 @@ renderLoginBox();
 const abaHash = window.location.hash.replace('#', '');
 const abasValidas = ['filmes', 'series', 'documentarios', 'animes', 'favoritos'];
 mudarAba(abasValidas.includes(abaHash) ? abaHash : 'filmes');
+
+lucide.createIcons();

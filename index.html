@@ -8,18 +8,33 @@
 <body>
 
 <header>
-  <div class="logo">LusTV-Ratings🍿</div>
+  <div class="logo">
+    <i data-lucide="popcorn"></i> LusTV-Ratings
+  </div>
 
   <nav>
-    <button class="active" data-aba="filmes">🎬 Filmes</button>
-    <button data-aba="series">📺 Séries</button>
-    <button data-aba="documentarios">🎥 Docs</button>
-    <button data-aba="animes">👾 Animações</button>
-    <button data-aba="favoritos">❤️ Favoritos</button>
-    <a href="dashboard.html" class="nav-dashboard">📊 Dashboard</a>
+    <button class="active" data-aba="filmes">
+      <i data-lucide="film"></i> Filmes
+    </button>
+    <button data-aba="series">
+      <i data-lucide="tv"></i> Séries
+    </button>
+    <button data-aba="documentarios">
+      <i data-lucide="clapperboard"></i> Docs
+    </button>
+    <button data-aba="animes">
+      <i data-lucide="sparkles"></i> Animações
+    </button>
+    <button data-aba="favoritos">
+      <i data-lucide="heart"></i> Favoritos
+    </button>
+    <a href="dashboard.html" class="nav-dashboard">
+      <i data-lucide="bar-chart-3"></i> Dashboard
+    </a>
   </nav>
 
   <div class="search-wrap">
+    <i data-lucide="search"></i>
     <input type="text" id="search" placeholder="Buscar...">
   </div>
 
@@ -28,17 +43,25 @@
   </div>
 </header>
 
-<h1 id="page-title">🎬 Filmes</h1>
+<h1 id="page-title">
+  <i data-lucide="film"></i> Filmes
+</h1>
+
 <div id="main-content"></div>
 
 <div id="btn-carregar-mais-wrap">
-  <button id="btn-carregar-mais" hidden>Carregar mais</button>
+  <button id="btn-carregar-mais" hidden>
+    <i data-lucide="plus"></i> Carregar mais
+  </button>
 </div>
 
 <!-- ======= MODAL FILME ======= -->
 <div id="modal-overlay">
   <div id="modal">
-    <button id="modal-close">✕</button>
+    <button id="modal-close">
+      <i data-lucide="x"></i>
+    </button>
+
     <div id="modal-trailer"></div>
 
     <div id="modal-body">
@@ -48,30 +71,40 @@
         <h2 id="modal-title"></h2>
         <div id="modal-meta"></div>
         <p id="modal-overview"></p>
-        <button id="modal-fav-btn">♡ Favoritar</button>
+
+        <button id="modal-fav-btn">
+          <i data-lucide="heart"></i> Favoritar
+        </button>
       </div>
     </div>
 
-    <!-- AVALIAÇÕES DENTRO DO MODAL -->
+    <!-- AVALIAÇÕES -->
     <section id="avaliacoes">
       <div class="av-form-card" id="av-form-wrap">
         <h3>Avaliar</h3>
 
         <div id="av-login-aviso" style="display:none">
-          <p>Faça <a href="#" id="av-link-login">login</a> para avaliar.</p>
+          <p>
+            Faça <a href="#" id="av-link-login">login</a> para avaliar.
+          </p>
         </div>
 
         <div id="av-form-fields">
           <div class="av-estrelas" id="av-estrelas">
-            <button data-v="1">★</button>
-            <button data-v="2">★</button>
-            <button data-v="3">★</button>
-            <button data-v="4">★</button>
-            <button data-v="5">★</button>
+            <button data-v="1"><i data-lucide="star"></i></button>
+            <button data-v="2"><i data-lucide="star"></i></button>
+            <button data-v="3"><i data-lucide="star"></i></button>
+            <button data-v="4"><i data-lucide="star"></i></button>
+            <button data-v="5"><i data-lucide="star"></i></button>
           </div>
+
           <span id="av-hint">Selecione uma nota</span>
+
           <textarea id="av-comentario" placeholder="Comentário (opcional)..."></textarea>
-          <button id="av-btn" disabled>Enviar avaliação</button>
+
+          <button id="av-btn" disabled>
+            <i data-lucide="send"></i> Enviar avaliação
+          </button>
         </div>
       </div>
 
@@ -87,9 +120,14 @@
 <!-- ======= MODAL LOGIN ======= -->
 <div id="login-modal-overlay">
   <div id="login-modal">
-    <button id="login-modal-close">✕</button>
+    <button id="login-modal-close">
+      <i data-lucide="x"></i>
+    </button>
+
     <div class="login-modal-header">
-      <div class="login-logo">LusTV</div>
+      <div class="login-logo">
+        <i data-lucide="film"></i> LusTV
+      </div>
       <p>Entre para salvar favoritos e avaliar títulos</p>
     </div>
 
@@ -98,17 +136,33 @@
         <label for="lm-nome">Nome de usuário</label>
         <input type="text" id="lm-nome" placeholder="Como quer ser chamado?" maxlength="30" autocomplete="off">
       </div>
+
       <div class="login-field">
         <label for="lm-senha">Senha</label>
         <input type="password" id="lm-senha" placeholder="Crie uma senha" maxlength="40">
       </div>
+
       <div id="login-error" class="login-error"></div>
-      <button id="lm-entrar-btn">Entrar / Cadastrar</button>
-      <p class="login-hint">Novo usuário? Basta digitar um nome e senha — a conta é criada automaticamente.</p>
+
+      <button id="lm-entrar-btn">
+        <i data-lucide="log-in"></i> Entrar / Cadastrar
+      </button>
+
+      <p class="login-hint">
+        Novo usuário? Basta digitar um nome e senha — a conta é criada automaticamente.
+      </p>
     </div>
   </div>
 </div>
 
+<!-- Lucide CDN -->
+<script src="https://unpkg.com/lucide@latest"></script>
+
 <script src="filme.js"></script>
+
+<script>
+  lucide.createIcons();
+</script>
+
 </body>
 </html>

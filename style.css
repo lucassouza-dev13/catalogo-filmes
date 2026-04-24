@@ -825,3 +825,16 @@ nav button.active { color: #fff; border-bottom: 2px solid #e50914; }
 .nav-dashboard:hover {
   background: rgba(255, 255, 255, 0.1);
 }
+
+i[data-lucide] {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2;
+  vertical-align: middle;
+}
+
+.search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
