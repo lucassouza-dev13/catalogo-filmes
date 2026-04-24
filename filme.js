@@ -591,4 +591,7 @@ document.querySelectorAll("nav button").forEach(btn => btn.addEventListener("cli
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 renderLoginBox();
-mudarAba("filmes");
+// Abre a aba indicada pelo hash da URL (ex: index.html#series)
+const abaHash = window.location.hash.replace('#', '');
+const abasValidas = ['filmes', 'series', 'documentarios', 'animes', 'favoritos'];
+mudarAba(abasValidas.includes(abaHash) ? abaHash : 'filmes');
