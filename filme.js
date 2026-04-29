@@ -1,4 +1,7 @@
-
+// ─────────────────────────────────────────────────────────────────────────────
+// CONFIGURAÇÃO
+// Depois que o Railway te der a URL do backend, troque aqui:
+// ─────────────────────────────────────────────────────────────────────────────
 const BACKEND = "https://backend-cat-logo-production.up.railway.app";
 const API_URL = "https://backend-cat-logo-production.up.railway.app";
 const API_KEY = "8bcf3516840c71be090ce067d3464a1d";
@@ -40,9 +43,7 @@ function formatarData(ts) {
 
 function estrelasHtml(n) {
   let h = "";
-  for (let i = 1; i <= 5; i++) {
-    h += `<i data-lucide="star" class="${i <= n ? "cheia" : ""}"></i>`;
-  }
+  for (let i = 1; i <= 5; i++) h += `<span class="${i <= n ? "cheia" : ""}">★</span>`;
   return h;
 }
 
@@ -209,7 +210,6 @@ async function renderAvaliacoes(filmeId) {
     avResumo.innerHTML = "";
     avLista.innerHTML  = '<div class="av-vazio">Seja o primeiro a avaliar! 🎬</div>';
     return;
-    lucide.createIcons();
   }
 
   // Resumo
@@ -246,7 +246,7 @@ async function renderAvaliacoes(filmeId) {
           <div class="av-item-nome">${r.autor}</div>
           <div class="av-estrelas-mini">${estrelasHtml(r.estrelas)}</div>
         </div>
-        ${podeRemover ? `<button class="av-remover" onclick="avRemover('${filmeId}',${r.id})"><i data-lucide="x"></i></button>` : ""}
+        ${podeRemover ? `<button class="av-remover" onclick="avRemover('${filmeId}',${r.id})">✕</button>` : ""}
       </div>
       ${r.comentario ? `<div class="av-texto">${r.comentario}</div>` : ""}
       <div class="av-data">${formatarData(r.criado_em)}</div>
@@ -261,7 +261,6 @@ async function avRemover(filmeId, avId) {
     renderAvaliacoes(filmeId);
   } catch(e) {
     alert(e.message);
-    lucide.createIcons();
   }
 }
 
@@ -318,7 +317,6 @@ function inicializarFormAvaliacao(filmeId) {
       });
 
       renderAvaliacoes(filmeId);
-      lucide.createIcons();
 
       // Reset form
       avEstrelaAtual = 0;
@@ -358,7 +356,7 @@ async function abrirModal(item, tipo) {
 
   modalTitle.textContent    = titulo;
   modalOverview.textContent = "Carregando descrição...";
-  modalTrailer.innerHTML    = `<div class="modal-no-trailer"><i data-lucide="film"></i>Carregando trailer...</div>`;
+  modalTrailer.innerHTML    = `<div class="modal-no-trailer"><span>🎬</span>Carregando trailer...</div>`;
   modalPoster.innerHTML     = item.poster_path
     ? `<img src="${IMG_LG}${item.poster_path}" alt="${titulo}">`
     : `<div style="height:165px;display:flex;align-items:center;justify-content:center;color:#444;font-size:2rem;">🎬</div>`;
@@ -368,7 +366,7 @@ async function abrirModal(item, tipo) {
   modalFavBtn.classList.toggle("active", isFav(item.id));
   modalOverlay.classList.add("open");
   document.body.style.overflow = "hidden";
-lucide.createIcons();
+
   // Reset form de avaliação
   avEstrelaAtual = 0;
   const hint = document.getElementById("av-hint");
@@ -382,7 +380,6 @@ lucide.createIcons();
   // Carrega avaliações e inicializa formulário
   renderAvaliacoes(filmeId);
   inicializarFormAvaliacao(filmeId);
-  lucide.createIcons();
 
   // Busca detalhes e vídeos em paralelo
   const [details, videosPT, videosEN] = await Promise.all([
@@ -443,52 +440,37 @@ modalFavBtn.addEventListener("click", () => {
 // CARDS / RENDER / ABAS / BUSCA
 // ══════════════════════════════════════════════════════════════════════════════
 function criarCard(item, tipo) {
-  const titulo  = tipo === "movie" ? item.title : item.name;
-  const dataRaw = item.release_date || item.first_air_date || "";
-  const dataFmt = dataRaw
-    ? new Date(dataRaw).toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })
-    : "";
-
-  const card = document.createElement("div");
+  const titulo = tipo === "movie" ? item.title : item.name;
+  const card   = document.createElement("div");
   card.className  = "movie-card";
   card.dataset.id = item.id;
-
-  // Poster wrapper (parte de cima)
-  const posterWrap = document.createElement("div");
-  posterWrap.className = "card-poster";
 
   if (item.poster_path) {
     const img = document.createElement("img");
     img.src = IMG + item.poster_path; img.alt = titulo; img.loading = "lazy";
-    posterWrap.appendChild(img);
+    card.appendChild(img);
   } else {
     const ph = document.createElement("div");
-    ph.className = "placeholder-img"; ph.innerHTML = `<i data-lucide="film"></i>`;
-    posterWrap.appendChild(ph);
+    ph.className = "placeholder-img"; ph.textContent = "🎬";
+    card.appendChild(ph);
   }
+
+  const overlay = document.createElement("div");
+  overlay.className = "card-overlay";
+  overlay.innerHTML = `<div class="card-title">${titulo}</div>`;
+  card.appendChild(overlay);
 
   const btn = document.createElement("button");
   btn.className = "fav-btn" + (isFav(item.id) ? " active" : "");
-  btn.title = "Favoritar"; btn.innerHTML = `<i data-lucide="heart"></i>`;
+  btn.title = "Favoritar"; btn.textContent = "♥";
   btn.addEventListener("click", e => {
     e.stopPropagation();
     toggleFav(item, tipo);
     btn.classList.toggle("active", isFav(item.id));
   });
-  posterWrap.appendChild(btn);
-  card.appendChild(posterWrap);
-  setTimeout(() => lucide.createIcons(), 0);
-
-  // Info (parte de baixo)
-  const info = document.createElement("div");
-  info.className = "card-info";
-  info.innerHTML = "<div class=\"card-title\">" + titulo + "</div>" +
-    (dataFmt ? "<div class=\"card-date\">" + dataFmt + "</div>" : "");
-  card.appendChild(info);
-
+  card.appendChild(btn);
   card.addEventListener("click", () => abrirModal(item, tipo));
   return card;
-  lucide.createIcons();
 }
 
 function renderSecao(label, items, tipo) {
@@ -532,16 +514,6 @@ async function mudarAba(aba) {
       fetchData(`${BASE}/discover/tv?api_key=${API_KEY}&with_genres=16&language=pt-BR`)
     ]);
     content.innerHTML = "";
-
-    if (favorites.length) {
-    const recomendados = await buscarRecomendados();
-
-    if (recomendados.length) {
-      const secRec = renderSecao("Recomendado para você", recomendados, "movie");
-      if (secRec) content.appendChild(secRec);
-    }
-  }
-  
     const secM = renderSecao("Filmes Animados", movies, "movie");
     const secS = renderSecao("Séries Animadas", series, "tv");
     if (secM) content.appendChild(secM);
@@ -555,7 +527,6 @@ async function mudarAba(aba) {
     const secS = renderSecao("Séries Favoritas", favorites.filter(f => f._tipo === "tv"),    "tv");
     if (secM) content.appendChild(secM);
     if (secS) content.appendChild(secS);
-    lucide.createIcons();
   }
 }
 
@@ -577,18 +548,10 @@ searchInput.addEventListener("input", () => {
       const secS = renderSecao("Séries", filtrados.filter(f => f._tipo === "tv"), "tv");
       if (secM) content.appendChild(secM);
       if (secS) content.appendChild(secS);
+      lucide.createIcons();
 
-    } else if (abaAtual === "filmes" || abaAtual === "documentarios") {
-      const data = await fetchData(`${BASE}/search/movie?api_key=${API_KEY}&query=${q}&language=pt-BR`);
-      content.innerHTML = ""; const sec = renderSecao(null, data, "movie");
-      sec ? content.appendChild(sec) : showEmpty();
-
-    } else if (abaAtual === "series") {
-      const data = await fetchData(`${BASE}/search/tv?api_key=${API_KEY}&query=${q}&language=pt-BR`);
-      content.innerHTML = ""; const sec = renderSecao(null, data, "tv");
-      sec ? content.appendChild(sec) : showEmpty();
-
-    } else if (abaAtual === "animes") {
+    } else {
+      // Busca global: filmes + séries em paralelo, independente da aba
       const [movies, series] = await Promise.all([
         fetchData(`${BASE}/search/movie?api_key=${API_KEY}&query=${q}&language=pt-BR`),
         fetchData(`${BASE}/search/tv?api_key=${API_KEY}&query=${q}&language=pt-BR`)
@@ -608,44 +571,4 @@ document.querySelectorAll("nav button").forEach(btn => btn.addEventListener("cli
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 renderLoginBox();
-// Abre a aba indicada pelo hash da URL (ex: index.html#series)
-const abaHash = window.location.hash.replace('#', '');
-const abasValidas = ['filmes', 'series', 'documentarios', 'animes', 'favoritos'];
-mudarAba(abasValidas.includes(abaHash) ? abaHash : 'filmes');
-
-lucide.createIcons();
-
-async function buscarRecomendados() {
-  if (!favorites.length) return [];
-
-  // pega IDs dos filmes favoritos
-  const ids = favorites.map(f => f.id).slice(0, 3); // limita pra não pesar
-
-  const resultados = [];
-
-  for (let id of ids) {
-    const tipo = favorites.find(f => f.id === id)?._tipo || "movie";
-
-    try {
-      const res = await fetch(`${BASE}/${tipo}/${id}/recommendations?api_key=${API_KEY}&language=pt-BR`);
-      const data = await res.json();
-
-      if (data.results) {
-        resultados.push(...data.results);
-      }
-    } catch (e) {}
-  }
-
-  // remove duplicados
-  const unicos = [];
-  const idsSet = new Set();
-
-  for (let item of resultados) {
-    if (!idsSet.has(item.id)) {
-      idsSet.add(item.id);
-      unicos.push(item);
-    }
-  }
-
-  return unicos.slice(0, 20);
-}
+mudarAba("filmes");
