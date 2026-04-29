@@ -175,9 +175,9 @@
   <div class="nav-links">
     <a href="https://lucassouza-dev13.github.io/catalogo-filmes/#filmes">Filmes</a>
     <a href="https://lucassouza-dev13.github.io/catalogo-filmes/#series">Séries</a>
-    <a href="#">Docs</a>
-    <a href="#">Animações</a>
-    <a href="#">Favoritos</a>
+    <a href="https://lucassouza-dev13.github.io/catalogo-filmes/#documentarios">Docs</a>
+    <a href="https://lucassouza-dev13.github.io/catalogo-filmes/#animes">Animações</a>
+    <a href="https://lucassouza-dev13.github.io/catalogo-filmes/#favoritos">Favoritos</a>
     <a href="#" class="active">Dashboard</a>
   </div>
   <div class="nav-right">
@@ -265,13 +265,13 @@
 const API = 'https://backend-cat-logo-production.up.railway.app';
 const AVATARES = ['🦊','🐻','🎭','🎬','🦁','🐼','🦸','🌟','🎮','🐯','🦋','🐉','🎸','🚀','🌙','👾','🦅','🐺','🎪','🔥','💎','🌊','🎯','🏆'];
 
-let token = localStorage.getItem('token');
-let usuario = JSON.parse(localStorage.getItem('usuario') || 'null');
+let token = localStorage.getItem('lustv_token');
+let usuario = JSON.parse(localStorage.getItem('lustv_usuario') || 'null');
 let avatarSelecionado = null;
 let generoSelecionado = null;
 
 // Utilitários
-function getToken() { return localStorage.getItem('token'); }
+function getToken() { return localStorage.getItem('lustv_token'); }
 function rankClass(i) { return i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : ''; }
 function badgeHtml(i) {
   if (i === 0) return '<span class="badge badge-hot">Quente</span>';
@@ -286,7 +286,7 @@ function delay(i) { return `animation-delay:${i * 0.06}s`; }
 
 // Nav
 function atualizarNav() {
-  const u = JSON.parse(localStorage.getItem('usuario') || 'null');
+  const u = JSON.parse(localStorage.getItem('lustv_usuario') || 'null');
   if (!u) return;
   document.getElementById('nav-nome').textContent = u.nome;
   const av = u.avatar || u.nome[0].toUpperCase();
