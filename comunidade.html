@@ -236,6 +236,108 @@
     .social-user-info small  { font-size: 0.74rem; color: #666; }
 
     .social-busca-vazio { text-align: center; padding: 2rem; font-size: 0.85rem; color: #555; }
+
+    /* ── Sino de notificações ───────────────────────────────────── */
+    .notif-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .btn-sino {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #aaa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+      border-radius: 50%;
+      transition: color 0.2s, background 0.2s;
+    }
+    .btn-sino:hover { color: #fff; background: #222; }
+
+    .notif-badge {
+      position: absolute;
+      top: 0; right: 0;
+      background: #e50914;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      pointer-events: none;
+    }
+
+    .notif-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      width: 300px;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+      z-index: 1100;
+      overflow: hidden;
+      animation: cardIn 0.2s ease;
+    }
+    .notif-dropdown.open { display: block; }
+
+    .notif-dropdown-head {
+      padding: 12px 16px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid #222;
+    }
+
+    .notif-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 16px;
+      border-bottom: 1px solid #1f1f1f;
+      transition: background 0.15s;
+    }
+    .notif-item:last-child { border-bottom: none; }
+    .notif-item:hover { background: #111; }
+    .notif-item.nao-lida { background: #1f1414; }
+    .notif-item.nao-lida:hover { background: #251515; }
+
+    .notif-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: #e50914;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .notif-texto {
+      flex: 1; min-width: 0;
+      font-size: 0.8rem;
+      color: #bbb;
+      line-height: 1.4;
+    }
+    .notif-texto strong { color: #fff; }
+    .notif-tempo {
+      font-size: 0.72rem;
+      color: #555;
+      flex-shrink: 0;
+    }
+
+    .notif-vazio {
+      padding: 2rem;
+      text-align: center;
+      font-size: 0.82rem;
+      color: #555;
+    }
   </style>
 </head>
 <body>
@@ -272,6 +374,18 @@
   <div class="search-wrap">
     <i data-lucide="search"></i>
     <input type="text" id="search" placeholder="Buscar..." disabled style="cursor:default">
+  </div>
+
+  <!-- Sino de notificações -->
+  <div class="notif-wrap" id="notif-wrap" style="display:none">
+    <button class="btn-sino" id="btn-sino" onclick="toggleNotifDropdown()">
+      <i data-lucide="bell"></i>
+    </button>
+    <span class="notif-badge" id="notif-badge" style="display:none"></span>
+    <div class="notif-dropdown" id="notif-dropdown">
+      <div class="notif-dropdown-head">Notificações</div>
+      <div id="notif-lista"></div>
+    </div>
   </div>
 
   <div id="login-box"></div>
@@ -334,6 +448,9 @@
           <span class="user-chip-nome">${usuario.nome}</span>
           <button class="btn-sair" onclick="fazerLogout()">Sair</button>
         </div>`;
+      // Exibe o sino só para usuários logados
+      document.getElementById('notif-wrap').style.display = 'flex';
+      carregarNotificacoes();
     } else {
       box.innerHTML = `<button class="btn-entrar" onclick="window.location.href='index.html'">Entrar</button>`;
     }
@@ -385,6 +502,77 @@
   function estrelasTexto(n) {
     return '★'.repeat(n) + '☆'.repeat(5 - n);
   }
+
+  // ── Notificações ───────────────────────────────────────────────
+  async function carregarNotificacoes() {
+    try {
+      const notifs = await apiReq('GET', '/social/notificacoes');
+      const naoLidas = notifs.filter(n => !n.lida).length;
+
+      const badge = document.getElementById('notif-badge');
+      if (naoLidas > 0) {
+        badge.textContent = naoLidas > 9 ? '9+' : naoLidas;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+
+      const lista = document.getElementById('notif-lista');
+      if (!notifs.length) {
+        lista.innerHTML = '<div class="notif-vazio">Nenhuma notificação ainda.</div>';
+        return;
+      }
+
+      lista.innerHTML = '';
+      notifs.forEach(n => {
+        const item = document.createElement('div');
+        item.className = 'notif-item' + (!n.lida ? ' nao-lida' : '');
+        item.innerHTML = `
+          <div class="notif-avatar">${iniciais(n.ator_nome)}</div>
+          <div class="notif-texto">
+            <strong>${n.ator_nome}</strong> começou a te seguir
+          </div>
+          <div class="notif-tempo">${tempoAtras(n.criado_em)}</div>`;
+        lista.appendChild(item);
+      });
+    } catch(e) {
+      console.error('[NOTIF]', e.message);
+    }
+  }
+
+  async function toggleNotifDropdown() {
+    const dropdown = document.getElementById('notif-dropdown');
+    const aberto   = dropdown.classList.contains('open');
+
+    dropdown.classList.toggle('open');
+
+    // Marca como lidas ao abrir
+    if (!aberto) {
+      const badge = document.getElementById('notif-badge');
+      if (badge.style.display !== 'none') {
+        try {
+          await apiReq('PATCH', '/social/notificacoes/lidas');
+          badge.style.display = 'none';
+          // Remove destaque visual das não lidas
+          document.querySelectorAll('.notif-item.nao-lida')
+            .forEach(el => el.classList.remove('nao-lida'));
+        } catch(e) { console.error('[NOTIF LIDAS]', e.message); }
+      }
+    }
+  }
+
+  // Fecha dropdown ao clicar fora
+  document.addEventListener('click', function(e) {
+    const wrap = document.getElementById('notif-wrap');
+    if (wrap && !wrap.contains(e.target)) {
+      document.getElementById('notif-dropdown').classList.remove('open');
+    }
+  });
+
+  // Atualiza notificações a cada 60 segundos
+  setInterval(() => {
+    if (token) carregarNotificacoes();
+  }, 60000);
 
   // ── Follow / Unfollow ──────────────────────────────────────────
   async function toggleFollow(targetId, btn) {
