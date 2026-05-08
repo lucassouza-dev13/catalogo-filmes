@@ -233,34 +233,77 @@
       <i data-lucide="x"></i>
     </button>
 
-    <div class="login-modal-header">
-      <div class="login-logo">
-        <i data-lucide="film"></i> LusTV
+    <!-- TELA: Login / Cadastro -->
+    <div id="lm-tela-login">
+      <div class="login-modal-header">
+        <div class="login-logo">
+          <i data-lucide="film"></i> LusTV
+        </div>
+        <p>Entre para salvar favoritos e avaliar títulos</p>
       </div>
-      <p>Entre para salvar favoritos e avaliar títulos</p>
+
+      <div class="login-modal-body">
+        <div class="login-field">
+          <label for="lm-nome">Nome de usuário</label>
+          <input type="text" id="lm-nome" placeholder="Como quer ser chamado?" maxlength="30" autocomplete="off">
+        </div>
+
+        <div class="login-field">
+          <label for="lm-email">Email <span style="color:#555;font-weight:400">(para recuperar senha)</span></label>
+          <input type="email" id="lm-email" placeholder="seu@email.com" maxlength="100" autocomplete="off">
+        </div>
+
+        <div class="login-field">
+          <label for="lm-senha">Senha</label>
+          <input type="password" id="lm-senha" placeholder="Mínimo 3 caracteres" maxlength="40">
+        </div>
+
+        <div id="login-error" class="login-error"></div>
+
+        <button id="lm-entrar-btn">
+          <i data-lucide="log-in"></i> Entrar / Cadastrar
+        </button>
+
+        <p class="login-hint">
+          Novo usuário? Preencha nome, email e senha — a conta é criada automaticamente.
+        </p>
+
+        <button id="lm-esqueci-btn" style="background:none;border:none;color:#555;font-size:0.8rem;cursor:pointer;padding:0;margin-top:4px;font-family:'Inter',sans-serif;transition:color 0.2s" onmouseover="this.style.color='#aaa'" onmouseout="this.style.color='#555'">
+          Esqueci minha senha
+        </button>
+      </div>
     </div>
 
-    <div class="login-modal-body">
-      <div class="login-field">
-        <label for="lm-nome">Nome de usuário</label>
-        <input type="text" id="lm-nome" placeholder="Como quer ser chamado?" maxlength="30" autocomplete="off">
+    <!-- TELA: Esqueci a senha -->
+    <div id="lm-tela-esqueci" style="display:none">
+      <div class="login-modal-header">
+        <div class="login-logo">
+          <i data-lucide="key-round"></i> Recuperar senha
+        </div>
+        <p>Digite seu email para receber o link de redefinição</p>
       </div>
 
-      <div class="login-field">
-        <label for="lm-senha">Senha</label>
-        <input type="password" id="lm-senha" placeholder="Crie uma senha" maxlength="40">
+      <div class="login-modal-body">
+        <div class="login-field">
+          <label for="lm-email-reset">Email cadastrado</label>
+          <input type="email" id="lm-email-reset" placeholder="seu@email.com" maxlength="100">
+        </div>
+
+        <div id="esqueci-error"   class="login-error"></div>
+        <div id="esqueci-success" style="display:none;color:#4ade80;font-size:0.82rem;margin-bottom:8px">
+          ✓ Email enviado! Verifique sua caixa de entrada.
+        </div>
+
+        <button id="lm-enviar-reset-btn">
+          <i data-lucide="send"></i> Enviar link
+        </button>
+
+        <button id="lm-voltar-btn" style="background:none;border:none;color:#555;font-size:0.8rem;cursor:pointer;padding:0;margin-top:8px;font-family:'Inter',sans-serif;transition:color 0.2s" onmouseover="this.style.color='#aaa'" onmouseout="this.style.color='#555'">
+          ← Voltar ao login
+        </button>
       </div>
-
-      <div id="login-error" class="login-error"></div>
-
-      <button id="lm-entrar-btn">
-        <i data-lucide="log-in"></i> Entrar / Cadastrar
-      </button>
-
-      <p class="login-hint">
-        Novo usuário? Basta digitar um nome e senha — a conta é criada automaticamente.
-      </p>
     </div>
+
   </div>
 </div>
 
@@ -271,11 +314,7 @@
 
 <script>
   // ── Notificações ───────────────────────────────────────────────
-  const BACKEND = 'https://backend-cat-logo-production.up.railway.app';
-
-  function iniciais(nome) {
-    return nome.trim().split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-  }
+  // BACKEND e iniciais() já declarados no filme.js
 
   function tempoAtras(ts) {
     const diff = (Date.now() - new Date(ts)) / 1000;
@@ -287,11 +326,11 @@
   }
 
   async function carregarNotificacoes() {
-    const token = localStorage.getItem('lustv_token');
-    if (!token) return;
+    const t = localStorage.getItem('lustv_token');
+    if (!t) return;
     try {
       const res    = await fetch(BACKEND + '/social/notificacoes', {
-        headers: { Authorization: 'Bearer ' + token }
+        headers: { Authorization: 'Bearer ' + t }
       });
       const notifs = await res.json();
       const naoLidas = notifs.filter(n => !n.lida).length;
@@ -357,6 +396,124 @@
     carregarNotificacoes();
     setInterval(carregarNotificacoes, 60000);
   }
+
+  // ── Esqueci a senha ────────────────────────────────────────────
+  function mostrarTelaEsqueci() {
+    document.getElementById('lm-tela-login').style.display  = 'none';
+    document.getElementById('lm-tela-esqueci').style.display = 'block';
+    document.getElementById('esqueci-error').textContent    = '';
+    document.getElementById('esqueci-success').style.display = 'none';
+    document.getElementById('lm-email-reset').value         = '';
+    lucide.createIcons();
+  }
+
+  function mostrarTelaLogin() {
+    document.getElementById('lm-tela-esqueci').style.display = 'none';
+    document.getElementById('lm-tela-login').style.display   = 'block';
+    lucide.createIcons();
+  }
+
+  document.getElementById('lm-esqueci-btn').addEventListener('click', mostrarTelaEsqueci);
+  document.getElementById('lm-voltar-btn').addEventListener('click', mostrarTelaLogin);
+
+  document.getElementById('lm-enviar-reset-btn').addEventListener('click', async () => {
+    const email  = document.getElementById('lm-email-reset').value.trim();
+    const errEl  = document.getElementById('esqueci-error');
+    const sucEl  = document.getElementById('esqueci-success');
+    const btn    = document.getElementById('lm-enviar-reset-btn');
+
+    errEl.textContent      = '';
+    sucEl.style.display    = 'none';
+
+    if (!email || !email.includes('@')) { errEl.textContent = 'Email inválido.'; return; }
+
+    btn.disabled    = true;
+    btn.textContent = 'Enviando...';
+
+    try {
+      const res  = await fetch(BACKEND + '/auth/esqueci-senha', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      await res.json();
+      // Sempre mostra sucesso (backend não revela se email existe)
+      sucEl.style.display = 'block';
+      btn.style.display   = 'none';
+    } catch(e) {
+      errEl.textContent = 'Erro de conexão. Tente novamente.';
+      btn.disabled      = false;
+      btn.innerHTML     = '<i data-lucide="send"></i> Enviar link';
+      lucide.createIcons();
+    }
+  });
+
+  // ── Patch no lmEntrarBtn para incluir email no cadastro ────────
+  // Aguarda o filme.js carregar e sobrescreve o listener do botão
+  window.addEventListener('load', () => {
+    const btn = document.getElementById('lm-entrar-btn');
+    if (!btn) return;
+
+    // Remove listeners antigos clonando
+    const clone = btn.cloneNode(true);
+    btn.parentNode.replaceChild(clone, btn);
+
+    clone.addEventListener('click', async () => {
+      const nome  = document.getElementById('lm-nome').value.trim();
+      const email = document.getElementById('lm-email').value.trim();
+      const senha = document.getElementById('lm-senha').value.trim();
+      const errEl = document.getElementById('login-error');
+
+      if (!nome)              { errEl.textContent = 'Insira um nome de usuário.'; return; }
+      if (senha.length < 3)   { errEl.textContent = 'A senha precisa ter pelo menos 3 caracteres.'; return; }
+
+      clone.disabled    = true;
+      clone.textContent = 'Aguarde...';
+      errEl.textContent = '';
+
+      try {
+        let data;
+        try {
+          // Tenta login primeiro (email não obrigatório no login)
+          data = await api('POST', '/auth/entrar', { nome, senha });
+        } catch(err) {
+          if (err.message === 'Usuario nao encontrado.') {
+            // Cadastro novo — email obrigatório
+            if (!email || !email.includes('@')) {
+              errEl.textContent = 'Insira um email válido para criar sua conta.';
+              clone.disabled    = false;
+              clone.innerHTML   = '<i data-lucide="log-in"></i> Entrar / Cadastrar';
+              lucide.createIcons();
+              return;
+            }
+            data = await api('POST', '/auth/cadastrar', { nome, senha, email });
+          } else {
+            throw err;
+          }
+        }
+
+        token   = data.token;
+        usuario = data.usuario;
+        localStorage.setItem('lustv_token',   token);
+        localStorage.setItem('lustv_usuario', JSON.stringify(usuario));
+
+        fecharLoginModal();
+        renderLoginBox();
+
+        document.getElementById('notif-wrap').style.display = 'flex';
+        carregarNotificacoes();
+
+        if (modalItem) renderAvaliacoes(String(modalItem.id));
+
+      } catch(err) {
+        errEl.textContent = err.message;
+      } finally {
+        clone.disabled  = false;
+        clone.innerHTML = '<i data-lucide="log-in"></i> Entrar / Cadastrar';
+        lucide.createIcons();
+      }
+    });
+  });
 
   lucide.createIcons();
 </script>

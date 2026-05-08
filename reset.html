@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LusTV-Ratings — Redefinir Senha</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .reset-wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .reset-card {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      padding: 36px 32px;
+      width: 100%;
+      max-width: 400px;
+    }
+    .reset-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      color: #e50914;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .reset-card p {
+      font-size: 0.88rem;
+      color: #666;
+      margin-bottom: 24px;
+    }
+    .reset-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+    .reset-field label {
+      font-size: 0.82rem;
+      color: #aaa;
+      font-weight: 600;
+    }
+    .reset-field input {
+      background: #111;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      padding: 10px 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .reset-field input:focus { border-color: #e50914; }
+    .reset-error {
+      color: #ff6b6b;
+      font-size: 0.82rem;
+      min-height: 18px;
+      margin-bottom: 8px;
+    }
+    .reset-success {
+      color: #4ade80;
+      font-size: 0.88rem;
+      text-align: center;
+      padding: 12px;
+      background: rgba(74,222,128,0.08);
+      border: 1px solid rgba(74,222,128,0.2);
+      border-radius: 6px;
+      display: none;
+    }
+    .btn-reset {
+      width: 100%;
+      background: #e50914;
+      border: none;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 11px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-reset:hover    { background: #b20710; }
+    .btn-reset:disabled { opacity: 0.5; cursor: default; }
+    .reset-voltar {
+      display: block;
+      text-align: center;
+      margin-top: 16px;
+      font-size: 0.82rem;
+      color: #555;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .reset-voltar:hover { color: #aaa; }
+  </style>
+</head>
+<body>
+  <div class="reset-wrap">
+    <div class="reset-card">
+      <div class="reset-logo">
+        <i data-lucide="film"></i> LusTV-Ratings
+      </div>
+      <p>Digite sua nova senha abaixo.</p>
+
+      <div class="reset-field">
+        <label for="nova-senha">Nova senha</label>
+        <input type="password" id="nova-senha" placeholder="Mínimo 3 caracteres" maxlength="40">
+      </div>
+      <div class="reset-field">
+        <label for="confirmar-senha">Confirmar senha</label>
+        <input type="password" id="confirmar-senha" placeholder="Repita a senha" maxlength="40">
+      </div>
+
+      <div class="reset-error" id="reset-error"></div>
+      <div class="reset-success" id="reset-success">Senha redefinida com sucesso! Redirecionando...</div>
+
+      <button class="btn-reset" id="btn-reset">Redefinir senha</button>
+      <a href="index.html" class="reset-voltar">← Voltar para o início</a>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    const BACKEND = 'https://backend-cat-logo-production.up.railway.app';
+
+    const token       = new URLSearchParams(window.location.search).get('token');
+    const btnReset    = document.getElementById('btn-reset');
+    const errorEl     = document.getElementById('reset-error');
+    const successEl   = document.getElementById('reset-success');
+    const novaSenha   = document.getElementById('nova-senha');
+    const confirmarSenha = document.getElementById('confirmar-senha');
+
+    if (!token) {
+      errorEl.textContent = 'Link inválido ou expirado.';
+      btnReset.disabled = true;
+    }
+
+    btnReset.addEventListener('click', async () => {
+      errorEl.textContent = '';
+      const senha = novaSenha.value.trim();
+      const conf  = confirmarSenha.value.trim();
+
+      if (senha.length < 3) { errorEl.textContent = 'Senha muito curta.'; return; }
+      if (senha !== conf)   { errorEl.textContent = 'As senhas não coincidem.'; return; }
+
+      btnReset.disabled    = true;
+      btnReset.textContent = 'Aguarde...';
+
+      try {
+        const res  = await fetch(BACKEND + '/auth/redefinir-senha', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token, novaSenha: senha }),
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          errorEl.textContent  = data.erro || 'Erro ao redefinir senha.';
+          btnReset.disabled    = false;
+          btnReset.textContent = 'Redefinir senha';
+          return;
+        }
+
+        successEl.style.display = 'block';
+        btnReset.style.display  = 'none';
+        setTimeout(() => window.location.href = 'index.html', 2500);
+      } catch(e) {
+        errorEl.textContent  = 'Erro de conexão.';
+        btnReset.disabled    = false;
+        btnReset.textContent = 'Redefinir senha';
+      }
+    });
+
+    lucide.createIcons();
+  </script>
+</body>
+</html>
