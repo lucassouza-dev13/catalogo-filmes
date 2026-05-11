@@ -565,17 +565,8 @@ searchInput.addEventListener("input", () => {
       if (secM) content.appendChild(secM);
       if (secS) content.appendChild(secS);
 
-    } else if (abaAtual === "filmes" || abaAtual === "documentarios") {
-      const data = await fetchData(`${BASE}/search/movie?api_key=${API_KEY}&query=${q}&language=pt-BR`);
-      content.innerHTML = ""; const sec = renderSecao(null, data, "movie");
-      sec ? content.appendChild(sec) : showEmpty();
-
-    } else if (abaAtual === "series") {
-      const data = await fetchData(`${BASE}/search/tv?api_key=${API_KEY}&query=${q}&language=pt-BR`);
-      content.innerHTML = ""; const sec = renderSecao(null, data, "tv");
-      sec ? content.appendChild(sec) : showEmpty();
-
-    } else if (abaAtual === "animes") {
+    } else {
+      // Busca global: filmes + séries sempre
       const [movies, series] = await Promise.all([
         fetchData(`${BASE}/search/movie?api_key=${API_KEY}&query=${q}&language=pt-BR`),
         fetchData(`${BASE}/search/tv?api_key=${API_KEY}&query=${q}&language=pt-BR`)
