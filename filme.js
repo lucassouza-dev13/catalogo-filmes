@@ -1,9 +1,5 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// CONFIGURAÇÃO
-// Depois que o Railway te der a URL do backend, troque aqui:
-// ─────────────────────────────────────────────────────────────────────────────
-const BACKEND = "https://backend-cat-logo-production.up.railway.app";
-const API_URL = "https://backend-cat-logo-production.up.railway.app";
+const BACKEND = "https://backend-cat-logo.onrender.com";
+const API_URL = "https://backend-cat-logo.onrender.com";
 const API_KEY = "8bcf3516840c71be090ce067d3464a1d";
 const IMG     = "https://image.tmdb.org/t/p/w342";
 const IMG_LG  = "https://image.tmdb.org/t/p/w500";
