@@ -40,7 +40,7 @@
     gap: 6px;
   }
   .tab-btn:hover  { color: #fff; }
-  .tab-btn.active { color: #fff; border-bottom-color: #e50914; }
+  .tab-btn.active { color: #fff; border-bottom-color: #8b5cf6; }
   .tab-panel { display: none; }
   .tab-panel.active { display: block; }
 
@@ -88,13 +88,13 @@
   .movie-title { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .movie-meta  { font-size: 13px; color: #888; margin-top: 3px; }
   .movie-bar   { height: 3px; background: #2a2a2a; border-radius: 2px; margin-top: 7px; }
-  .movie-bar-fill { height: 100%; border-radius: 2px; background: #e50914; transition: width 0.6s ease; }
+  .movie-bar-fill { height: 100%; border-radius: 2px; background: #8b5cf6; transition: width 0.6s ease; }
 
   .badge {
     font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px;
     text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0;
   }
-  .badge-hot { background: rgba(229,9,20,0.2); color: #ff6b6b; border: 1px solid rgba(229,9,20,0.3); }
+  .badge-hot { background: rgba(139,92,246,0.2); color: #ff6b6b; border: 1px solid rgba(139,92,246,0.3); }
   .badge-up  { background: rgba(29,158,117,0.2); color: #4ade80; border: 1px solid rgba(29,158,117,0.3); }
   .badge-new { background: rgba(59,130,246,0.2); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
   .star { color: #f5c518; font-size: 13px; margin-left: 6px; }
@@ -109,7 +109,7 @@
     background: #1c1c1c; border: 1px solid #2a2a2a; border-radius: 8px;
     padding: 18px 14px; cursor: pointer; transition: all 0.2s; text-align: center;
   }
-  .genre-card:hover, .genre-card.selected { background: #222; border-color: #e50914; }
+  .genre-card:hover, .genre-card.selected { background: #222; border-color: #8b5cf6; }
   .genre-card .gicon  { font-size: 26px; margin-bottom: 8px; }
   .genre-card .gname  { font-size: 13px; font-weight: 600; }
 
@@ -120,10 +120,10 @@
     display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center;
   }
   .avatar-big {
-    width: 88px; height: 88px; border-radius: 50%; background: #e50914;
+    width: 88px; height: 88px; border-radius: 50%; background: #8b5cf6;
     display: flex; align-items: center; justify-content: center;
     font-size: 36px; font-weight: 700; cursor: pointer; position: relative;
-    border: 3px solid #b20710; transition: transform 0.2s;
+    border: 3px solid #7c3aed; transition: transform 0.2s;
   }
   .avatar-big:hover { transform: scale(1.05); }
   .avatar-big .edit-overlay {
@@ -141,11 +141,11 @@
     padding: 6px 18px; border-radius: 20px; font-family: 'Inter', sans-serif;
     font-size: 12px; cursor: pointer; transition: all 0.2s;
   }
-  .edit-name-btn:hover { border-color: #e50914; color: #fff; }
+  .edit-name-btn:hover { border-color: #8b5cf6; color: #fff; }
 
   .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; }
   .stat-box   { background: #141414; border-radius: 8px; padding: 14px; }
-  .stat-num   { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: #e50914; }
+  .stat-num   { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: #8b5cf6; }
   .stat-lbl   { font-size: 11px; color: #666; margin-top: 2px; }
 
   .profile-right { display: flex; flex-direction: column; gap: 16px; }
@@ -164,7 +164,7 @@
   }
   .dash-spinner {
     width: 18px; height: 18px; border: 2px solid #2a2a2a;
-    border-top-color: #e50914; border-radius: 50%;
+    border-top-color: #8b5cf6; border-radius: 50%;
     animation: spin 0.7s linear infinite;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
@@ -192,7 +192,7 @@
     text-align: center; transition: background 0.15s; border: 2px solid transparent;
   }
   .emoji-opt:hover    { background: #222; }
-  .emoji-opt.selected { border-color: #e50914; background: #222; }
+  .emoji-opt.selected { border-color: #8b5cf6; background: #222; }
   .modal-btns { display: flex; gap: 10px; justify-content: flex-end; }
   .btn-cancel {
     background: none; border: 1px solid #2a2a2a; color: #888;
@@ -200,11 +200,11 @@
     font-family: 'Inter', sans-serif; font-size: 0.85rem;
   }
   .btn-save {
-    background: #e50914; border: none; color: #fff;
+    background: #8b5cf6; border: none; color: #fff;
     padding: 8px 18px; border-radius: 6px; cursor: pointer;
     font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600;
   }
-  .btn-save:hover { background: #b20710; }
+  .btn-save:hover { background: #7c3aed; }
 
   /* ── Sino de notificações ───────────────────────────────────── */
   .notif-wrap {
@@ -228,7 +228,7 @@
   .notif-badge {
     position: absolute;
     top: 0; right: 0;
-    background: #e50914;
+    background: #8b5cf6;
     color: #fff;
     font-size: 10px;
     font-weight: 700;
@@ -270,12 +270,12 @@
   }
   .notif-item:last-child { border-bottom: none; }
   .notif-item:hover { background: #111; }
-  .notif-item.nao-lida { background: #1f1414; }
-  .notif-item.nao-lida:hover { background: #251515; }
+  .notif-item.nao-lida { background: #1a1428; }
+  .notif-item.nao-lida:hover { background: #1e1a35; }
   .notif-avatar {
     width: 32px; height: 32px;
     border-radius: 50%;
-    background: #e50914;
+    background: #8b5cf6;
     display: flex; align-items: center; justify-content: center;
     font-size: 11px; font-weight: 700;
     flex-shrink: 0;
@@ -326,7 +326,7 @@
     <a href="comunidade.html" class="nav-dashboard">
       <i data-lucide="users"></i> Comunidade
     </a>
-    <a href="dashboard.html" class="nav-dashboard" style="color:#fff; border-bottom: 2px solid #e50914; padding-bottom:2px;">
+    <a href="dashboard.html" class="nav-dashboard" style="color:#fff; border-bottom: 2px solid #8b5cf6; padding-bottom:2px;">
       <i data-lucide="bar-chart-3"></i> Dashboard
     </a>
   </nav>
