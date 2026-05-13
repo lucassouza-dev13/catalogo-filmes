@@ -425,7 +425,7 @@
 <!-- Lucide CDN -->
 <script src="https://unpkg.com/lucide@latest"></script>
 <script>
-  const BACKEND  = 'https://backend-cat-logo-production.up.railway.app';
+  const BACKEND = 'https://backend-cat-logo.onrender.com';
   const TMDB_KEY = '8bcf3516840c71be090ce067d3464a1d';
   const IMG_MD   = 'https://image.tmdb.org/t/p/w342';
   const TMDB_URL = 'https://api.themoviedb.org/3';
@@ -685,13 +685,15 @@
     const ano    = (filme?.release_date || filme?.first_air_date || '').slice(0, 4);
 
     card.innerHTML = `
-      <div class="feed-card-header">
-        <div class="feed-avatar">${iniciais(item.usuario_nome)}</div>
-        <div class="feed-userinfo">
-          <strong>${item.usuario_nome}</strong>
-          <span>${tempoAtras(item.criado_em)}</span>
-        </div>
+  <div class="feed-card-header">
+    <a href="perfil.html?id=${item.usuario_id}" style="display:flex;align-items:center;gap:10px;text-decoration:none;flex:1;min-width:0">
+      <div class="feed-avatar">${iniciais(item.usuario_nome)}</div>
+      <div class="feed-userinfo">
+        <strong>${item.usuario_nome}</strong>
+        <span>${tempoAtras(item.criado_em)}</span>
       </div>
+    </a>
+  </div>
       <div class="feed-filme">
         <div class="feed-poster">
           ${poster ? `<img src="${poster}" alt="${titulo}" loading="lazy">` : '🎬'}
@@ -754,13 +756,16 @@
         res.innerHTML = '';
         for (const u of usuarios) {
           const item = document.createElement('div');
-          item.className = 'social-user-item';
-          item.innerHTML = `
-            <div class="social-user-avatar">${iniciais(u.nome)}</div>
-            <div class="social-user-info">
-              <strong>${u.nome}</strong>
-              <small>${u.total_avaliacoes} avaliações · ${u.total_seguidores} seguidores</small>
-            </div>`;
+    item.className = 'social-user-item';
+  item.style.cursor = 'pointer';
+   item.innerHTML = `
+  <a href="perfil.html?id=${u.id}" style="display:flex;align-items:center;gap:12px;flex:1;text-decoration:none">
+    <div class="social-user-avatar">${iniciais(u.nome)}</div>
+    <div class="social-user-info">
+      <strong>${u.nome}</strong>
+      <small>${u.total_avaliacoes} avaliações · ${u.total_seguidores} seguidores</small>
+    </div>
+    </a>`;
           const btn = document.createElement('button');
           btn.className = 'btn-follow' + (u.ja_sigo ? ' seguindo' : '');
           btn.dataset.seguindo = u.ja_sigo ? 'true' : 'false';
