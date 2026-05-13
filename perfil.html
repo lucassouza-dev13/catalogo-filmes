@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfil — LusTV-Ratings</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .perfil-wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2rem 2rem 4rem;
+    }
+
+    /* ── Hero do perfil ── */
+    .perfil-hero {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      padding: 2rem;
+      background: linear-gradient(135deg, rgba(139,92,246,0.1), rgba(124,58,237,0.05));
+      border: 1px solid rgba(139,92,246,0.2);
+      border-radius: 16px;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .perfil-avatar-big {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 42px;
+      font-weight: 700;
+      flex-shrink: 0;
+      box-shadow: 0 0 30px rgba(139,92,246,0.4);
+      border: 2px solid rgba(139,92,246,0.4);
+    }
+
+    .perfil-hero-info { flex: 1; }
+
+    .perfil-nome {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.2rem;
+      letter-spacing: 1px;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .perfil-desde {
+      font-size: 0.78rem;
+      color: #666;
+      margin-bottom: 1rem;
+    }
+
+    .perfil-stats {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .perfil-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .perfil-stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      color: #8b5cf6;
+      line-height: 1;
+    }
+
+    .perfil-stat-lbl {
+      font-size: 0.72rem;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .perfil-stat-divider {
+      width: 1px;
+      height: 40px;
+      background: #2a2a3e;
+      align-self: center;
+    }
+
+    /* ── Botão seguir ── */
+    .btn-follow-perfil {
+      background: none;
+      border: 1.5px solid #8b5cf6;
+      color: #8b5cf6;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 8px 22px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .btn-follow-perfil:hover,
+    .btn-follow-perfil.seguindo {
+      background: #8b5cf6;
+      color: #fff;
+    }
+
+    .btn-follow-perfil.seguindo:hover {
+      background: #7c3aed;
+      border-color: #7c3aed;
+    }
+
+    /* ── Avaliações ── */
+    .perfil-section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.3rem;
+      letter-spacing: 1px;
+      color: #aaa;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .av-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: #16161f;
+      border: 1px solid #1e1e2e;
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      transition: border-color 0.2s, background 0.2s;
+      animation: fadeUp 0.4s ease both;
+      cursor: pointer;
+    }
+
+    .av-row:hover {
+      border-color: rgba(139,92,246,0.3);
+      background: #1a1a2a;
+    }
+
+    .av-poster {
+      width: 44px;
+      height: 64px;
+      border-radius: 5px;
+      overflow: hidden;
+      flex-shrink: 0;
+      background: #1e1e2e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .av-poster img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .av-info { flex: 1; min-width: 0; }
+
+    .av-titulo {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #eee;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 3px;
+    }
+
+    .av-estrelas-row {
+      font-size: 13px;
+      color: #ef9f27;
+      letter-spacing: 1px;
+      margin-bottom: 3px;
+    }
+
+    .av-comentario-row {
+      font-size: 0.78rem;
+      color: #777;
+      font-style: italic;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .av-data-row {
+      font-size: 0.72rem;
+      color: #555;
+      flex-shrink: 0;
+    }
+
+    /* ── Estados ── */
+    .perfil-loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 4rem;
+      color: #555;
+      font-size: 0.9rem;
+    }
+
+    .perfil-erro {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: #555;
+    }
+
+    .perfil-erro span {
+      display: block;
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .perfil-vazio {
+      text-align: center;
+      padding: 2rem;
+      color: #555;
+      font-size: 0.85rem;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Notificações ── */
+    .notif-wrap { position: relative; display: flex; align-items: center; }
+    .btn-sino { background: none; border: none; cursor: pointer; color: #aaa; display: flex; align-items: center; justify-content: center; padding: 6px; border-radius: 50%; transition: color 0.2s, background 0.2s; }
+    .btn-sino:hover { color: #fff; background: #222; }
+    .notif-badge { position: absolute; top: 0; right: 0; background: #8b5cf6; color: #fff; font-size: 10px; font-weight: 700; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+    .notif-dropdown { display: none; position: absolute; top: calc(100% + 10px); right: 0; width: 300px; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); z-index: 1100; overflow: hidden; }
+    .notif-dropdown.open { display: block; }
+    .notif-dropdown-head { padding: 12px 16px; font-size: 0.8rem; font-weight: 700; color: #666; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #222; }
+    .notif-item { display: flex; align-items: center; gap: 10px; padding: 11px 16px; border-bottom: 1px solid #1f1f1f; transition: background 0.15s; }
+    .notif-item:last-child { border-bottom: none; }
+    .notif-item:hover { background: #111; }
+    .notif-item.nao-lida { background: #1a1428; }
+    .notif-avatar { width: 32px; height: 32px; border-radius: 50%; background: #8b5cf6; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+    .notif-texto { flex: 1; min-width: 0; font-size: 0.8rem; color: #bbb; line-height: 1.4; }
+    .notif-texto strong { color: #fff; }
+    .notif-tempo { font-size: 0.72rem; color: #555; flex-shrink: 0; }
+    .notif-vazio { padding: 2rem; text-align: center; font-size: 0.82rem; color: #555; }
+
+    @media (max-width: 600px) {
+      .perfil-hero { flex-direction: column; text-align: center; }
+      .perfil-stats { justify-content: center; }
+      .btn-follow-perfil { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <i data-lucide="popcorn"></i> LusTV-Ratings
+  </div>
+
+  <nav>
+    <button onclick="window.location.href='index.html'"><i data-lucide="film"></i> Filmes</button>
+    <button onclick="window.location.href='index.html'"><i data-lucide="tv"></i> Séries</button>
+    <button onclick="window.location.href='index.html'"><i data-lucide="clapperboard"></i> Docs</button>
+    <button onclick="window.location.href='index.html'"><i data-lucide="sparkles"></i> Animações</button>
+    <button onclick="window.location.href='index.html'"><i data-lucide="heart"></i> Favoritos</button>
+    <a href="comunidade.html" class="nav-dashboard"><i data-lucide="users"></i> Comunidade</a>
+    <a href="dashboard.html" class="nav-dashboard"><i data-lucide="bar-chart-3"></i> Dashboard</a>
+  </nav>
+
+  <div class="search-wrap">
+    <i data-lucide="search"></i>
+    <input type="text" placeholder="Buscar..." disabled style="cursor:default;opacity:0.4">
+  </div>
+
+  <div class="notif-wrap" id="notif-wrap" style="display:none">
+    <button class="btn-sino" onclick="toggleNotifDropdown()"><i data-lucide="bell"></i></button>
+    <span class="notif-badge" id="notif-badge" style="display:none"></span>
+    <div class="notif-dropdown" id="notif-dropdown">
+      <div class="notif-dropdown-head">Notificações</div>
+      <div id="notif-lista"></div>
+    </div>
+  </div>
+
+  <div id="login-box"></div>
+</header>
+
+<div class="perfil-wrap">
+  <div id="perfil-conteudo">
+    <div class="perfil-loading">
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+  const BACKEND  = 'https://backend-cat-logo.onrender.com';
+  const TMDB_KEY = '8bcf3516840c71be090ce067d3464a1d';
+  const IMG_SM   = 'https://image.tmdb.org/t/p/w92';
+  const TMDB_URL = 'https://api.themoviedb.org/3';
+
+  let token   = localStorage.getItem('lustv_token');
+  let usuario = JSON.parse(localStorage.getItem('lustv_usuario') || 'null');
+
+  // Pega o ID da URL: perfil.html?id=1
+  const params  = new URLSearchParams(window.location.search);
+  const perfilId = params.get('id');
+
+  function iniciais(nome) {
+    return nome.trim().split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+  }
+
+  function tempoAtras(ts) {
+    const diff = (Date.now() - new Date(ts)) / 1000;
+    if (diff < 60)     return 'agora mesmo';
+    if (diff < 3600)   return Math.floor(diff / 60) + 'm atrás';
+    if (diff < 86400)  return Math.floor(diff / 3600) + 'h atrás';
+    if (diff < 604800) return Math.floor(diff / 86400) + 'd atrás';
+    return new Date(ts).toLocaleDateString('pt-BR');
+  }
+
+  function estrelasTexto(n) {
+    return '★'.repeat(n) + '☆'.repeat(5 - n);
+  }
+
+  // ── Login box ──
+  function renderLoginBox() {
+    const box = document.getElementById('login-box');
+    if (usuario) {
+      const av = usuario.avatar || iniciais(usuario.nome);
+      box.innerHTML = `
+        <div class="user-chip">
+          <div class="user-avatar-sm" style="font-size:${usuario.avatar ? '14px' : '11px'}">${av}</div>
+          <span class="user-chip-nome">${usuario.nome}</span>
+          <button class="btn-sair" onclick="fazerLogout()">Sair</button>
+        </div>`;
+      document.getElementById('notif-wrap').style.display = 'flex';
+      carregarNotificacoes();
+    } else {
+      box.innerHTML = `<button class="btn-entrar" onclick="window.location.href='index.html'">Entrar</button>`;
+    }
+  }
+
+  function fazerLogout() {
+    localStorage.removeItem('lustv_token');
+    localStorage.removeItem('lustv_usuario');
+    window.location.href = 'index.html';
+  }
+
+  // ── Notificações ──
+  async function carregarNotificacoes() {
+    if (!token) return;
+    try {
+      const res    = await fetch(BACKEND + '/social/notificacoes', { headers: { Authorization: 'Bearer ' + token } });
+      const notifs = await res.json();
+      const naoLidas = notifs.filter(n => !n.lida).length;
+      const badge  = document.getElementById('notif-badge');
+      badge.style.display = naoLidas > 0 ? 'flex' : 'none';
+      if (naoLidas > 0) badge.textContent = naoLidas > 9 ? '9+' : naoLidas;
+      const lista = document.getElementById('notif-lista');
+      if (!notifs.length) { lista.innerHTML = '<div class="notif-vazio">Nenhuma notificação ainda.</div>'; return; }
+      lista.innerHTML = '';
+      notifs.forEach(n => {
+        const item = document.createElement('div');
+        item.className = 'notif-item' + (!n.lida ? ' nao-lida' : '');
+        item.innerHTML = `<div class="notif-avatar">${iniciais(n.ator_nome)}</div><div class="notif-texto"><strong>${n.ator_nome}</strong> começou a te seguir</div><div class="notif-tempo">${tempoAtras(n.criado_em)}</div>`;
+        lista.appendChild(item);
+      });
+    } catch(e) { console.error('[NOTIF]', e.message); }
+  }
+
+  async function toggleNotifDropdown() {
+    const dropdown = document.getElementById('notif-dropdown');
+    const aberto   = dropdown.classList.contains('open');
+    dropdown.classList.toggle('open');
+    if (!aberto) {
+      const badge = document.getElementById('notif-badge');
+      if (badge.style.display !== 'none') {
+        try {
+          await fetch(BACKEND + '/social/notificacoes/lidas', { method: 'PATCH', headers: { Authorization: 'Bearer ' + token } });
+          badge.style.display = 'none';
+          document.querySelectorAll('.notif-item.nao-lida').forEach(el => el.classList.remove('nao-lida'));
+        } catch(e) {}
+      }
+    }
+  }
+
+  document.addEventListener('click', function(e) {
+    const wrap = document.getElementById('notif-wrap');
+    if (wrap && !wrap.contains(e.target)) document.getElementById('notif-dropdown').classList.remove('open');
+  });
+
+  // ── Follow ──
+  async function toggleFollow(targetId, btn) {
+    if (!token) { window.location.href = 'index.html'; return; }
+    const seguindo = btn.dataset.seguindo === 'true';
+    btn.disabled = true;
+    try {
+      if (seguindo) {
+        await fetch(BACKEND + '/social/follow', { method: 'DELETE', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify({ following_id: targetId }) });
+        btn.dataset.seguindo = 'false';
+        btn.innerHTML = '<i data-lucide="user-plus"></i> Seguir';
+        btn.classList.remove('seguindo');
+      } else {
+        await fetch(BACKEND + '/social/follow', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify({ following_id: targetId }) });
+        btn.dataset.seguindo = 'true';
+        btn.innerHTML = '<i data-lucide="user-check"></i> Seguindo';
+        btn.classList.add('seguindo');
+      }
+      lucide.createIcons();
+    } catch(e) { console.error('[FOLLOW]', e.message); }
+    finally { btn.disabled = false; }
+  }
+
+  // ── Busca detalhes TMDB ──
+  const _cache = {};
+  async function tmdbInfo(filmeId) {
+    if (_cache[filmeId]) return _cache[filmeId];
+    try {
+      const rm = await fetch(`${TMDB_URL}/movie/${filmeId}?api_key=${TMDB_KEY}&language=pt-BR`);
+      const dm = await rm.json();
+      if (dm.title) { _cache[filmeId] = { titulo: dm.title, poster: dm.poster_path ? IMG_SM + dm.poster_path : null }; return _cache[filmeId]; }
+    } catch {}
+    try {
+      const rt = await fetch(`${TMDB_URL}/tv/${filmeId}?api_key=${TMDB_KEY}&language=pt-BR`);
+      const dt = await rt.json();
+      if (dt.name) { _cache[filmeId] = { titulo: dt.name, poster: dt.poster_path ? IMG_SM + dt.poster_path : null }; return _cache[filmeId]; }
+    } catch {}
+    return { titulo: 'Título #' + filmeId, poster: null };
+  }
+
+  // ── Carrega perfil ──
+  async function carregarPerfil() {
+    const cont = document.getElementById('perfil-conteudo');
+
+    if (!perfilId) {
+      cont.innerHTML = `<div class="perfil-erro"><span>🔍</span>ID de usuário não informado.</div>`;
+      return;
+    }
+
+    try {
+      const res  = await fetch(`${BACKEND}/perfil/${perfilId}`);
+      if (!res.ok) throw new Error('not found');
+      const data = await res.json();
+      const u    = data.usuario;
+      const s    = data.estatisticas;
+
+      document.title = `${u.nome} — LusTV-Ratings`;
+
+      // Verifica se é o próprio usuário
+      const eProprioUsuario = usuario && usuario.id === u.id;
+
+      // Verifica se já segue
+      let jaSigo = false;
+      if (token && !eProprioUsuario) {
+        try {
+          const chk = await fetch(`${BACKEND}/social/follow/check/${u.id}`, { headers: { Authorization: 'Bearer ' + token } });
+          const ck  = await chk.json();
+          jaSigo    = ck.seguindo;
+        } catch {}
+      }
+
+      const av       = u.avatar || iniciais(u.nome);
+      const isEmoji  = u.avatar ? true : false;
+      const membroDesde = new Date(u.membro_desde).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+
+      // Hero
+      let heroHtml = `
+        <div class="perfil-hero">
+          <div class="perfil-avatar-big" style="font-size:${isEmoji ? '42px' : '32px'}">${av}</div>
+          <div class="perfil-hero-info">
+            <div class="perfil-nome">${u.nome}</div>
+            <div class="perfil-desde">Membro desde ${membroDesde}</div>
+            <div class="perfil-stats">
+              <div class="perfil-stat">
+                <div class="perfil-stat-num">${s.total_avaliacoes}</div>
+                <div class="perfil-stat-lbl">Avaliações</div>
+              </div>
+              <div class="perfil-stat-divider"></div>
+              <div class="perfil-stat">
+                <div class="perfil-stat-num">${s.media_estrelas || '—'}</div>
+                <div class="perfil-stat-lbl">Média ⭐</div>
+              </div>
+              <div class="perfil-stat-divider"></div>
+              <div class="perfil-stat">
+                <div class="perfil-stat-num">${s.seguidores}</div>
+                <div class="perfil-stat-lbl">Seguidores</div>
+              </div>
+              <div class="perfil-stat-divider"></div>
+              <div class="perfil-stat">
+                <div class="perfil-stat-num">${s.seguindo}</div>
+                <div class="perfil-stat-lbl">Seguindo</div>
+              </div>
+            </div>
+          </div>`;
+
+      if (!eProprioUsuario) {
+        heroHtml += `<button class="btn-follow-perfil ${jaSigo ? 'seguindo' : ''}" id="btn-follow" data-seguindo="${jaSigo}">
+          <i data-lucide="${jaSigo ? 'user-check' : 'user-plus'}"></i>
+          ${jaSigo ? 'Seguindo' : 'Seguir'}
+        </button>`;
+      } else {
+        heroHtml += `<a href="dashboard.html" style="text-decoration:none"><button class="btn-follow-perfil">
+          <i data-lucide="settings"></i> Editar perfil
+        </button></a>`;
+      }
+
+      heroHtml += `</div>`;
+
+      // Avaliações
+      let avsHtml = `<div class="perfil-section-title"><i data-lucide="star"></i> Avaliações recentes</div>`;
+
+      if (!data.recentes.length) {
+        avsHtml += `<div class="perfil-vazio">Nenhuma avaliação ainda.</div>`;
+      } else {
+        const detalhes = await Promise.all(data.recentes.map(av => tmdbInfo(av.filme_id)));
+        avsHtml += data.recentes.map((av, i) => {
+          const det = detalhes[i];
+          return `<div class="av-row" style="animation-delay:${i * 0.05}s">
+            <div class="av-poster">
+              ${det.poster ? `<img src="${det.poster}" alt="${det.titulo}" loading="lazy">` : '🎬'}
+            </div>
+            <div class="av-info">
+              <div class="av-titulo">${det.titulo}</div>
+              <div class="av-estrelas-row">${estrelasTexto(av.estrelas)}</div>
+              ${av.comentario ? `<div class="av-comentario-row">"${av.comentario}"</div>` : ''}
+            </div>
+            <div class="av-data-row">${tempoAtras(av.criado_em)}</div>
+          </div>`;
+        }).join('');
+      }
+
+      cont.innerHTML = heroHtml + avsHtml;
+      lucide.createIcons();
+
+      // Listener do botão follow
+      const btnFollow = document.getElementById('btn-follow');
+      if (btnFollow) {
+        btnFollow.addEventListener('click', () => toggleFollow(u.id, btnFollow));
+      }
+
+    } catch(e) {
+      cont.innerHTML = `<div class="perfil-erro"><span>😢</span>Usuário não encontrado.</div>`;
+    }
+  }
+
+  renderLoginBox();
+  lucide.createIcons();
+  carregarPerfil();
+</script>
+</body>
+</html>
