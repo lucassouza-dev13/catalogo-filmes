@@ -13,54 +13,105 @@
       align-items: center;
       justify-content: center;
       padding: 2rem;
+      background: #0d0d0d;
     }
     .reset-card {
-      background: #1a1a1a;
-      border: 1px solid #2a2a2a;
-      border-radius: 12px;
-      padding: 36px 32px;
+      background: #111;
+      border: 1px solid #1e1e1e;
+      border-radius: 16px;
+      padding: 2rem;
       width: 100%;
       max-width: 400px;
     }
+
+    /* ── Header ── */
+    .reset-header { margin-bottom: 1.5rem; }
+
     .reset-logo {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.6rem;
-      color: #e50914;
-      margin-bottom: 6px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
+      margin-bottom: 6px;
     }
-    .reset-card p {
-      font-size: 0.88rem;
-      color: #666;
-      margin-bottom: 24px;
+    .reset-logo span {
+      font-size: 20px;
+      font-weight: 600;
+      color: #9b6fd4;
+      letter-spacing: 1px;
     }
+    .reset-tagline {
+      margin: 0;
+      font-size: 11px;
+      color: #444;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* ── Título com barra ── */
+    .reset-titulo-bloco {
+      border-left: 3px solid #9b6fd4;
+      padding-left: 14px;
+      margin-bottom: 1.5rem;
+    }
+    .reset-titulo-principal {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.2;
+    }
+    .reset-subtitulo {
+      margin: 4px 0 0;
+      font-size: 13px;
+      color: #555;
+    }
+
+    /* ── Campos ── */
     .reset-field {
       display: flex;
       flex-direction: column;
       gap: 6px;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
     .reset-field label {
-      font-size: 0.82rem;
-      color: #aaa;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #9b6fd4;
       font-weight: 600;
     }
-    .reset-field input {
-      background: #111;
+    .reset-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .reset-input-wrap i[data-lucide] {
+      position: absolute;
+      left: 14px;
+      color: #555;
+      width: 16px;
+      height: 16px;
+      pointer-events: none;
+    }
+    .reset-input-wrap input {
+      width: 100%;
+      background: #161616;
       border: 1px solid #2a2a2a;
-      border-radius: 6px;
+      border-radius: 8px;
+      padding: 12px 14px 12px 42px;
       color: #fff;
       font-family: 'Inter', sans-serif;
-      font-size: 0.9rem;
-      padding: 10px 14px;
+      font-size: 14px;
       outline: none;
       transition: border-color 0.2s;
+      box-sizing: border-box;
     }
-    .reset-field input:focus { border-color: #e50914; }
+    .reset-input-wrap input:focus { border-color: #9b6fd4; }
+    .reset-input-wrap input::placeholder { color: #444; }
+
+    /* ── Feedback ── */
     .reset-error {
-      color: #ff6b6b;
+      color: #e57373;
       font-size: 0.82rem;
       min-height: 18px;
       margin-bottom: 8px;
@@ -72,57 +123,106 @@
       padding: 12px;
       background: rgba(74,222,128,0.08);
       border: 1px solid rgba(74,222,128,0.2);
-      border-radius: 6px;
+      border-radius: 8px;
       display: none;
+      margin-bottom: 12px;
     }
+
+    /* ── Botão ── */
     .btn-reset {
       width: 100%;
-      background: #e50914;
+      background: #9b6fd4;
       border: none;
       color: #fff;
       font-family: 'Inter', sans-serif;
-      font-size: 0.9rem;
+      font-size: 15px;
       font-weight: 600;
-      padding: 11px;
-      border-radius: 6px;
+      padding: 14px;
+      border-radius: 8px;
       cursor: pointer;
       transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 4px;
     }
-    .btn-reset:hover    { background: #b20710; }
+    .btn-reset:hover    { background: #7c52b8; }
     .btn-reset:disabled { opacity: 0.5; cursor: default; }
+
+    /* ── Divider + voltar ── */
+    .reset-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 16px 0 12px;
+    }
+    .reset-divider span { flex: 1; height: 1px; background: #1e1e1e; }
+    .reset-divider small { font-size: 12px; color: #444; }
+
     .reset-voltar {
       display: block;
       text-align: center;
-      margin-top: 16px;
-      font-size: 0.82rem;
+      font-size: 13px;
       color: #555;
       text-decoration: none;
+      border-bottom: 1px solid #2a2a2a;
+      padding-bottom: 1px;
+      width: fit-content;
+      margin: 0 auto;
       transition: color 0.2s;
     }
-    .reset-voltar:hover { color: #aaa; }
+    .reset-voltar:hover { color: #9b6fd4; }
   </style>
 </head>
 <body>
   <div class="reset-wrap">
     <div class="reset-card">
-      <div class="reset-logo">
-        <i data-lucide="film"></i> LusTV-Ratings
+
+      <div class="reset-header">
+        <div class="reset-logo">
+          <svg width="26" height="26" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="28" height="28" rx="6" fill="#2d1b6e"/>
+            <text x="5" y="22" font-family="Georgia,serif" font-size="20" font-weight="700" fill="#9b6fd4">L</text>
+            <polygon points="21,13 22.5,17.5 27,17.5 23.5,20 24.5,24.5 21,22 17.5,24.5 18.5,20 15,17.5 19.5,17.5" fill="#f0b429"/>
+          </svg>
+          <span>LUSTV</span>
+        </div>
+        <p class="reset-tagline">Avalie. Descubra. Compartilhe.</p>
       </div>
-      <p>Digite sua nova senha abaixo.</p>
+
+      <div class="reset-titulo-bloco">
+        <p class="reset-titulo-principal">Redefinir senha</p>
+        <p class="reset-subtitulo">Digite sua nova senha abaixo</p>
+      </div>
 
       <div class="reset-field">
         <label for="nova-senha">Nova senha</label>
-        <input type="password" id="nova-senha" placeholder="Mínimo 3 caracteres" maxlength="40">
+        <div class="reset-input-wrap">
+          <i data-lucide="lock"></i>
+          <input type="password" id="nova-senha" placeholder="Mínimo 3 caracteres" maxlength="40">
+        </div>
       </div>
+
       <div class="reset-field">
         <label for="confirmar-senha">Confirmar senha</label>
-        <input type="password" id="confirmar-senha" placeholder="Repita a senha" maxlength="40">
+        <div class="reset-input-wrap">
+          <i data-lucide="lock"></i>
+          <input type="password" id="confirmar-senha" placeholder="Repita a senha" maxlength="40">
+        </div>
       </div>
 
       <div class="reset-error" id="reset-error"></div>
       <div class="reset-success" id="reset-success">Senha redefinida com sucesso! Redirecionando...</div>
 
-      <button class="btn-reset" id="btn-reset">Redefinir senha</button>
+      <button class="btn-reset" id="btn-reset">
+        <i data-lucide="arrow-right"></i> Redefinir senha
+      </button>
+
+      <div class="reset-divider">
+        <span></span><small>ou</small><span></span>
+      </div>
+
       <a href="index.html" class="reset-voltar">← Voltar para o início</a>
     </div>
   </div>
