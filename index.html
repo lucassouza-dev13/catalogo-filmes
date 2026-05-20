@@ -230,68 +230,118 @@
 <!-- ======= MODAL LOGIN ======= -->
 <div id="login-modal-overlay">
   <div id="login-modal">
+
     <button id="login-modal-close">
       <i data-lucide="x"></i>
     </button>
 
     <!-- TELA: Login / Cadastro -->
-    <!-- TELA: Login / Cadastro -->
-<div id="lm-tela-login">
-  <div class="login-modal-header">
-    <div class="login-logo">
-      <svg width="26" height="26" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="28" height="28" rx="6" fill="#2d1b6e"/>
-        <text x="5" y="22" font-family="Georgia,serif" font-size="20" font-weight="700" fill="#9b6fd4">L</text>
-        <polygon points="21,13 22.5,17.5 27,17.5 23.5,20 24.5,24.5 21,22 17.5,24.5 18.5,20 15,17.5 19.5,17.5" fill="#f0b429"/>
-      </svg>
-      <span>LUSTV</span>
-    </div>
-    <p class="login-tagline">Avalie. Descubra. Compartilhe.</p>
-  </div>
+    <div id="lm-tela-login">
+      <div class="login-modal-header">
+        <div class="login-logo">
+          <svg width="26" height="26" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="28" height="28" rx="6" fill="#2d1b6e"/>
+            <text x="5" y="22" font-family="Georgia,serif" font-size="20" font-weight="700" fill="#9b6fd4">L</text>
+            <polygon points="21,13 22.5,17.5 27,17.5 23.5,20 24.5,24.5 21,22 17.5,24.5 18.5,20 15,17.5 19.5,17.5" fill="#f0b429"/>
+          </svg>
+          <span>LUSTV</span>
+        </div>
+        <p class="login-tagline">Avalie. Descubra. Compartilhe.</p>
+      </div>
 
-  <div class="login-modal-body">
-    <div class="login-titulo-bloco">
-      <p class="login-titulo-principal">Entre na sua conta</p>
-      <p class="login-subtitulo">ou crie uma agora, automaticamente</p>
-    </div>
+      <div class="login-modal-body">
+        <div class="login-titulo-bloco">
+          <p class="login-titulo-principal">Entre na sua conta</p>
+          <p class="login-subtitulo">ou crie uma agora, automaticamente</p>
+        </div>
 
-    <div class="login-field">
-      <label for="lm-nome">Nome de usuário</label>
-      <div class="login-input-wrap">
-        <i data-lucide="user"></i>
-        <input type="text" id="lm-nome" placeholder="Como quer ser chamado?" maxlength="30" autocomplete="off">
+        <div class="login-field">
+          <label for="lm-nome">Nome de usuário</label>
+          <div class="login-input-wrap">
+            <i data-lucide="user"></i>
+            <input type="text" id="lm-nome" placeholder="Como quer ser chamado?" maxlength="30" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="login-field">
+          <label for="lm-email">Email <span class="login-label-hint">— para recuperar senha</span></label>
+          <div class="login-input-wrap">
+            <i data-lucide="mail"></i>
+            <input type="email" id="lm-email" placeholder="seu@email.com" maxlength="100" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="login-field">
+          <label for="lm-senha">Senha</label>
+          <div class="login-input-wrap">
+            <i data-lucide="lock"></i>
+            <input type="password" id="lm-senha" placeholder="Mínimo 3 caracteres" maxlength="40">
+          </div>
+        </div>
+
+        <div id="login-error" class="login-error"></div>
+
+        <button id="lm-entrar-btn">
+          <i data-lucide="arrow-right"></i> Entrar / Cadastrar
+        </button>
+
+        <div class="login-divider">
+          <span></span><small>ou</small><span></span>
+        </div>
+
+        <button id="lm-esqueci-btn" class="login-link-btn">
+          Esqueci minha senha
+        </button>
       </div>
     </div>
 
-    <div class="login-field">
-      <label for="lm-email">Email <span class="login-label-hint">— para recuperar senha</span></label>
-      <div class="login-input-wrap">
-        <i data-lucide="mail"></i>
-        <input type="email" id="lm-email" placeholder="seu@email.com" maxlength="100" autocomplete="off">
+    <!-- TELA: Esqueci a senha -->
+    <div id="lm-tela-esqueci" style="display:none">
+      <div class="login-modal-header">
+        <div class="login-logo">
+          <svg width="26" height="26" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="28" height="28" rx="6" fill="#2d1b6e"/>
+            <text x="5" y="22" font-family="Georgia,serif" font-size="20" font-weight="700" fill="#9b6fd4">L</text>
+            <polygon points="21,13 22.5,17.5 27,17.5 23.5,20 24.5,24.5 21,22 17.5,24.5 18.5,20 15,17.5 19.5,17.5" fill="#f0b429"/>
+          </svg>
+          <span>LUSTV</span>
+        </div>
+        <p class="login-tagline">Avalie. Descubra. Compartilhe.</p>
+      </div>
+
+      <div class="login-modal-body">
+        <div class="login-titulo-bloco">
+          <p class="login-titulo-principal">Recuperar senha</p>
+          <p class="login-subtitulo">Enviaremos um link para seu email</p>
+        </div>
+
+        <div class="login-field">
+          <label for="lm-email-reset">Email cadastrado</label>
+          <div class="login-input-wrap">
+            <i data-lucide="mail"></i>
+            <input type="email" id="lm-email-reset" placeholder="seu@email.com" maxlength="100">
+          </div>
+        </div>
+
+        <div id="esqueci-error" class="login-error"></div>
+        <div id="esqueci-success" style="display:none;color:#4ade80;font-size:0.82rem;padding:10px 14px;background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.2);border-radius:8px">
+          ✓ Email enviado! Verifique sua caixa de entrada.
+        </div>
+
+        <button id="lm-enviar-reset-btn">
+          <i data-lucide="arrow-right"></i> Enviar link
+        </button>
+
+        <div class="login-divider">
+          <span></span><small>ou</small><span></span>
+        </div>
+
+        <button id="lm-voltar-btn" class="login-link-btn">
+          ← Voltar ao login
+        </button>
       </div>
     </div>
 
-    <div class="login-field">
-      <label for="lm-senha">Senha</label>
-      <div class="login-input-wrap">
-        <i data-lucide="lock"></i>
-        <input type="password" id="lm-senha" placeholder="Mínimo 3 caracteres" maxlength="40">
-      </div>
-    </div>
-
-    <div id="login-error" class="login-error"></div>
-
-    <button id="lm-entrar-btn">
-      <i data-lucide="arrow-right"></i> Entrar / Cadastrar
-    </button>
-
-    <div class="login-divider">
-      <span></span><small>ou</small><span></span>
-    </div>
-
-    <button id="lm-esqueci-btn" class="login-link-btn">
-      Esqueci minha senha
-    </button>
   </div>
 </div>
 
@@ -431,13 +481,12 @@
     } catch(e) {
       errEl.textContent = 'Erro de conexão. Tente novamente.';
       btn.disabled      = false;
-      btn.innerHTML     = '<i data-lucide="send"></i> Enviar link';
+      btn.innerHTML     = '<i data-lucide="arrow-right"></i> Enviar link';
       lucide.createIcons();
     }
   });
 
   // ── Patch no lmEntrarBtn para incluir email no cadastro ────────
-  // Aguarda o filme.js carregar e sobrescreve o listener do botão
   window.addEventListener('load', () => {
     const btn = document.getElementById('lm-entrar-btn');
     if (!btn) return;
@@ -462,15 +511,13 @@
       try {
         let data;
         try {
-          // Tenta login primeiro (email não obrigatório no login)
           data = await api('POST', '/auth/entrar', { nome, senha });
         } catch(err) {
           if (err.message === 'Usuario nao encontrado.') {
-            // Cadastro novo — email obrigatório
             if (!email || !email.includes('@')) {
               errEl.textContent = 'Insira um email válido para criar sua conta.';
               clone.disabled    = false;
-              clone.innerHTML   = '<i data-lucide="log-in"></i> Entrar / Cadastrar';
+              clone.innerHTML   = '<i data-lucide="arrow-right"></i> Entrar / Cadastrar';
               lucide.createIcons();
               return;
             }
@@ -497,7 +544,7 @@
         errEl.textContent = err.message;
       } finally {
         clone.disabled  = false;
-        clone.innerHTML = '<i data-lucide="log-in"></i> Entrar / Cadastrar';
+        clone.innerHTML = '<i data-lucide="arrow-right"></i> Entrar / Cadastrar';
         lucide.createIcons();
       }
     });

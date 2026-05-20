@@ -870,3 +870,23 @@ i[data-lucide] {
   stroke-width: 2;
   vertical-align: middle;
 }
+
+#lm-enviar-reset-btn {
+  margin-top: 4px;
+  background: #9b6fd4;
+  border: none;
+  border-radius: 8px;
+  padding: 14px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.2s;
+  font-family: 'Inter', sans-serif;
+  width: 100%;
+}
+#lm-enviar-reset-btn:hover { background: #7c52b8; }
