@@ -4,7 +4,35 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
-  <title>LusTV-Ratings</title>
+
+  <!-- ── SEO ─────────────────────────────────────────────────── -->
+  <title>LusTV-Ratings — Avalie filmes, séries e muito mais</title>
+  <meta name="description" content="Avalie, descubra e compartilhe filmes, séries, documentários e animações. Crie sua lista de favoritos e veja o que a comunidade está assistindo.">
+  <meta name="keywords" content="filmes, séries, avaliações, ratings, catálogo, cinema, streaming, animações, documentários">
+  <meta name="author" content="LusTV-Ratings">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://lustv.netlify.app/">
+
+  <!-- ── Open Graph (WhatsApp, Facebook, Discord) ────────────── -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="LusTV-Ratings">
+  <meta property="og:title" content="LusTV-Ratings — Avalie filmes, séries e muito mais">
+  <meta property="og:description" content="Avalie, descubra e compartilhe filmes, séries, documentários e animações. Crie sua lista de favoritos e veja o que a comunidade está assistindo.">
+  <meta property="og:url" content="https://lustv.netlify.app/">
+  <meta property="og:image" content="https://lustv.netlify.app/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="pt_BR">
+
+  <!-- ── Twitter Card ────────────────────────────────────────── -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="LusTV-Ratings — Avalie filmes, séries e muito mais">
+  <meta name="twitter:description" content="Avalie, descubra e compartilhe filmes, séries, documentários e animações.">
+  <meta name="twitter:image" content="https://lustv.netlify.app/og-image.png">
+
+  <!-- ── Tema mobile ─────────────────────────────────────────── -->
+  <meta name="theme-color" content="#0f0f14">
+
   <link rel="stylesheet" href="css/style.css">
   <style>
     /* ── Sino de notificações ───────────────────────────────────── */
@@ -120,14 +148,11 @@
     }
 
     @media (max-width: 768px) {
-      /* Header reorganizado em 2 linhas */
       header {
         flex-wrap: wrap;
         padding: 0 !important;
         gap: 0 !important;
       }
-
-      /* Linha 1: logo + ações (sino, login) */
       .header-row1 {
         display: flex;
         align-items: center;
@@ -136,8 +161,6 @@
         padding: 10px 1rem;
         border-bottom: 1px solid var(--border);
       }
-
-      /* Linha 2: nav scrollável */
       .header-row2 {
         display: flex;
         width: 100%;
@@ -148,17 +171,9 @@
         padding: 0 0.5rem;
       }
       .header-row2::-webkit-scrollbar { display: none; }
-
-      /* Esconde busca do header no mobile */
       header > .search-wrap { display: none; }
-
-      /* Mostra busca mobile */
       .search-mobile { display: block; }
-
-      /* Logo menor */
       .logo { font-size: 1.4rem !important; }
-
-      /* Nav no mobile */
       nav {
         display: flex;
         gap: 0;
@@ -181,15 +196,11 @@
       nav button.active {
         border-bottom: 2px solid var(--accent) !important;
       }
-
-      /* Ações do header (sino + login) */
       .header-actions {
         display: flex;
         align-items: center;
         gap: 8px;
       }
-
-      /* Grid: 2 colunas no mobile */
       .grid {
         padding: 0.5rem 0.75rem !important;
         gap: 8px !important;
@@ -197,14 +208,10 @@
       .grid .movie-card {
         width: calc(50% - 4px) !important;
       }
-
-      /* Page title */
       #page-title {
         padding: 1rem 1rem 0.25rem !important;
         font-size: 1.6rem !important;
       }
-
-      /* Modal filme fullscreen */
       #modal-overlay {
         padding: 0 !important;
         align-items: flex-end !important;
@@ -215,8 +222,6 @@
         max-height: 92vh;
         overflow-y: auto;
       }
-
-      /* Modal login centralizado com margem */
       #login-modal-overlay {
         padding: 1rem !important;
         align-items: flex-end !important;
@@ -225,8 +230,6 @@
         max-width: 100% !important;
         border-radius: 16px 16px 0 0 !important;
       }
-
-      /* Dropdown notif mais estreito */
       .notif-dropdown {
         width: 260px !important;
         right: -10px !important;
@@ -237,7 +240,6 @@
 <body>
 
 <header>
-  <!-- Linha 1: logo + ações -->
   <div class="header-row1">
     <div class="logo">
       <i data-lucide="popcorn"></i> LusTV-Ratings
@@ -257,7 +259,6 @@
     </div>
   </div>
 
-  <!-- Linha 2: nav -->
   <div class="header-row2">
     <nav>
       <button class="active" data-aba="filmes">
@@ -284,14 +285,12 @@
     </nav>
   </div>
 
-  <!-- Busca desktop (fica no header no desktop) -->
   <div class="search-wrap search-desktop">
     <i data-lucide="search"></i>
     <input type="text" id="search" placeholder="Buscar...">
   </div>
 </header>
 
-<!-- Busca mobile (abaixo do header) -->
 <div class="search-mobile">
   <div class="search-wrap">
     <i data-lucide="search"></i>
@@ -317,34 +316,24 @@
     <button id="modal-close">
       <i data-lucide="x"></i>
     </button>
-
     <div id="modal-trailer"></div>
-
     <div id="modal-body">
       <div id="modal-poster"></div>
-
       <div id="modal-info">
         <h2 id="modal-title"></h2>
         <div id="modal-meta"></div>
         <p id="modal-overview"></p>
-
         <button id="modal-fav-btn">
           <i data-lucide="heart"></i> Favoritar
         </button>
       </div>
     </div>
-
-    <!-- AVALIAÇÕES -->
     <section id="avaliacoes">
       <div class="av-form-card" id="av-form-wrap">
         <h3>Avaliar</h3>
-
         <div id="av-login-aviso" style="display:none">
-          <p>
-            Faça <a href="#" id="av-link-login">login</a> para avaliar.
-          </p>
+          <p>Faça <a href="#" id="av-link-login">login</a> para avaliar.</p>
         </div>
-
         <div id="av-form-fields">
           <div class="av-estrelas" id="av-estrelas">
             <button data-v="1"><i data-lucide="star"></i></button>
@@ -353,17 +342,13 @@
             <button data-v="4"><i data-lucide="star"></i></button>
             <button data-v="5"><i data-lucide="star"></i></button>
           </div>
-
           <span id="av-hint">Selecione uma nota</span>
-
           <textarea id="av-comentario" placeholder="Comentário (opcional)..."></textarea>
-
           <button id="av-btn" disabled>
             <i data-lucide="send"></i> Enviar avaliação
           </button>
         </div>
       </div>
-
       <div class="av-lista-card">
         <h3>Avaliações</h3>
         <div id="av-resumo"></div>
@@ -376,12 +361,9 @@
 <!-- ======= MODAL LOGIN ======= -->
 <div id="login-modal-overlay">
   <div id="login-modal">
-
     <button id="login-modal-close">
       <i data-lucide="x"></i>
     </button>
-
-    <!-- TELA: Login / Cadastro -->
     <div id="lm-tela-login">
       <div class="login-modal-header">
         <div class="login-logo">
@@ -394,13 +376,11 @@
         </div>
         <p class="login-tagline">Avalie. Descubra. Compartilhe.</p>
       </div>
-
       <div class="login-modal-body">
         <div class="login-titulo-bloco">
           <p class="login-titulo-principal">Entre na sua conta</p>
           <p class="login-subtitulo">ou crie uma agora, automaticamente</p>
         </div>
-
         <div class="login-field">
           <label for="lm-nome">Nome de usuário</label>
           <div class="login-input-wrap">
@@ -408,7 +388,6 @@
             <input type="text" id="lm-nome" placeholder="Como quer ser chamado?" maxlength="30" autocomplete="off">
           </div>
         </div>
-
         <div class="login-field">
           <label for="lm-email">Email <span class="login-label-hint">— para recuperar senha</span></label>
           <div class="login-input-wrap">
@@ -416,7 +395,6 @@
             <input type="email" id="lm-email" placeholder="seu@email.com" maxlength="100" autocomplete="off">
           </div>
         </div>
-
         <div class="login-field">
           <label for="lm-senha">Senha</label>
           <div class="login-input-wrap">
@@ -424,24 +402,18 @@
             <input type="password" id="lm-senha" placeholder="Mínimo 3 caracteres" maxlength="40">
           </div>
         </div>
-
         <div id="login-error" class="login-error"></div>
-
         <button id="lm-entrar-btn">
           <i data-lucide="arrow-right"></i> Entrar / Cadastrar
         </button>
-
         <div class="login-divider">
           <span></span><small>ou</small><span></span>
         </div>
-
         <button id="lm-esqueci-btn" class="login-link-btn">
           Esqueci minha senha
         </button>
       </div>
     </div>
-
-    <!-- TELA: Esqueci a senha -->
     <div id="lm-tela-esqueci" style="display:none">
       <div class="login-modal-header">
         <div class="login-logo">
@@ -454,13 +426,11 @@
         </div>
         <p class="login-tagline">Avalie. Descubra. Compartilhe.</p>
       </div>
-
       <div class="login-modal-body">
         <div class="login-titulo-bloco">
           <p class="login-titulo-principal">Recuperar senha</p>
           <p class="login-subtitulo">Enviaremos um link para seu email</p>
         </div>
-
         <div class="login-field">
           <label for="lm-email-reset">Email cadastrado</label>
           <div class="login-input-wrap">
@@ -468,26 +438,21 @@
             <input type="email" id="lm-email-reset" placeholder="seu@email.com" maxlength="100">
           </div>
         </div>
-
         <div id="esqueci-error" class="login-error"></div>
         <div id="esqueci-success" style="display:none;color:#4ade80;font-size:0.82rem;padding:10px 14px;background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.2);border-radius:8px">
           ✓ Email enviado! Verifique sua caixa de entrada.
         </div>
-
         <button id="lm-enviar-reset-btn">
           <i data-lucide="arrow-right"></i> Enviar link
         </button>
-
         <div class="login-divider">
           <span></span><small>ou</small><span></span>
         </div>
-
         <button id="lm-voltar-btn" class="login-link-btn">
           ← Voltar ao login
         </button>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -496,13 +461,11 @@
 <script src="js/filme.js"></script>
 
 <script>
-  // Sincroniza busca mobile com busca desktop
   document.getElementById('search-mobile').addEventListener('input', function() {
     document.getElementById('search').value = this.value;
     document.getElementById('search').dispatchEvent(new Event('input'));
   });
 
-  // ── Notificações ───────────────────────────────────────────────
   function tempoAtras(ts) {
     const diff = (Date.now() - new Date(ts)) / 1000;
     if (diff < 60)     return 'agora mesmo';
@@ -521,7 +484,6 @@
       });
       const notifs = await res.json();
       const naoLidas = notifs.filter(n => !n.lida).length;
-
       const badge = document.getElementById('notif-badge');
       if (naoLidas > 0) {
         badge.textContent  = naoLidas > 9 ? '9+' : naoLidas;
@@ -529,7 +491,6 @@
       } else {
         badge.style.display = 'none';
       }
-
       const lista = document.getElementById('notif-lista');
       if (!notifs.length) {
         lista.innerHTML = '<div class="notif-vazio">Nenhuma notificação ainda.</div>';
@@ -583,7 +544,6 @@
     setInterval(carregarNotificacoes, 60000);
   }
 
-  // ── Esqueci a senha ────────────────────────────────────────────
   function mostrarTelaEsqueci() {
     document.getElementById('lm-tela-login').style.display  = 'none';
     document.getElementById('lm-tela-esqueci').style.display = 'block';
@@ -607,17 +567,13 @@
     const errEl  = document.getElementById('esqueci-error');
     const sucEl  = document.getElementById('esqueci-success');
     const btn    = document.getElementById('lm-enviar-reset-btn');
-
-    errEl.textContent      = '';
-    sucEl.style.display    = 'none';
-
+    errEl.textContent   = '';
+    sucEl.style.display = 'none';
     if (!email || !email.includes('@')) { errEl.textContent = 'Email inválido.'; return; }
-
     btn.disabled    = true;
     btn.textContent = 'Enviando...';
-
     try {
-      const res  = await fetch(BACKEND + '/auth/esqueci-senha', {
+      const res = await fetch(BACKEND + '/auth/esqueci-senha', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
@@ -633,27 +589,21 @@
     }
   });
 
-  // ── Patch no lmEntrarBtn ────────────────────────────────────────
   window.addEventListener('load', () => {
     const btn = document.getElementById('lm-entrar-btn');
     if (!btn) return;
-
     const clone = btn.cloneNode(true);
     btn.parentNode.replaceChild(clone, btn);
-
     clone.addEventListener('click', async () => {
       const nome  = document.getElementById('lm-nome').value.trim();
       const email = document.getElementById('lm-email').value.trim();
       const senha = document.getElementById('lm-senha').value.trim();
       const errEl = document.getElementById('login-error');
-
-      if (!nome)              { errEl.textContent = 'Insira um nome de usuário.'; return; }
-      if (senha.length < 3)   { errEl.textContent = 'A senha precisa ter pelo menos 3 caracteres.'; return; }
-
+      if (!nome)            { errEl.textContent = 'Insira um nome de usuário.'; return; }
+      if (senha.length < 3) { errEl.textContent = 'A senha precisa ter pelo menos 3 caracteres.'; return; }
       clone.disabled    = true;
       clone.textContent = 'Aguarde...';
       errEl.textContent = '';
-
       try {
         let data;
         try {
@@ -672,20 +622,15 @@
             throw err;
           }
         }
-
         token   = data.token;
         usuario = data.usuario;
         localStorage.setItem('lustv_token',   token);
         localStorage.setItem('lustv_usuario', JSON.stringify(usuario));
-
         fecharLoginModal();
         renderLoginBox();
-
         document.getElementById('notif-wrap').style.display = 'flex';
         carregarNotificacoes();
-
         if (modalItem) renderAvaliacoes(String(modalItem.id));
-
       } catch(err) {
         errEl.textContent = err.message;
       } finally {
