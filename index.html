@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
   <title>LusTV-Ratings</title>
   <link rel="stylesheet" href="css/style.css">
@@ -98,60 +99,205 @@
       font-size: 0.82rem;
       color: #555;
     }
+
+    /* ── Busca mobile (abaixo do header) ── */
+    .search-mobile {
+      display: none;
+      padding: 10px 1rem;
+      background: var(--bg-header);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 56px;
+      z-index: 99;
+    }
+    .search-mobile .search-wrap {
+      width: 100%;
+      border-radius: 10px;
+    }
+    .search-mobile .search-wrap input {
+      width: 100%;
+      flex: 1;
+    }
+
+    @media (max-width: 768px) {
+      /* Header reorganizado em 2 linhas */
+      header {
+        flex-wrap: wrap;
+        padding: 0 !important;
+        gap: 0 !important;
+      }
+
+      /* Linha 1: logo + ações (sino, login) */
+      .header-row1 {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        padding: 10px 1rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      /* Linha 2: nav scrollável */
+      .header-row2 {
+        display: flex;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        border-bottom: 1px solid var(--border);
+        padding: 0 0.5rem;
+      }
+      .header-row2::-webkit-scrollbar { display: none; }
+
+      /* Esconde busca do header no mobile */
+      header > .search-wrap { display: none; }
+
+      /* Mostra busca mobile */
+      .search-mobile { display: block; }
+
+      /* Logo menor */
+      .logo { font-size: 1.4rem !important; }
+
+      /* Nav no mobile */
+      nav {
+        display: flex;
+        gap: 0;
+        flex-shrink: 0;
+        white-space: nowrap;
+        width: 100%;
+      }
+      nav button,
+      nav a.nav-dashboard {
+        font-size: 0.78rem !important;
+        padding: 10px 10px !important;
+        border-radius: 0 !important;
+        border-bottom: 2px solid transparent;
+        white-space: nowrap;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      nav button.active {
+        border-bottom: 2px solid var(--accent) !important;
+      }
+
+      /* Ações do header (sino + login) */
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      /* Grid: 2 colunas no mobile */
+      .grid {
+        padding: 0.5rem 0.75rem !important;
+        gap: 8px !important;
+      }
+      .grid .movie-card {
+        width: calc(50% - 4px) !important;
+      }
+
+      /* Page title */
+      #page-title {
+        padding: 1rem 1rem 0.25rem !important;
+        font-size: 1.6rem !important;
+      }
+
+      /* Modal filme fullscreen */
+      #modal-overlay {
+        padding: 0 !important;
+        align-items: flex-end !important;
+      }
+      #modal {
+        border-radius: 16px 16px 0 0 !important;
+        max-width: 100% !important;
+        max-height: 92vh;
+        overflow-y: auto;
+      }
+
+      /* Modal login centralizado com margem */
+      #login-modal-overlay {
+        padding: 1rem !important;
+        align-items: flex-end !important;
+      }
+      #login-modal {
+        max-width: 100% !important;
+        border-radius: 16px 16px 0 0 !important;
+      }
+
+      /* Dropdown notif mais estreito */
+      .notif-dropdown {
+        width: 260px !important;
+        right: -10px !important;
+      }
+    }
   </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">
-    <i data-lucide="popcorn"></i> LusTV-Ratings
-  </div>
-
-  <nav>
-    <button class="active" data-aba="filmes">
-      <i data-lucide="film"></i> Filmes
-    </button>
-    <button data-aba="series">
-      <i data-lucide="tv"></i> Séries
-    </button>
-    <button data-aba="documentarios">
-      <i data-lucide="clapperboard"></i> Docs
-    </button>
-    <button data-aba="animes">
-      <i data-lucide="sparkles"></i> Animações
-    </button>
-    <button data-aba="favoritos">
-      <i data-lucide="heart"></i> Favoritos
-    </button>
-    <a href="comunidade.html" class="nav-dashboard">
-      <i data-lucide="users"></i> Comunidade
-    </a>
-    <a href="dashboard.html" class="nav-dashboard">
-      <i data-lucide="bar-chart-3"></i> Dashboard
-    </a>
-  </nav>
-
-  <div class="search-wrap">
-    <i data-lucide="search"></i>
-    <input type="text" id="search" placeholder="Buscar...">
-  </div>
-
-  <!-- Sino de notificações -->
-  <div class="notif-wrap" id="notif-wrap" style="display:none">
-    <button class="btn-sino" id="btn-sino" onclick="toggleNotifDropdown()">
-      <i data-lucide="bell"></i>
-    </button>
-    <span class="notif-badge" id="notif-badge" style="display:none"></span>
-    <div class="notif-dropdown" id="notif-dropdown">
-      <div class="notif-dropdown-head">Notificações</div>
-      <div id="notif-lista"></div>
+  <!-- Linha 1: logo + ações -->
+  <div class="header-row1">
+    <div class="logo">
+      <i data-lucide="popcorn"></i> LusTV-Ratings
+    </div>
+    <div class="header-actions">
+      <div class="notif-wrap" id="notif-wrap" style="display:none">
+        <button class="btn-sino" id="btn-sino" onclick="toggleNotifDropdown()">
+          <i data-lucide="bell"></i>
+        </button>
+        <span class="notif-badge" id="notif-badge" style="display:none"></span>
+        <div class="notif-dropdown" id="notif-dropdown">
+          <div class="notif-dropdown-head">Notificações</div>
+          <div id="notif-lista"></div>
+        </div>
+      </div>
+      <div id="login-box"></div>
     </div>
   </div>
 
-  <div id="login-box">
-    <!-- preenchido pelo JS -->
+  <!-- Linha 2: nav -->
+  <div class="header-row2">
+    <nav>
+      <button class="active" data-aba="filmes">
+        <i data-lucide="film"></i> Filmes
+      </button>
+      <button data-aba="series">
+        <i data-lucide="tv"></i> Séries
+      </button>
+      <button data-aba="documentarios">
+        <i data-lucide="clapperboard"></i> Docs
+      </button>
+      <button data-aba="animes">
+        <i data-lucide="sparkles"></i> Animações
+      </button>
+      <button data-aba="favoritos">
+        <i data-lucide="heart"></i> Favoritos
+      </button>
+      <a href="comunidade.html" class="nav-dashboard">
+        <i data-lucide="users"></i> Comunidade
+      </a>
+      <a href="dashboard.html" class="nav-dashboard">
+        <i data-lucide="bar-chart-3"></i> Dashboard
+      </a>
+    </nav>
+  </div>
+
+  <!-- Busca desktop (fica no header no desktop) -->
+  <div class="search-wrap search-desktop">
+    <i data-lucide="search"></i>
+    <input type="text" id="search" placeholder="Buscar...">
   </div>
 </header>
+
+<!-- Busca mobile (abaixo do header) -->
+<div class="search-mobile">
+  <div class="search-wrap">
+    <i data-lucide="search"></i>
+    <input type="text" id="search-mobile" placeholder="Buscar...">
+  </div>
+</div>
 
 <h1 id="page-title">
   <i data-lucide="film"></i> Filmes
@@ -347,13 +493,16 @@
 
 <!-- Lucide CDN -->
 <script src="https://unpkg.com/lucide@latest"></script>
-
 <script src="js/filme.js"></script>
 
 <script>
-  // ── Notificações ───────────────────────────────────────────────
-  // BACKEND e iniciais() já declarados no filme.js
+  // Sincroniza busca mobile com busca desktop
+  document.getElementById('search-mobile').addEventListener('input', function() {
+    document.getElementById('search').value = this.value;
+    document.getElementById('search').dispatchEvent(new Event('input'));
+  });
 
+  // ── Notificações ───────────────────────────────────────────────
   function tempoAtras(ts) {
     const diff = (Date.now() - new Date(ts)) / 1000;
     if (diff < 60)     return 'agora mesmo';
@@ -427,7 +576,6 @@
     }
   });
 
-  // Exibe sino e carrega notificações se estiver logado
   const _token = localStorage.getItem('lustv_token');
   if (_token) {
     document.getElementById('notif-wrap').style.display = 'flex';
@@ -475,7 +623,6 @@
         body: JSON.stringify({ email }),
       });
       await res.json();
-      // Sempre mostra sucesso (backend não revela se email existe)
       sucEl.style.display = 'block';
       btn.style.display   = 'none';
     } catch(e) {
@@ -486,12 +633,11 @@
     }
   });
 
-  // ── Patch no lmEntrarBtn para incluir email no cadastro ────────
+  // ── Patch no lmEntrarBtn ────────────────────────────────────────
   window.addEventListener('load', () => {
     const btn = document.getElementById('lm-entrar-btn');
     if (!btn) return;
 
-    // Remove listeners antigos clonando
     const clone = btn.cloneNode(true);
     btn.parentNode.replaceChild(clone, btn);
 
