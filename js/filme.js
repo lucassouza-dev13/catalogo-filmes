@@ -132,7 +132,6 @@ lmEntrarBtn.addEventListener("click", async () => {
   loginError.textContent  = "";
 
   try {
-    // tenta login → se não encontrar, tenta cadastro automático
     let data;
     try {
       data = await api("POST", "/auth/entrar", { nome, senha });
@@ -152,7 +151,6 @@ lmEntrarBtn.addEventListener("click", async () => {
     fecharLoginModal();
     renderLoginBox();
 
-    // se há um modal de filme aberto, atualiza avaliações
     if (modalItem) renderAvaliacoes(String(modalItem.id));
 
   } catch (err) {
@@ -208,7 +206,6 @@ async function renderAvaliacoes(filmeId) {
     return;
   }
 
-  // Resumo
   const total    = avaliacoes.reduce((s, r) => s + r.estrelas, 0);
   const media    = total / avaliacoes.length;
   const contagem = [0,0,0,0,0];
@@ -269,7 +266,6 @@ async function inicializarFormAvaliacao(filmeId) {
   const avLink   = document.getElementById("av-link-login");
   const avComent = document.getElementById("av-comentario");
 
-  // Remove listeners antigos clonando os nós
   btns.forEach(btn => {
     const clone = btn.cloneNode(true);
     btn.parentNode.replaceChild(clone, btn);
@@ -301,7 +297,6 @@ async function inicializarFormAvaliacao(filmeId) {
     btn.addEventListener("mouseleave", () => atualizarEstrelas(avEstrelaAtual));
   });
 
-  // Verifica se usuário já avaliou e pré-preenche o formulário
   let modoEdicao = false;
   if (usuario) {
     try {
@@ -349,6 +344,38 @@ async function inicializarFormAvaliacao(filmeId) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
+// PLATAFORMAS (onde assistir)
+// ══════════════════════════════════════════════════════════════════════════════
+async function carregarPlataformas(id, tipo) {
+  const wrap = document.getElementById("modal-plataformas");
+  if (!wrap) return;
+  wrap.innerHTML = "";
+
+  try {
+    const data     = await fetchOne(`${BASE}/${tipo}/${id}/watch/providers?api_key=${API_KEY}`);
+    const br       = data?.results?.BR;
+    const provedores = br?.flatrate || br?.ads || br?.rent || [];
+
+    if (!provedores.length) {
+      wrap.innerHTML = `<p class="plat-vazio">Não disponível em streaming no Brasil.</p>`;
+      return;
+    }
+
+    wrap.innerHTML = `
+      <div class="plat-titulo">Onde assistir</div>
+      <div class="plat-logos">
+        ${provedores.map(p => `
+          <div class="plat-item" title="${p.provider_name}">
+            <img src="https://image.tmdb.org/t/p/w45${p.logo_path}" alt="${p.provider_name}">
+            <span>${p.provider_name}</span>
+          </div>`).join("")}
+      </div>`;
+  } catch(e) {
+    console.error("[PLATAFORMAS]", e.message);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
 // MODAL
 // ══════════════════════════════════════════════════════════════════════════════
 const modalOverlay  = document.getElementById("modal-overlay");
@@ -378,12 +405,16 @@ async function abrirModal(item, tipo) {
     : `<div style="height:165px;display:flex;align-items:center;justify-content:center;color:#444;font-size:2rem;">🎬</div>`;
 
   modalMeta.innerHTML = "";
+
+  // Limpa plataformas enquanto carrega
+  const platWrap = document.getElementById("modal-plataformas");
+  if (platWrap) platWrap.innerHTML = "";
+
   modalFavBtn.textContent = isFav(item.id) ? "❤️ Favoritado" : "♡ Favoritar";
   modalFavBtn.classList.toggle("active", isFav(item.id));
   modalOverlay.classList.add("open");
   document.body.style.overflow = "hidden";
 
-  // Reset form de avaliação
   avEstrelaAtual = 0;
   const hint = document.getElementById("av-hint");
   const avComent = document.getElementById("av-comentario");
@@ -393,11 +424,10 @@ async function abrirModal(item, tipo) {
   const btnEnv = document.getElementById("av-btn");
   if (btnEnv) btnEnv.disabled = true;
 
-  // Carrega avaliações e inicializa formulário
   renderAvaliacoes(filmeId);
   inicializarFormAvaliacao(filmeId);
 
-  // Busca detalhes e vídeos em paralelo
+  // Busca detalhes, vídeos e plataformas em paralelo
   const [details, videosPT, videosEN] = await Promise.all([
     fetchOne(`${BASE}/${tipo}/${item.id}?api_key=${API_KEY}&language=pt-BR`),
     fetchOne(`${BASE}/${tipo}/${item.id}/videos?api_key=${API_KEY}&language=pt-BR`),
@@ -416,6 +446,9 @@ async function abrirModal(item, tipo) {
     ${ano     ? `<span class="modal-badge">${ano}</span>` : ""}
     ${duracao ? `<span class="modal-badge">${duracao}</span>` : ""}
     <span class="modal-badge">${tipo === "movie" ? "Filme" : "Série"}</span>`;
+
+  // Carrega plataformas após montar os badges
+  carregarPlataformas(item.id, tipo);
 
   const tipos = ["Trailer", "Teaser", "Clip", "Featurette"];
   let trailer = null;
@@ -566,7 +599,6 @@ searchInput.addEventListener("input", () => {
       if (secS) content.appendChild(secS);
 
     } else {
-      // Busca global: filmes + séries sempre
       const [movies, series] = await Promise.all([
         fetchData(`${BASE}/search/movie?api_key=${API_KEY}&query=${q}&language=pt-BR`),
         fetchData(`${BASE}/search/tv?api_key=${API_KEY}&query=${q}&language=pt-BR`)
