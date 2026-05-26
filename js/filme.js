@@ -5,10 +5,13 @@ const IMG     = "https://image.tmdb.org/t/p/w342";
 const IMG_LG  = "https://image.tmdb.org/t/p/w500";
 const BASE    = "https://api.themoviedb.org/3";
 
+// Filtros globais para todas as abas
+const FILTRO_SAFE = "&without_genres=10749,27&vote_count.gte=100&include_adult=false";
+
 // ─── Estado global ────────────────────────────────────────────────────────────
 let abaAtual  = "filmes";
 let favorites = [];
-let usuario   = null; // { id, nome }
+let usuario   = null;
 let token     = null;
 
 try { favorites = JSON.parse(localStorage.getItem("lustv_favs")) || []; } catch(e) {}
@@ -43,7 +46,6 @@ function estrelasHtml(n) {
   return h;
 }
 
-// Chamada autenticada ao backend
 async function api(method, path, body = null) {
   const opts = {
     method,
@@ -124,10 +126,10 @@ lmEntrarBtn.addEventListener("click", async () => {
   const nome  = lmNome.value.trim();
   const senha = lmSenha.value.trim();
 
-  if (!nome)          { loginError.textContent = "Insira um nome de usuário."; return; }
+  if (!nome)            { loginError.textContent = "Insira um nome de usuário."; return; }
   if (senha.length < 3) { loginError.textContent = "A senha precisa ter pelo menos 3 caracteres."; return; }
 
-  lmEntrarBtn.disabled   = true;
+  lmEntrarBtn.disabled    = true;
   lmEntrarBtn.textContent = "Aguarde...";
   loginError.textContent  = "";
 
@@ -352,8 +354,8 @@ async function carregarPlataformas(id, tipo) {
   wrap.innerHTML = "";
 
   try {
-    const data     = await fetchOne(`${BASE}/${tipo}/${id}/watch/providers?api_key=${API_KEY}`);
-    const br       = data?.results?.BR;
+    const data       = await fetchOne(`${BASE}/${tipo}/${id}/watch/providers?api_key=${API_KEY}`);
+    const br         = data?.results?.BR;
     const provedores = br?.flatrate || br?.ads || br?.rent || [];
 
     if (!provedores.length) {
@@ -394,7 +396,7 @@ async function abrirModal(item, tipo) {
   modalItem = item;
   modalTipo = tipo;
 
-  const titulo = tipo === "movie" ? item.title : item.name;
+  const titulo  = tipo === "movie" ? item.title : item.name;
   const filmeId = String(item.id);
 
   modalTitle.textContent    = titulo;
@@ -406,7 +408,6 @@ async function abrirModal(item, tipo) {
 
   modalMeta.innerHTML = "";
 
-  // Limpa plataformas enquanto carrega
   const platWrap = document.getElementById("modal-plataformas");
   if (platWrap) platWrap.innerHTML = "";
 
@@ -416,7 +417,7 @@ async function abrirModal(item, tipo) {
   document.body.style.overflow = "hidden";
 
   avEstrelaAtual = 0;
-  const hint = document.getElementById("av-hint");
+  const hint     = document.getElementById("av-hint");
   const avComent = document.getElementById("av-comentario");
   if (hint)     hint.textContent = "Selecione uma nota";
   if (avComent) avComent.value   = "";
@@ -427,7 +428,6 @@ async function abrirModal(item, tipo) {
   renderAvaliacoes(filmeId);
   inicializarFormAvaliacao(filmeId);
 
-  // Busca detalhes, vídeos e plataformas em paralelo
   const [details, videosPT, videosEN] = await Promise.all([
     fetchOne(`${BASE}/${tipo}/${item.id}?api_key=${API_KEY}&language=pt-BR`),
     fetchOne(`${BASE}/${tipo}/${item.id}/videos?api_key=${API_KEY}&language=pt-BR`),
@@ -447,11 +447,10 @@ async function abrirModal(item, tipo) {
     ${duracao ? `<span class="modal-badge">${duracao}</span>` : ""}
     <span class="modal-badge">${tipo === "movie" ? "Filme" : "Série"}</span>`;
 
-  // Carrega plataformas após montar os badges
   carregarPlataformas(item.id, tipo);
 
   const tipos = ["Trailer", "Teaser", "Clip", "Featurette"];
-  let trailer = null;
+  let trailer  = null;
   for (const t of tipos) { trailer = (videosPT?.results || []).find(v => v.site === "YouTube" && v.type === t); if (trailer) break; }
   if (!trailer) for (const t of tipos) { trailer = (videosEN?.results || []).find(v => v.site === "YouTube" && v.type === t); if (trailer) break; }
 
@@ -543,24 +542,24 @@ async function mudarAba(aba) {
   showLoading();
 
   if (aba === "filmes") {
-    const data = await fetchData(`${BASE}/discover/movie?api_key=${API_KEY}&sort_by=popularity.desc&language=pt-BR`);
+    const data = await fetchData(`${BASE}/discover/movie?api_key=${API_KEY}&sort_by=popularity.desc&language=pt-BR${FILTRO_SAFE}`);
     content.innerHTML = ""; const sec = renderSecao(null, data, "movie");
     sec ? content.appendChild(sec) : showEmpty("Nenhum filme encontrado.");
 
   } else if (aba === "series") {
-    const data = await fetchData(`${BASE}/tv/popular?api_key=${API_KEY}&language=pt-BR`);
+    const data = await fetchData(`${BASE}/discover/tv?api_key=${API_KEY}&sort_by=popularity.desc&language=pt-BR${FILTRO_SAFE}`);
     content.innerHTML = ""; const sec = renderSecao(null, data, "tv");
     sec ? content.appendChild(sec) : showEmpty("Nenhuma série encontrada.");
 
   } else if (aba === "documentarios") {
-    const data = await fetchData(`${BASE}/discover/movie?api_key=${API_KEY}&with_genres=99&language=pt-BR`);
+    const data = await fetchData(`${BASE}/discover/movie?api_key=${API_KEY}&with_genres=99&language=pt-BR${FILTRO_SAFE}`);
     content.innerHTML = ""; const sec = renderSecao(null, data, "movie");
     sec ? content.appendChild(sec) : showEmpty("Nenhum documentário encontrado.");
 
   } else if (aba === "animes") {
     const [movies, series] = await Promise.all([
-      fetchData(`${BASE}/discover/movie?api_key=${API_KEY}&with_genres=16&language=pt-BR`),
-      fetchData(`${BASE}/discover/tv?api_key=${API_KEY}&with_genres=16&language=pt-BR`)
+      fetchData(`${BASE}/discover/movie?api_key=${API_KEY}&with_genres=16&language=pt-BR${FILTRO_SAFE}`),
+      fetchData(`${BASE}/discover/tv?api_key=${API_KEY}&with_genres=16&language=pt-BR${FILTRO_SAFE}`)
     ]);
     content.innerHTML = "";
     const secM = renderSecao("Filmes Animados", movies, "movie");
@@ -600,8 +599,8 @@ searchInput.addEventListener("input", () => {
 
     } else {
       const [movies, series] = await Promise.all([
-        fetchData(`${BASE}/search/movie?api_key=${API_KEY}&query=${q}&language=pt-BR`),
-        fetchData(`${BASE}/search/tv?api_key=${API_KEY}&query=${q}&language=pt-BR`)
+        fetchData(`${BASE}/search/movie?api_key=${API_KEY}&query=${q}&language=pt-BR&include_adult=false`),
+        fetchData(`${BASE}/search/tv?api_key=${API_KEY}&query=${q}&language=pt-BR&include_adult=false`)
       ]);
       content.innerHTML = "";
       const secM = renderSecao("Filmes", movies, "movie");
