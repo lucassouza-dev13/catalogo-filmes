@@ -27,14 +27,38 @@ body {
 /* ====== HEADER ====== */
 header {
   background: var(--bg-header);
-  padding: 0.75rem 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   position: sticky;
   top: 0;
   z-index: 100;
   border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
+
+.header-row1 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 2rem;
+  gap: 1rem;
+}
+
+.header-row2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  border-top: 1px solid var(--border);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.search-desktop {
+  flex-shrink: 0;
 }
 
 .logo {
