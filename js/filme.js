@@ -5,7 +5,6 @@ const IMG     = "https://image.tmdb.org/t/p/w342";
 const IMG_LG  = "https://image.tmdb.org/t/p/w500";
 const BASE    = "https://api.themoviedb.org/3";
 
-// Filtros globais para todas as abas
 const FILTRO_SAFE = "&without_genres=10749,27&vote_count.gte=100&include_adult=false";
 
 // ─── Estado global ────────────────────────────────────────────────────────────
@@ -26,7 +25,7 @@ const searchInput = document.getElementById("search");
 
 const TITULOS = {
   filmes: "🎬 Filmes", series: "📺 Séries",
-  documentarios: "🎥 Documentários", animes: "👾 Animações", favoritos: "❤️ Favoritos"
+  jogos: "🎮 Jogos", animes: "👾 Animações", favoritos: "❤️ Favoritos"
 };
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -485,7 +484,7 @@ modalFavBtn.addEventListener("click", () => {
 });
 
 // ══════════════════════════════════════════════════════════════════════════════
-// CARDS / RENDER / ABAS / BUSCA
+// CARDS / RENDER
 // ══════════════════════════════════════════════════════════════════════════════
 function criarCard(item, tipo) {
   const titulo = tipo === "movie" ? item.title : item.name;
@@ -534,6 +533,143 @@ function renderSecao(label, items, tipo) {
 function showLoading() { content.innerHTML = `<div class="loading"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`; }
 function showEmpty(msg = "Nada encontrado 😢") { content.innerHTML = `<div class="empty-state"><span>🎬</span>${msg}</div>`; }
 
+// ══════════════════════════════════════════════════════════════════════════════
+// JOGOS — Giant Bomb via Backend
+// ══════════════════════════════════════════════════════════════════════════════
+function jogoId(id) { return `game-${id}`; }
+
+async function fetchJogos(query) {
+  try {
+    const url = query
+      ? `${BACKEND}/jogos/buscar?q=${encodeURIComponent(query)}`
+      : `${BACKEND}/jogos/populares`;
+    const r    = await fetch(url);
+    const data = await r.json();
+    return data.jogos || [];
+  } catch (e) {
+    console.error("[JOGOS]", e.message);
+    return [];
+  }
+}
+
+async function fetchJogoDetalhe(id) {
+  try {
+    const r    = await fetch(`${BACKEND}/jogos/${id}`);
+    const data = await r.json();
+    return data.jogo || null;
+  } catch (e) {
+    console.error("[JOGO DETALHE]", e.message);
+    return null;
+  }
+}
+
+function criarCardJogo(jogo) {
+  const titulo = jogo.name || "Sem título";
+  const img    = jogo.image?.medium_url || jogo.image?.small_url || null;
+  const id     = jogoId(jogo.id);
+
+  const card      = document.createElement("div");
+  card.className  = "movie-card";
+  card.dataset.id = id;
+
+  if (img) {
+    const el   = document.createElement("img");
+    el.src     = img;
+    el.alt     = titulo;
+    el.loading = "lazy";
+    card.appendChild(el);
+  } else {
+    const ph       = document.createElement("div");
+    ph.className   = "placeholder-img";
+    ph.textContent = "🎮";
+    card.appendChild(ph);
+  }
+
+  const overlay     = document.createElement("div");
+  overlay.className = "card-overlay";
+  overlay.innerHTML = `<div class="card-title">${titulo}</div>`;
+  card.appendChild(overlay);
+
+  const btn       = document.createElement("button");
+  btn.className   = "fav-btn" + (isFav(id) ? " active" : "");
+  btn.title       = "Favoritar";
+  btn.textContent = "♥";
+  btn.addEventListener("click", e => {
+    e.stopPropagation();
+    toggleFav({ id, name: titulo, image: jogo.image, _tipo: "game" }, "game");
+    btn.classList.toggle("active", isFav(id));
+  });
+  card.appendChild(btn);
+
+  card.addEventListener("click", () => abrirModalJogo(jogo));
+  return card;
+}
+
+async function abrirModalJogo(jogo) {
+  const titulo = jogo.name || "Sem título";
+  const id     = jogoId(jogo.id);
+  const img    = jogo.image?.screen_url || jogo.image?.medium_url || jogo.image?.small_url || null;
+
+  modalItem = { id, _tipo: "game" };
+  modalTipo = "game";
+
+  modalTitle.textContent    = titulo;
+  modalOverview.textContent = jogo.deck || "Carregando descrição...";
+  modalTrailer.innerHTML    = "";
+  modalPoster.innerHTML     = img
+    ? `<img src="${img}" alt="${titulo}">`
+    : `<div style="height:165px;display:flex;align-items:center;justify-content:center;color:#444;font-size:3rem;">🎮</div>`;
+
+  modalMeta.innerHTML = "";
+  const platWrap = document.getElementById("modal-plataformas");
+  if (platWrap) platWrap.innerHTML = "";
+
+  modalFavBtn.textContent = isFav(id) ? "❤️ Favoritado" : "♡ Favoritar";
+  modalFavBtn.classList.toggle("active", isFav(id));
+  modalOverlay.classList.add("open");
+  document.body.style.overflow = "hidden";
+
+  avEstrelaAtual = 0;
+  const hint     = document.getElementById("av-hint");
+  const avComent = document.getElementById("av-comentario");
+  if (hint)     hint.textContent = "Selecione uma nota";
+  if (avComent) avComent.value   = "";
+  document.querySelectorAll("#av-estrelas button").forEach(b => b.classList.remove("ativa"));
+  const btnEnv = document.getElementById("av-btn");
+  if (btnEnv) btnEnv.disabled = true;
+
+  renderAvaliacoes(id);
+  inicializarFormAvaliacao(id);
+
+  const detalhe = await fetchJogoDetalhe(jogo.id);
+  if (detalhe) {
+    if (detalhe.deck) modalOverview.textContent = detalhe.deck;
+
+    const ano       = (detalhe.original_release_date || "").slice(0, 4);
+    const plats     = (detalhe.platforms || []).map(p => p.name).slice(0, 3).join(", ");
+    const generos   = (detalhe.genres    || []).map(g => g.name).slice(0, 2).join(", ");
+
+    modalMeta.innerHTML = `
+      ${ano     ? `<span class="modal-badge">${ano}</span>`      : ""}
+      ${generos ? `<span class="modal-badge">${generos}</span>`  : ""}
+      ${plats   ? `<span class="modal-badge">${plats}</span>`    : ""}
+      <span class="modal-badge">🎮 Jogo</span>`;
+
+    if (platWrap && detalhe.platforms?.length) {
+      platWrap.innerHTML = `
+        <div class="plat-titulo">Plataformas</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;">
+          ${detalhe.platforms.map(p =>
+            `<span style="font-size:11px;padding:3px 10px;border-radius:6px;background:#222;color:#aaa;border:1px solid #333">${p.name}</span>`
+          ).join("")}
+        </div>`;
+    }
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ABAS
+// ══════════════════════════════════════════════════════════════════════════════
 async function mudarAba(aba) {
   abaAtual = aba;
   pageTitle.textContent = TITULOS[aba];
@@ -551,10 +687,14 @@ async function mudarAba(aba) {
     content.innerHTML = ""; const sec = renderSecao(null, data, "tv");
     sec ? content.appendChild(sec) : showEmpty("Nenhuma série encontrada.");
 
-  } else if (aba === "documentarios") {
-    const data = await fetchData(`${BASE}/discover/movie?api_key=${API_KEY}&with_genres=99&language=pt-BR${FILTRO_SAFE}`);
-    content.innerHTML = ""; const sec = renderSecao(null, data, "movie");
-    sec ? content.appendChild(sec) : showEmpty("Nenhum documentário encontrado.");
+  } else if (aba === "jogos") {
+    const jogos = await fetchJogos(null);
+    content.innerHTML = "";
+    if (!jogos.length) { showEmpty("Nenhum jogo encontrado 🎮"); return; }
+    const grid = document.createElement("div");
+    grid.className = "grid";
+    jogos.forEach(j => grid.appendChild(criarCardJogo(j)));
+    content.appendChild(grid);
 
   } else if (aba === "animes") {
     const [movies, series] = await Promise.all([
@@ -571,13 +711,27 @@ async function mudarAba(aba) {
   } else if (aba === "favoritos") {
     content.innerHTML = "";
     if (!favorites.length) { showEmpty("Você ainda não tem favoritos ❤️<br><small style='color:#555;font-size:0.8rem;'>Passe o mouse sobre um título e clique no ♥</small>"); return; }
-    const secM = renderSecao("Filmes Favoritos", favorites.filter(f => f._tipo === "movie"), "movie");
-    const secS = renderSecao("Séries Favoritas", favorites.filter(f => f._tipo === "tv"),    "tv");
+    const secM = renderSecao("Filmes Favoritos",  favorites.filter(f => f._tipo === "movie"), "movie");
+    const secS = renderSecao("Séries Favoritas",  favorites.filter(f => f._tipo === "tv"),    "tv");
+    const secG = (() => {
+      const jogos = favorites.filter(f => f._tipo === "game");
+      if (!jogos.length) return null;
+      const sec = document.createElement("div");
+      const h   = document.createElement("div"); h.className = "section-label"; h.textContent = "Jogos Favoritos"; sec.appendChild(h);
+      const grid = document.createElement("div"); grid.className = "grid";
+      jogos.forEach(j => grid.appendChild(criarCardJogo(j)));
+      sec.appendChild(grid);
+      return sec;
+    })();
     if (secM) content.appendChild(secM);
     if (secS) content.appendChild(secS);
+    if (secG) content.appendChild(secG);
   }
 }
 
+// ══════════════════════════════════════════════════════════════════════════════
+// BUSCA
+// ══════════════════════════════════════════════════════════════════════════════
 let searchTimer;
 searchInput.addEventListener("input", () => {
   clearTimeout(searchTimer);
@@ -596,6 +750,15 @@ searchInput.addEventListener("input", () => {
       const secS = renderSecao("Séries", filtrados.filter(f => f._tipo === "tv"), "tv");
       if (secM) content.appendChild(secM);
       if (secS) content.appendChild(secS);
+
+    } else if (abaAtual === "jogos") {
+      const jogos = await fetchJogos(query);
+      content.innerHTML = "";
+      if (!jogos.length) { showEmpty(); return; }
+      const grid = document.createElement("div");
+      grid.className = "grid";
+      jogos.forEach(j => grid.appendChild(criarCardJogo(j)));
+      content.appendChild(grid);
 
     } else {
       const [movies, series] = await Promise.all([
