@@ -26,7 +26,7 @@ const searchInput = document.getElementById("search");
 
 const TITULOS = {
   filmes: "🎬 Filmes", series: "📺 Séries",
-  documentarios: "🎥 Documentários", animes: "👾 Animações", favoritos: "❤️ Favoritos"
+  jogos: "🎮 Jogos", animes: "👾 Animações", favoritos: "❤️ Favoritos"
 };
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -551,10 +551,20 @@ async function mudarAba(aba) {
     content.innerHTML = ""; const sec = renderSecao(null, data, "tv");
     sec ? content.appendChild(sec) : showEmpty("Nenhuma série encontrada.");
 
-  } else if (aba === "documentarios") {
-    const data = await fetchData(`${BASE}/discover/movie?api_key=${API_KEY}&with_genres=99&language=pt-BR${FILTRO_SAFE}`);
-    content.innerHTML = ""; const sec = renderSecao(null, data, "movie");
-    sec ? content.appendChild(sec) : showEmpty("Nenhum documentário encontrado.");
+  } else if (aba === "jogos") {
+  const jogos = await fetchJogos();
+  content.innerHTML = "";
+  if (!jogos.length) {
+   showEmpty("Nenhum jogo encontrado.");
+    return;
+  } const sec = document.createElement("div");
+  const grid = document.createElement("div");
+ grid.className = "grid";
+  jogos.forEach(jogo => {
+    grid.appendChild(criarCardJogo(jogo));
+   });
+    sec.appendChild(grid);
+    content.appendChild(sec);
 
   } else if (aba === "animes") {
     const [movies, series] = await Promise.all([
@@ -587,6 +597,32 @@ searchInput.addEventListener("input", () => {
   searchTimer = setTimeout(async () => {
     showLoading();
     const q = encodeURIComponent(query);
+
+    if (abaAtual === "jogos") {
+
+  const jogos = await fetchJogos(query);
+
+  content.innerHTML = "";
+
+  if (!jogos.length) {
+    showEmpty("Nenhum jogo encontrado.");
+    return;
+  }
+
+  const sec  = document.createElement("div");
+  const grid = document.createElement("div");
+
+  grid.className = "grid";
+
+  jogos.forEach(jogo => {
+    grid.appendChild(criarCardJogo(jogo));
+  });
+
+  sec.appendChild(grid);
+  content.appendChild(sec);
+
+}
+else
 
     if (abaAtual === "favoritos") {
       const filtrados = favorites.filter(f => (f.title || f.name || "").toLowerCase().includes(query.toLowerCase()));
