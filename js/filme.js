@@ -461,10 +461,7 @@ async function abrirModal(item, tipo) {
 function fecharModal() {
   modalOverlay.classList.remove("open");
   document.body.style.overflow = "";
-  const imgBanner = igdbCover(jogo.cover?.url, "screenshot_big") || igdbCover(jogo.cover?.url, "cover_big");
-modalTrailer.innerHTML = imgBanner
-  ? `<img src="${imgBanner}" alt="${titulo}" style="width:100%;height:100%;object-fit:cover;border-radius:8px 8px 0 0;">`
-  : `<div style="height:100%;display:flex;align-items:center;justify-content:center;font-size:5rem;">🎮</div>`;
+  modalTrailer.innerHTML = "";
   modalItem = modalTipo = null;
 }
 
@@ -623,8 +620,10 @@ async function abrirModalJogo(jogo) {
 
   modalTitle.textContent    = titulo;
   modalOverview.textContent = jogo.summary || "Carregando descrição...";
-  modalTrailer.innerHTML    = "";
-  modalPoster.innerHTML     = img
+const imgBanner = igdbCover(jogo.cover?.url, "screenshot_big") || igdbCover(jogo.cover?.url, "cover_big");
+modalTrailer.innerHTML = imgBanner
+  ? `<img src="${imgBanner}" alt="${titulo}" style="width:100%;height:100%;object-fit:cover;border-radius:8px 8px 0 0;">`
+  : `<div style="height:100%;display:flex;align-items:center;justify-content:center;font-size:5rem;">🎮</div>`;  modalPoster.innerHTML     = img
     ? `<img src="${img}" alt="${titulo}">`
     : `<div style="height:165px;display:flex;align-items:center;justify-content:center;color:#444;font-size:3rem;">🎮</div>`;
 
