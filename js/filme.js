@@ -461,7 +461,10 @@ async function abrirModal(item, tipo) {
 function fecharModal() {
   modalOverlay.classList.remove("open");
   document.body.style.overflow = "";
-  modalTrailer.innerHTML = "";
+  const imgBanner = igdbCover(jogo.cover?.url, "screenshot_big") || igdbCover(jogo.cover?.url, "cover_big");
+modalTrailer.innerHTML = imgBanner
+  ? `<img src="${imgBanner}" alt="${titulo}" style="width:100%;height:100%;object-fit:cover;border-radius:8px 8px 0 0;">`
+  : `<div style="height:100%;display:flex;align-items:center;justify-content:center;font-size:5rem;">🎮</div>`;
   modalItem = modalTipo = null;
 }
 
