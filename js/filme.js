@@ -532,11 +532,15 @@ function renderSecao(label, items, tipo) {
 
 function showLoading() { content.innerHTML = `<div class="loading"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`; }
 function showEmpty(msg = "Nada encontrado 😢") { content.innerHTML = `<div class="empty-state"><span>🎬</span>${msg}</div>`; }
-
 // ══════════════════════════════════════════════════════════════════════════════
-// JOGOS — Giant Bomb via Backend
+// JOGOS — IGDB via Backend
 // ══════════════════════════════════════════════════════════════════════════════
 function jogoId(id) { return `game-${id}`; }
+
+function igdbCover(url, size = "cover_big") {
+  if (!url) return null;
+  return "https:" + url.replace("t_thumb", `t_${size}`);
+}
 
 async function fetchJogos(query) {
   try {
@@ -545,7 +549,8 @@ async function fetchJogos(query) {
       : `${BACKEND}/jogos/populares`;
     const r    = await fetch(url);
     const data = await r.json();
-    return data.jogos || [];
+    // IGDB retorna array direto
+    return Array.isArray(data) ? data : [];
   } catch (e) {
     console.error("[JOGOS]", e.message);
     return [];
@@ -556,7 +561,7 @@ async function fetchJogoDetalhe(id) {
   try {
     const r    = await fetch(`${BACKEND}/jogos/${id}`);
     const data = await r.json();
-    return data.jogo || null;
+    return data || null;
   } catch (e) {
     console.error("[JOGO DETALHE]", e.message);
     return null;
@@ -565,7 +570,7 @@ async function fetchJogoDetalhe(id) {
 
 function criarCardJogo(jogo) {
   const titulo = jogo.name || "Sem título";
-  const img    = jogo.image?.medium_url || jogo.image?.small_url || null;
+  const img    = igdbCover(jogo.cover?.url);
   const id     = jogoId(jogo.id);
 
   const card      = document.createElement("div");
@@ -596,7 +601,7 @@ function criarCardJogo(jogo) {
   btn.textContent = "♥";
   btn.addEventListener("click", e => {
     e.stopPropagation();
-    toggleFav({ id, name: titulo, image: jogo.image, _tipo: "game" }, "game");
+    toggleFav({ id, name: titulo, cover: jogo.cover, _tipo: "game" }, "game");
     btn.classList.toggle("active", isFav(id));
   });
   card.appendChild(btn);
@@ -608,13 +613,13 @@ function criarCardJogo(jogo) {
 async function abrirModalJogo(jogo) {
   const titulo = jogo.name || "Sem título";
   const id     = jogoId(jogo.id);
-  const img    = jogo.image?.screen_url || jogo.image?.medium_url || jogo.image?.small_url || null;
+  const img    = igdbCover(jogo.cover?.url, "screenshot_big");
 
   modalItem = { id, _tipo: "game" };
   modalTipo = "game";
 
   modalTitle.textContent    = titulo;
-  modalOverview.textContent = jogo.deck || "Carregando descrição...";
+  modalOverview.textContent = jogo.summary || "Carregando descrição...";
   modalTrailer.innerHTML    = "";
   modalPoster.innerHTML     = img
     ? `<img src="${img}" alt="${titulo}">`
@@ -643,16 +648,20 @@ async function abrirModalJogo(jogo) {
 
   const detalhe = await fetchJogoDetalhe(jogo.id);
   if (detalhe) {
-    if (detalhe.deck) modalOverview.textContent = detalhe.deck;
+    if (detalhe.summary) modalOverview.textContent = detalhe.summary;
 
-    const ano       = (detalhe.original_release_date || "").slice(0, 4);
-    const plats     = (detalhe.platforms || []).map(p => p.name).slice(0, 3).join(", ");
-    const generos   = (detalhe.genres    || []).map(g => g.name).slice(0, 2).join(", ");
+    const ano     = detalhe.first_release_date
+      ? new Date(detalhe.first_release_date * 1000).getFullYear()
+      : "";
+    const nota    = detalhe.rating ? (detalhe.rating / 10).toFixed(1) : null;
+    const plats   = (detalhe.platforms || []).map(p => p.name).slice(0, 3).join(", ");
+    const generos = (detalhe.genres    || []).map(g => g.name).slice(0, 2).join(", ");
 
     modalMeta.innerHTML = `
-      ${ano     ? `<span class="modal-badge">${ano}</span>`      : ""}
-      ${generos ? `<span class="modal-badge">${generos}</span>`  : ""}
-      ${plats   ? `<span class="modal-badge">${plats}</span>`    : ""}
+      ${nota    ? `<span class="modal-badge rating">★ ${nota}</span>` : ""}
+      ${ano     ? `<span class="modal-badge">${ano}</span>`           : ""}
+      ${generos ? `<span class="modal-badge">${generos}</span>`       : ""}
+      ${plats   ? `<span class="modal-badge">${plats}</span>`         : ""}
       <span class="modal-badge">🎮 Jogo</span>`;
 
     if (platWrap && detalhe.platforms?.length) {
