@@ -788,4 +788,8 @@ document.querySelectorAll("nav button").forEach(btn => btn.addEventListener("cli
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 renderLoginBox();
-mudarAba("filmes");
+
+// Lê aba da URL (ex: index.html#jogos)
+const hashAba = location.hash.replace('#', '');
+if (hashAba && TITULOS[hashAba]) mudarAba(hashAba);
+else mudarAba("filmes");
