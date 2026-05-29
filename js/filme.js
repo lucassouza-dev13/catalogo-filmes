@@ -63,10 +63,28 @@ async function api(method, path, body = null) {
 // TMDB FETCH
 // ══════════════════════════════════════════════════════════════════════════════
 async function fetchData(url) {
-  try { const r = await fetch(url); const d = await r.json(); return d.results || []; } catch(e) { return []; }
-}
-async function fetchOne(url) {
-  try { const r = await fetch(url); return await r.json(); } catch(e) { return null; }
+  try {
+    const r = await fetch(url);
+    const d = await r.json();
+
+    const bloqueados = [
+      "Ninfomaníaca",
+      "Ninfomaníaca: Volume 1",
+      "Ninfomaníaca: Volume 2"
+    ];
+
+    return (d.results || []).filter(item => {
+      const titulo = item.title || item.name || "";
+
+      return (
+        !item.adult &&
+        !bloqueados.includes(titulo)
+      );
+    });
+
+  } catch(e) {
+    return [];
+  }
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
