@@ -481,12 +481,16 @@
   async function tmdbFilme(id, tipo) {
   const chave = `${tipo}_${id}`;
   if (_tmdb[chave]) return _tmdb[chave];
-  try {
-    const endpoint = tipo === "tv" ? "tv" : "movie";
-    const r = await fetch(`${TMDB_URL}/${endpoint}/${id}?api_key=${TMDB_KEY}&language=pt-BR`);
-    const d = await r.json();
-    if (d.title || d.name) { _tmdb[chave] = d; return d; }
-  } catch {}
+  
+  const endpoints = tipo === "tv" ? ["tv"] : tipo === "movie" ? ["movie", "tv"] : [];
+  
+  for (const ep of endpoints) {
+    try {
+      const r = await fetch(`${TMDB_URL}/${ep}/${id}?api_key=${TMDB_KEY}&language=pt-BR`);
+      const d = await r.json();
+      if (d.title || d.name) { _tmdb[chave] = d; return d; }
+    } catch {}
+  }
   return null;
 }
 
