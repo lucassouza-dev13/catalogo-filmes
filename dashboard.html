@@ -702,18 +702,15 @@ async function carregarPerfil() {
     }
 
     const detalhes = await Promise.all(data.recentes.map(async av => {
-      try {
-        const rm = await fetch(`${TMDB_URL}/movie/${av.filme_id}?api_key=${TMDB_KEY}&language=pt-BR`);
-        const dm = await rm.json();
-        if (dm.title) return { titulo: dm.title, poster: dm.poster_path ? IMG_SM + dm.poster_path : null };
-      } catch {}
-      try {
-        const rt = await fetch(`${TMDB_URL}/tv/${av.filme_id}?api_key=${TMDB_KEY}&language=pt-BR`);
-        const dt = await rt.json();
-        if (dt.name) return { titulo: dt.name, poster: dt.poster_path ? IMG_SM + dt.poster_path : null };
-      } catch {}
-      return { titulo: null, poster: null };
-    }));
+  try {
+    const endpoint = av.tipo === "tv" ? "tv" : av.tipo === "game" ? null : "movie";
+    if (!endpoint) return { titulo: av.filme_id.replace("game-", "Jogo #"), poster: null };
+    const r = await fetch(`${TMDB_URL}/${endpoint}/${av.filme_id}?api_key=${TMDB_KEY}&language=pt-BR`);
+    const d = await r.json();
+    if (d.title || d.name) return { titulo: d.title || d.name, poster: d.poster_path ? IMG_SM + d.poster_path : null };
+  } catch {}
+  return { titulo: null, poster: null };
+   }));
 
     listEl.innerHTML = data.recentes.map((av, i) => {
       const det    = detalhes[i];

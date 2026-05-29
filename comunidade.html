@@ -478,20 +478,17 @@
 
   // Cache TMDB
   const _tmdb = {};
-  async function tmdbFilme(id) {
-    if (_tmdb[id]) return _tmdb[id];
-    try {
-      const r = await fetch(`${TMDB_URL}/movie/${id}?api_key=${TMDB_KEY}&language=pt-BR`);
-      const d = await r.json();
-      if (d.title) { _tmdb[id] = d; return d; }
-    } catch {}
-    try {
-      const r = await fetch(`${TMDB_URL}/tv/${id}?api_key=${TMDB_KEY}&language=pt-BR`);
-      const d = await r.json();
-      if (d.name) { _tmdb[id] = d; return d; }
-    } catch {}
-    return null;
-  }
+  async function tmdbFilme(id, tipo) {
+  const chave = `${tipo}_${id}`;
+  if (_tmdb[chave]) return _tmdb[chave];
+  try {
+    const endpoint = tipo === "tv" ? "tv" : "movie";
+    const r = await fetch(`${TMDB_URL}/${endpoint}/${id}?api_key=${TMDB_KEY}&language=pt-BR`);
+    const d = await r.json();
+    if (d.title || d.name) { _tmdb[chave] = d; return d; }
+  } catch {}
+  return null;
+}
 
   function tempoAtras(ts) {
     const diff = (Date.now() - new Date(ts)) / 1000;
@@ -682,7 +679,7 @@
     const card = document.createElement('div');
     card.className = 'feed-card';
 
-    const filme  = await tmdbFilme(item.filme_id);
+    const filme = await tmdbFilme(item.filme_id, item.tipo || "movie");
     const titulo = filme?.title || filme?.name || 'Título #' + item.filme_id;
     const poster = filme?.poster_path ? IMG_MD + filme.poster_path : null;
     const ano    = (filme?.release_date || filme?.first_air_date || '').slice(0, 4);
