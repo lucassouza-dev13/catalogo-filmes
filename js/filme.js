@@ -322,14 +322,16 @@ async function inicializarFormAvaliacao(filmeId) {
     try {
       if (modoEdicao) {
         await api("PUT", `/avaliacoes/${filmeId}`, {
-          estrelas:   avEstrelaAtual,
-          comentario: avComent ? avComent.value.trim() : ""
-        });
+    estrelas:   avEstrelaAtual,
+    comentario: avComent ? avComent.value.trim() : "",
+     tipo:       modalTipo || "movie"
+    });
       } else {
         await api("POST", `/avaliacoes/${filmeId}`, {
-          estrelas:   avEstrelaAtual,
-          comentario: avComent ? avComent.value.trim() : ""
-        });
+      estrelas:   avEstrelaAtual,
+     comentario: avComent ? avComent.value.trim() : "",
+     tipo:       modalTipo || "movie"
+      });
         modoEdicao = true;
       }
 
