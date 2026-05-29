@@ -506,6 +506,15 @@ modalFavBtn.addEventListener("click", () => {
 // ══════════════════════════════════════════════════════════════════════════════
 function criarCard(item, tipo) {
   const titulo = tipo === "movie" ? item.title : item.name;
+  const bloqueados = [
+  "Ninfomaníaca",
+  "Ninfomaníaca: Volume 1",
+  "Ninfomaníaca: Volume 2"
+];
+
+if (bloqueados.includes(titulo)) {
+  return document.createElement("div");
+}
   const card   = document.createElement("div");
   card.className  = "movie-card";
   card.dataset.id = item.id;
