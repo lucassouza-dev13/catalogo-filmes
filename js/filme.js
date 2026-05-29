@@ -63,28 +63,10 @@ async function api(method, path, body = null) {
 // TMDB FETCH
 // ══════════════════════════════════════════════════════════════════════════════
 async function fetchData(url) {
-  try {
-    const r = await fetch(url);
-    const d = await r.json();
-
-    const bloqueados = [
-      "Ninfomaníaca",
-      "Ninfomaníaca: Volume 1",
-      "Ninfomaníaca: Volume 2"
-    ];
-
-    return (d.results || []).filter(item => {
-      const titulo = item.title || item.name || "";
-
-      return (
-        !item.adult &&
-        !bloqueados.includes(titulo)
-      );
-    });
-
-  } catch(e) {
-    return [];
-  }
+  try { const r = await fetch(url); const d = await r.json(); return d.results || []; } catch(e) { return []; }
+}
+async function fetchOne(url) {
+  try { const r = await fetch(url); return await r.json(); } catch(e) { return null; }
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -506,15 +488,6 @@ modalFavBtn.addEventListener("click", () => {
 // ══════════════════════════════════════════════════════════════════════════════
 function criarCard(item, tipo) {
   const titulo = tipo === "movie" ? item.title : item.name;
-  const bloqueados = [
-  "Ninfomaníaca",
-  "Ninfomaníaca: Volume 1",
-  "Ninfomaníaca: Volume 2"
-];
-
-if (bloqueados.includes(titulo)) {
-  return document.createElement("div");
-}
   const card   = document.createElement("div");
   card.className  = "movie-card";
   card.dataset.id = item.id;
@@ -842,4 +815,4 @@ const hashAba = location.hash.replace('#', '');
 if (hashAba && TITULOS[hashAba]) mudarAba(hashAba);
 else mudarAba("filmes");
 ENDOFFILE
-echo 
+echo
