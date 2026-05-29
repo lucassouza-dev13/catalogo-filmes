@@ -680,42 +680,58 @@
   }
 
   async function criarFeedCard(item) {
-   console.log("FEED ITEM:", item.filme_id, item.tipo); 
-    const card = document.createElement('div');
-    card.className = 'feed-card';
+  const card = document.createElement('div');
+  card.className = 'feed-card';
 
-    const filme = await tmdbFilme(item.filme_id, item.tipo || "movie");
-    const titulo = filme?.title || filme?.name || 'Título #' + item.filme_id;
-    const poster = filme?.poster_path ? IMG_MD + filme.poster_path : null;
-    const ano    = (filme?.release_date || filme?.first_air_date || '').slice(0, 4);
+  let titulo, poster, ano;
 
-    card.innerHTML = `
-  <div class="feed-card-header">
-    <a href="perfil.html?id=${item.usuario_id}" style="display:flex;align-items:center;gap:10px;text-decoration:none;flex:1;min-width:0">
-      <div class="feed-avatar">${iniciais(item.usuario_nome)}</div>
-      <div class="feed-userinfo">
-        <strong>${item.usuario_nome}</strong>
-        <span>${tempoAtras(item.criado_em)}</span>
-      </div>
-    </a>
-  </div>
-      <div class="feed-filme">
-        <div class="feed-poster">
-          ${poster ? `<img src="${poster}" alt="${titulo}" loading="lazy">` : '🎬'}
-        </div>
-        <div class="feed-filme-info">
-          <div class="feed-filme-titulo">${titulo}</div>
-          ${ano ? `<div class="feed-filme-meta">${ano}</div>` : ''}
-          <div class="feed-estrelas">${estrelasTexto(item.estrelas)}</div>
-        </div>
-      </div>
-      ${item.comentario ? `<div class="feed-comentario">"${item.comentario}"</div>` : ''}`;
-
-    const btnFollow = await criarBtnFollow(item.usuario_id);
-    if (btnFollow) card.querySelector('.feed-card-header').appendChild(btnFollow);
-
-    return card;
+  if (item.tipo === 'game') {
+    const jogoId = item.filme_id.replace('game-', '');
+    try {
+      const r = await fetch(`${BACKEND}/jogos/${jogoId}`);
+      const jogo = await r.json();
+      titulo = jogo?.name || 'Jogo #' + jogoId;
+      poster = jogo?.cover?.url ? 'https:' + jogo.cover.url.replace('t_thumb', 't_cover_big') : null;
+      ano = jogo?.first_release_date ? new Date(jogo.first_release_date * 1000).getFullYear() : null;
+    } catch {
+      titulo = 'Jogo #' + jogoId;
+      poster = null;
+      ano = null;
+    }
+  } else {
+    const filme = await tmdbFilme(item.filme_id, item.tipo);
+    titulo = filme?.title || filme?.name || 'Título #' + item.filme_id;
+    poster = filme?.poster_path ? IMG_MD + filme.poster_path : null;
+    ano = (filme?.release_date || filme?.first_air_date || '').slice(0, 4);
   }
+
+  card.innerHTML = `
+    <div class="feed-card-header">
+      <a href="perfil.html?id=${item.usuario_id}" style="display:flex;align-items:center;gap:10px;text-decoration:none;flex:1;min-width:0">
+        <div class="feed-avatar">${iniciais(item.usuario_nome)}</div>
+        <div class="feed-userinfo">
+          <strong>${item.usuario_nome}</strong>
+          <span>${tempoAtras(item.criado_em)}</span>
+        </div>
+      </a>
+    </div>
+    <div class="feed-filme">
+      <div class="feed-poster">
+        ${poster ? `<img src="${poster}" alt="${titulo}" loading="lazy">` : (item.tipo === 'game' ? '🎮' : '🎬')}
+      </div>
+      <div class="feed-filme-info">
+        <div class="feed-filme-titulo">${titulo}</div>
+        ${ano ? `<div class="feed-filme-meta">${ano}</div>` : ''}
+        <div class="feed-estrelas">${estrelasTexto(item.estrelas)}</div>
+      </div>
+    </div>
+    ${item.comentario ? `<div class="feed-comentario">"${item.comentario}"</div>` : ''}`;
+
+  const btnFollow = await criarBtnFollow(item.usuario_id);
+  if (btnFollow) card.querySelector('.feed-card-header').appendChild(btnFollow);
+
+  return card;
+}
 
   // Scroll infinito
   window.addEventListener('scroll', () => {

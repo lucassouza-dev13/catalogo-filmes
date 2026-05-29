@@ -702,15 +702,27 @@ async function carregarPerfil() {
     }
 
     const detalhes = await Promise.all(data.recentes.map(async av => {
+  if (av.tipo === 'game') {
+    const jogoId = av.filme_id.replace('game-', '');
+    try {
+      const r = await fetch(`${API}/jogos/${jogoId}`);
+      const jogo = await r.json();
+      return {
+        titulo: jogo?.name || 'Jogo #' + jogoId,
+        poster: jogo?.cover?.url ? 'https:' + jogo.cover.url.replace('t_thumb', 't_cover_big') : null
+      };
+    } catch {
+      return { titulo: 'Jogo #' + jogoId, poster: null };
+    }
+  }
+  const endpoint = av.tipo === 'tv' ? 'tv' : 'movie';
   try {
-    const endpoint = av.tipo === "tv" ? "tv" : av.tipo === "game" ? null : "movie";
-    if (!endpoint) return { titulo: av.filme_id.replace("game-", "Jogo #"), poster: null };
     const r = await fetch(`${TMDB_URL}/${endpoint}/${av.filme_id}?api_key=${TMDB_KEY}&language=pt-BR`);
     const d = await r.json();
     if (d.title || d.name) return { titulo: d.title || d.name, poster: d.poster_path ? IMG_SM + d.poster_path : null };
   } catch {}
   return { titulo: null, poster: null };
-   }));
+}));
 
     listEl.innerHTML = data.recentes.map((av, i) => {
       const det    = detalhes[i];
