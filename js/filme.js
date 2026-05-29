@@ -1,4 +1,3 @@
-cat > /mnt/user-data/outputs/filme.js << 'ENDOFFILE'
 const BACKEND = "https://backend-cat-logo.onrender.com";
 const API_URL = "https://backend-cat-logo.onrender.com";
 const API_KEY = "8bcf3516840c71be090ce067d3464a1d";
