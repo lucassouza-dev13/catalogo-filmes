@@ -1,3 +1,4 @@
+cat > /mnt/user-data/outputs/filme.js << 'ENDOFFILE'
 const BACKEND = "https://backend-cat-logo.onrender.com";
 const API_URL = "https://backend-cat-logo.onrender.com";
 const API_KEY = "8bcf3516840c71be090ce067d3464a1d";
@@ -532,6 +533,7 @@ function renderSecao(label, items, tipo) {
 
 function showLoading() { content.innerHTML = `<div class="loading"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`; }
 function showEmpty(msg = "Nada encontrado 😢") { content.innerHTML = `<div class="empty-state"><span>🎬</span>${msg}</div>`; }
+
 // ══════════════════════════════════════════════════════════════════════════════
 // JOGOS — IGDB via Backend
 // ══════════════════════════════════════════════════════════════════════════════
@@ -549,7 +551,6 @@ async function fetchJogos(query) {
       : `${BACKEND}/jogos/populares`;
     const r    = await fetch(url);
     const data = await r.json();
-    // IGDB retorna array direto
     return Array.isArray(data) ? data : [];
   } catch (e) {
     console.error("[JOGOS]", e.message);
@@ -613,18 +614,21 @@ function criarCardJogo(jogo) {
 async function abrirModalJogo(jogo) {
   const titulo = jogo.name || "Sem título";
   const id     = jogoId(jogo.id);
-  const img    = igdbCover(jogo.cover?.url, "screenshot_big");
 
   modalItem = { id, _tipo: "game" };
   modalTipo = "game";
 
   modalTitle.textContent    = titulo;
   modalOverview.textContent = jogo.summary || "Carregando descrição...";
-const imgBanner = igdbCover(jogo.cover?.url, "screenshot_big") || igdbCover(jogo.cover?.url, "cover_big");
-modalTrailer.innerHTML = imgBanner
-  ? `<img src="${imgBanner}" alt="${titulo}" style="width:100%;height:100%;object-fit:cover;border-radius:8px 8px 0 0;">`
-  : `<div style="height:100%;display:flex;align-items:center;justify-content:center;font-size:5rem;">🎮</div>`;  modalPoster.innerHTML     = img
-    ? `<img src="${img}" alt="${titulo}">`
+
+  const imgBanner = igdbCover(jogo.cover?.url, "screenshot_big") || igdbCover(jogo.cover?.url, "cover_big");
+  modalTrailer.innerHTML = imgBanner
+    ? `<img src="${imgBanner}" alt="${titulo}" style="width:100%;height:100%;object-fit:cover;border-radius:8px 8px 0 0;">`
+    : `<div style="height:100%;display:flex;align-items:center;justify-content:center;font-size:5rem;">🎮</div>`;
+
+  const imgPoster = igdbCover(jogo.cover?.url, "cover_big");
+  modalPoster.innerHTML = imgPoster
+    ? `<img src="${imgPoster}" alt="${titulo}">`
     : `<div style="height:165px;display:flex;align-items:center;justify-content:center;color:#444;font-size:3rem;">🎮</div>`;
 
   modalMeta.innerHTML = "";
@@ -765,7 +769,8 @@ searchInput.addEventListener("input", () => {
     } else if (abaAtual === "jogos") {
       const jogos = await fetchJogos(query);
       content.innerHTML = "";
-      if (!jogos.length) { showEmpty(); return; }
+      if (!jogos.length) { showEmpty("Nenhum jogo encontrado 🎮"); return; }
+      pageTitle.textContent = `${jogos.length} resultado${jogos.length !== 1 ? "s" : ""} para "${query}"`;
       const grid = document.createElement("div");
       grid.className = "grid";
       jogos.forEach(j => grid.appendChild(criarCardJogo(j)));
@@ -778,14 +783,18 @@ searchInput.addEventListener("input", () => {
         fetchJogos(query)
       ]);
       content.innerHTML = "";
+
+      const total = movies.length + series.length + jogos.length;
+      pageTitle.textContent = `${total} resultado${total !== 1 ? "s" : ""} para "${query}"`;
+
       const secM = renderSecao("Filmes", movies, "movie");
       const secS = renderSecao("Séries", series, "tv");
       if (secM) content.appendChild(secM);
       if (secS) content.appendChild(secS);
 
       if (jogos.length) {
-        const sec = document.createElement("div");
-        const h = document.createElement("div"); h.className = "section-label"; h.textContent = "Jogos"; sec.appendChild(h);
+        const sec  = document.createElement("div");
+        const h    = document.createElement("div"); h.className = "section-label"; h.textContent = "Jogos"; sec.appendChild(h);
         const grid = document.createElement("div"); grid.className = "grid";
         jogos.forEach(j => grid.appendChild(criarCardJogo(j)));
         sec.appendChild(grid);
@@ -793,7 +802,8 @@ searchInput.addEventListener("input", () => {
       }
 
       if (!secM && !secS && !jogos.length) showEmpty();
-    }}, 400);
+    }
+  }, 400);
 });
 
 document.querySelectorAll("nav button").forEach(btn => btn.addEventListener("click", () => mudarAba(btn.dataset.aba)));
@@ -805,3 +815,5 @@ renderLoginBox();
 const hashAba = location.hash.replace('#', '');
 if (hashAba && TITULOS[hashAba]) mudarAba(hashAba);
 else mudarAba("filmes");
+ENDOFFILE
+echo 
