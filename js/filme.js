@@ -772,18 +772,28 @@ searchInput.addEventListener("input", () => {
       content.appendChild(grid);
 
     } else {
-      const [movies, series] = await Promise.all([
+      const [movies, series, jogos] = await Promise.all([
         fetchData(`${BASE}/search/movie?api_key=${API_KEY}&query=${q}&language=pt-BR&include_adult=false`),
-        fetchData(`${BASE}/search/tv?api_key=${API_KEY}&query=${q}&language=pt-BR&include_adult=false`)
+        fetchData(`${BASE}/search/tv?api_key=${API_KEY}&query=${q}&language=pt-BR&include_adult=false`),
+        fetchJogos(query)
       ]);
       content.innerHTML = "";
       const secM = renderSecao("Filmes", movies, "movie");
       const secS = renderSecao("Séries", series, "tv");
       if (secM) content.appendChild(secM);
       if (secS) content.appendChild(secS);
-      if (!secM && !secS) showEmpty();
-    }
-  }, 400);
+
+      if (jogos.length) {
+        const sec = document.createElement("div");
+        const h = document.createElement("div"); h.className = "section-label"; h.textContent = "Jogos"; sec.appendChild(h);
+        const grid = document.createElement("div"); grid.className = "grid";
+        jogos.forEach(j => grid.appendChild(criarCardJogo(j)));
+        sec.appendChild(grid);
+        content.appendChild(sec);
+      }
+
+      if (!secM && !secS && !jogos.length) showEmpty();
+    }}, 400);
 });
 
 document.querySelectorAll("nav button").forEach(btn => btn.addEventListener("click", () => mudarAba(btn.dataset.aba)));
