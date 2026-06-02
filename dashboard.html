@@ -725,23 +725,42 @@ async function carregarPerfil() {
 }));
 
     listEl.innerHTML = data.recentes.map((av, i) => {
-      const det    = detalhes[i];
-      const titulo = det.titulo || 'Filme #' + av.filme_id;
-      const poster = det.poster
-        ? `<div class="poster"><img src="${det.poster}" alt="${titulo}" style="width:100%;height:100%;object-fit:cover;border-radius:4px"/></div>`
-        : `<div class="poster">🎬</div>`;
-      const estrelas   = '★'.repeat(av.estrelas) + '☆'.repeat(5 - av.estrelas);
-      const dataFmt    = new Date(av.criado_em).toLocaleDateString('pt-BR');
-      const comentario = av.comentario ? `<div class="movie-meta" style="font-style:italic;margin-top:4px">"${av.comentario}"</div>` : '';
-      return `<div class="movie-row" style="${delay(i)}">${poster}
-        <div class="movie-info">
-          <div class="movie-title">${titulo}</div>
-          <div class="movie-meta">${estrelas} • ${dataFmt}</div>
-          ${comentario}
-        </div></div>`;
-    }).join('');
+  const det    = detalhes[i];
+  const titulo = det.titulo || 'Filme #' + av.filme_id;
+  const poster = det.poster
+    ? `<div class="poster"><img src="${det.poster}" alt="${titulo}" style="width:100%;height:100%;object-fit:cover;border-radius:4px"/></div>`
+    : `<div class="poster">🎬</div>`;
+  const estrelas   = '★'.repeat(av.estrelas) + '☆'.repeat(5 - av.estrelas);
+  const dataFmt    = new Date(av.criado_em).toLocaleDateString('pt-BR');
+  const comentario = av.comentario ? `<div class="movie-meta" style="font-style:italic;margin-top:4px">"${av.comentario}"</div>` : '';
+  return `<div class="movie-row" style="${delay(i)}" id="av-row-${av.id}">${poster}
+    <div class="movie-info">
+      <div class="movie-title">${titulo}</div>
+      <div class="movie-meta">${estrelas} • ${dataFmt}</div>
+      ${comentario}
+    </div>
+    <button onclick="excluirAvaliacao(${av.id})" title="Excluir avaliação"
+      style="background:none;border:none;color:#555;font-size:16px;cursor:pointer;padding:4px 8px;border-radius:4px;transition:color 0.2s;"
+      onmouseover="this.style.color='#ff6b6b'" onmouseout="this.style.color='#555'">✕</button>
+  </div>`;
+}).join('');
   } catch(e) {
     document.getElementById('list-recentes').innerHTML = '<div class="empty">Erro ao carregar perfil.</div>';
+  }
+}
+
+// ── Excluir avaliação ─────────────────────────────────────────
+async function excluirAvaliacao(avId) {
+  if (!confirm('Excluir esta avaliação?')) return;
+  try {
+    const r = await fetch(`${API}/avaliacoes/${avId}`, {
+      method: 'DELETE',
+      headers: { Authorization: 'Bearer ' + getToken() }
+    });
+    if (!r.ok) throw new Error();
+    document.getElementById('av-row-' + avId)?.remove();
+  } catch(e) {
+    alert('Erro ao excluir avaliação.');
   }
 }
 
