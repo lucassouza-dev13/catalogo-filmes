@@ -248,8 +248,20 @@ async function renderAvaliacoes(filmeId) {
   }).join("");
 }
 
+// ── Confirm modal ─────────────────────────────────────────────
+function confirmar(mensagem) {
+  return new Promise(resolve => {
+    const overlay = document.getElementById('confirm-overlay');
+    overlay.classList.add('open');
+    document.getElementById('confirm-ok').onclick     = () => { overlay.classList.remove('open'); resolve(true);  };
+    document.getElementById('confirm-cancel').onclick = () => { overlay.classList.remove('open'); resolve(false); };
+  });
+}
+
 async function avRemover(filmeId, avId) {
   if (!usuario) return;
+  const ok = await confirmar();
+  if (!ok) return;
   try {
     await api("DELETE", `/avaliacoes/${avId}`);
     renderAvaliacoes(filmeId);

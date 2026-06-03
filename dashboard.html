@@ -750,8 +750,18 @@ async function carregarPerfil() {
 }
 
 // ── Excluir avaliação ─────────────────────────────────────────
+function confirmar() {
+  return new Promise(resolve => {
+    const overlay = document.getElementById('confirm-overlay');
+    overlay.classList.add('open');
+    document.getElementById('confirm-ok').onclick     = () => { overlay.classList.remove('open'); resolve(true);  };
+    document.getElementById('confirm-cancel').onclick = () => { overlay.classList.remove('open'); resolve(false); };
+  });
+}
+
 async function excluirAvaliacao(avId) {
-  if (!confirm('Excluir esta avaliação?')) return;
+  const ok = await confirmar();
+  if (!ok) return;
   try {
     const r = await fetch(`${API}/avaliacoes/${avId}`, {
       method: 'DELETE',
@@ -839,6 +849,19 @@ if (!token) {
   carregarNotificacoes();
   setInterval(carregarNotificacoes, 60000);
 }
+
+<div id="confirm-overlay">
+  <div id="confirm-box">
+    <div class="confirm-icon">🗑️</div>
+    <h3>Excluir avaliação?</h3>
+    <p>Esta ação não pode ser desfeita.</p>
+    <div class="confirm-btns">
+      <button class="confirm-btn-cancel" id="confirm-cancel">Cancelar</button>
+      <button class="confirm-btn-delete" id="confirm-ok">Excluir</button>
+    </div>
+  </div>
+</div>
+
 </script>
 </body>
 </html>
