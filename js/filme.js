@@ -80,6 +80,54 @@ function toggleFav(item, tipo) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
+// CONQUISTAS
+// ══════════════════════════════════════════════════════════════════════════════
+async function verificarConquistas() {
+  if (!usuario || !token) return;
+  try {
+    const data = await api("POST", "/conquistas/verificar");
+    if (data.novas && data.novas.length > 0) {
+      mostrarPopupConquistas(data.novas);
+    }
+  } catch (e) {
+    console.warn("[CONQUISTAS]", e.message);
+  }
+}
+
+function mostrarPopupConquistas(novas) {
+  // Remove popup anterior se existir
+  document.getElementById("conquista-popup")?.remove();
+
+  const popup = document.createElement("div");
+  popup.id = "conquista-popup";
+  popup.innerHTML = `
+    <div class="conquista-popup-inner">
+      <div class="conquista-popup-header">
+        <span class="conquista-popup-icon">🏆</span>
+        <span class="conquista-popup-titulo">Conquista desbloqueada!</span>
+        <button class="conquista-popup-close" onclick="this.closest('#conquista-popup').remove()">✕</button>
+      </div>
+      <div class="conquista-popup-lista">
+        ${novas.map(c => `
+          <div class="conquista-item">
+            <span class="conquista-emoji">${c.emoji}</span>
+            <div class="conquista-info">
+              <div class="conquista-nome">${c.nome}</div>
+              <div class="conquista-desc">${c.desc}</div>
+            </div>
+          </div>
+        `).join("")}
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(popup);
+
+  // Auto-fechar após 6 segundos
+  setTimeout(() => popup?.remove(), 6000);
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
 // LOGIN / CADASTRO
 // ══════════════════════════════════════════════════════════════════════════════
 const loginBox          = document.getElementById("login-box");
@@ -334,17 +382,18 @@ async function inicializarFormAvaliacao(filmeId) {
     try {
       if (modoEdicao) {
         await api("PUT", `/avaliacoes/${filmeId}`, {
-    estrelas:   avEstrelaAtual,
-    comentario: avComent ? avComent.value.trim() : "",
-     tipo:       modalTipo || "movie"
-    });
+          estrelas:   avEstrelaAtual,
+          comentario: avComent ? avComent.value.trim() : "",
+          tipo:       modalTipo || "movie"
+        });
       } else {
         await api("POST", `/avaliacoes/${filmeId}`, {
-      estrelas:   avEstrelaAtual,
-     comentario: avComent ? avComent.value.trim() : "",
-     tipo:       modalTipo || "movie"
-      });
+          estrelas:   avEstrelaAtual,
+          comentario: avComent ? avComent.value.trim() : "",
+          tipo:       modalTipo || "movie"
+        });
         modoEdicao = true;
+        verificarConquistas(); // ← verifica conquistas apenas em avaliações novas
       }
 
       renderAvaliacoes(filmeId);
@@ -828,5 +877,3 @@ renderLoginBox();
 const hashAba = location.hash.replace('#', '');
 if (hashAba && TITULOS[hashAba]) mudarAba(hashAba);
 else mudarAba("filmes");
-ENDOFFILE
-echo
