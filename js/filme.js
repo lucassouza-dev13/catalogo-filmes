@@ -86,6 +86,7 @@ async function verificarConquistas() {
   if (!usuario || !token) return;
   try {
     const data = await api("POST", "/conquistas/verificar");
+    console.log("[CONQUISTAS RETORNO]", data); // debug — remover após confirmar
     if (data.novas && data.novas.length > 0) {
       mostrarPopupConquistas(data.novas);
     }
@@ -327,6 +328,7 @@ async function inicializarFormAvaliacao(filmeId) {
   const avLink   = document.getElementById("av-link-login");
   const avComent = document.getElementById("av-comentario");
 
+  // ── FIX BUG 2: clona botões de estrela e botão de envio para limpar listeners antigos ──
   btns.forEach(btn => {
     const clone = btn.cloneNode(true);
     btn.parentNode.replaceChild(clone, btn);
@@ -374,8 +376,12 @@ async function inicializarFormAvaliacao(filmeId) {
     } catch(e) {}
   }
 
+  // ── FIX BUG 2: guard contra duplo submit ──
+  let enviando = false;
+
   btnNovo.addEventListener("click", async () => {
-    if (!usuario || !avEstrelaAtual) return;
+    if (!usuario || !avEstrelaAtual || enviando) return;
+    enviando = true;
     btnNovo.disabled    = true;
     btnNovo.textContent = modoEdicao ? "Atualizando..." : "Enviando...";
 
@@ -393,16 +399,22 @@ async function inicializarFormAvaliacao(filmeId) {
           tipo:       modalTipo || "movie"
         });
         modoEdicao = true;
-        verificarConquistas(); // ← verifica conquistas apenas em avaliações novas
+        // ── FIX BUG 1: aguarda o render antes de verificar conquistas ──
+        await renderAvaliacoes(filmeId);
+        await verificarConquistas();
+        hint.textContent    = AV_LABELS[avEstrelaAtual - 1];
+        btnNovo.textContent = "Atualizar avaliação";
+        return; // já renderizou, sai cedo
       }
 
-      renderAvaliacoes(filmeId);
+      await renderAvaliacoes(filmeId);
       hint.textContent    = AV_LABELS[avEstrelaAtual - 1];
       btnNovo.textContent = "Atualizar avaliação";
     } catch(e) {
       hint.textContent = e.message;
     } finally {
       btnNovo.disabled = false;
+      enviando = false;
     }
   });
 }
