@@ -85,7 +85,7 @@ function toggleFav(item, tipo) {
 async function verificarConquistas() {
   if (!usuario || !token) return;
   try {
-    const data = await api("POST", "/conquistas/verificar");
+    const data = await api("POST", "/perfil/conquistas/verificar");
     console.log("[CONQUISTAS RETORNO]", data); // debug — remover após confirmar
     if (data.novas && data.novas.length > 0) {
       mostrarPopupConquistas(data.novas);
