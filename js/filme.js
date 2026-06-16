@@ -35,6 +35,9 @@ let carregandoPagina = false;
 let scrollObserver  = null;
 let scrollAbaAtual  = null;  // qual aba está com scroll ativo
 let scrollGrid      = null;  // referência ao grid que recebe novos cards
+let jogosPagina     = 1;
+let jogosAcabaram   = false;
+let jogosGrid       = null;
 
 // ══════════════════════════════════════════════════════════════════════════════
 // HELPERS
@@ -828,11 +831,11 @@ function igdbCover(url, size = "cover_big") {
   return "https:" + url.replace("t_thumb", `t_${size}`);
 }
 
-async function fetchJogos(query) {
+async function fetchJogos(query, pagina = 1) {
   try {
     const url = query
       ? `${BACKEND}/jogos/buscar?q=${encodeURIComponent(query)}`
-      : `${BACKEND}/jogos/populares`;
+      : `${BACKEND}/jogos/populares?page=${pagina}`;
     const r    = await fetch(url);
     const data = await r.json();
     return Array.isArray(data) ? data : [];
@@ -991,13 +994,39 @@ async function mudarAba(aba) {
   showLoading();
 
   if (aba === "jogos") {
-    const jogos = await fetchJogos(null);
+    destruirObserver();
+    jogosPagina   = 1;
+    jogosAcabaram = false;
+    showLoading();
+
+    const jogos = await fetchJogos(null, 1);
     content.innerHTML = "";
     if (!jogos.length) { showEmpty("Nenhum jogo encontrado 🎮"); return; }
-    const grid = document.createElement("div");
-    grid.className = "grid";
-    jogos.forEach(j => grid.appendChild(criarCardJogo(j)));
-    content.appendChild(grid);
+
+    jogosGrid = document.createElement("div");
+    jogosGrid.className = "grid";
+    jogos.forEach(j => jogosGrid.appendChild(criarCardJogo(j)));
+    content.appendChild(jogosGrid);
+
+    if (jogos.length < 20) { jogosAcabaram = true; return; }
+
+    const carregarMaisJogos = async () => {
+      if (carregandoPagina || jogosAcabaram) return;
+      carregandoPagina = true;
+      setSpinner(true);
+
+      const proximos = await fetchJogos(null, ++jogosPagina);
+      proximos.forEach(j => jogosGrid.appendChild(criarCardJogo(j)));
+
+      setSpinner(false);
+      carregandoPagina = false;
+
+      if (proximos.length < 20) { jogosAcabaram = true; destruirObserver(); return; }
+      criarSentinela(carregarMaisJogos);
+    }
+
+    criarSentinela(carregarMaisJogos);
+  }
 
   } else if (aba === "favoritos") {
     content.innerHTML = "";
@@ -1018,7 +1047,8 @@ async function mudarAba(aba) {
     if (secS) content.appendChild(secS);
     if (secG) content.appendChild(secG);
   }
-}
+
+
 
 // ══════════════════════════════════════════════════════════════════════════════
 // BUSCA
