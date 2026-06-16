@@ -28,6 +28,14 @@ const TITULOS = {
   jogos: "🎮 Jogos", animes: "👾 Animações", favoritos: "❤️ Favoritos"
 };
 
+// ─── Estado do Infinite Scroll ────────────────────────────────────────────────
+let paginaAtual     = 1;
+let totalPaginas    = 1;
+let carregandoPagina = false;
+let scrollObserver  = null;
+let scrollAbaAtual  = null;  // qual aba está com scroll ativo
+let scrollGrid      = null;  // referência ao grid que recebe novos cards
+
 // ══════════════════════════════════════════════════════════════════════════════
 // HELPERS
 // ══════════════════════════════════════════════════════════════════════════════
@@ -65,8 +73,217 @@ async function api(method, path, body = null) {
 async function fetchData(url) {
   try { const r = await fetch(url); const d = await r.json(); return d.results || []; } catch(e) { return []; }
 }
+
+async function fetchPagina(url) {
+  // Retorna { results, total_pages }
+  try {
+    const r = await fetch(url);
+    const d = await r.json();
+    return { results: d.results || [], total_pages: d.total_pages || 1 };
+  } catch(e) {
+    return { results: [], total_pages: 1 };
+  }
+}
+
 async function fetchOne(url) {
   try { const r = await fetch(url); return await r.json(); } catch(e) { return null; }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// INFINITE SCROLL
+// ══════════════════════════════════════════════════════════════════════════════
+function destruirObserver() {
+  if (scrollObserver) {
+    scrollObserver.disconnect();
+    scrollObserver = null;
+  }
+  // Remove sentinela anterior se existir
+  const old = document.getElementById("scroll-sentinela");
+  if (old) old.remove();
+  const oldSpinner = document.getElementById("scroll-spinner");
+  if (oldSpinner) oldSpinner.remove();
+}
+
+function setSpinner(visivel) {
+  let spinner = document.getElementById("scroll-spinner");
+  if (!spinner) {
+    spinner = document.createElement("div");
+    spinner.id = "scroll-spinner";
+    spinner.innerHTML = `<div class="loading" style="padding:20px 0"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
+    content.appendChild(spinner);
+  }
+  spinner.style.display = visivel ? "block" : "none";
+}
+
+function appendCards(items, tipo) {
+  if (!scrollGrid || !items.length) return;
+  items.forEach(item => scrollGrid.appendChild(criarCard(item, tipo)));
+}
+
+function criarSentinela(onVisible) {
+  // Remove sentinela antiga
+  const old = document.getElementById("scroll-sentinela");
+  if (old) old.remove();
+
+  const sentinela = document.createElement("div");
+  sentinela.id = "scroll-sentinela";
+  sentinela.style.cssText = "height:1px;width:100%;";
+  content.appendChild(sentinela);
+
+  scrollObserver = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) onVisible();
+  }, { rootMargin: "200px" });
+
+  scrollObserver.observe(sentinela);
+}
+
+// Monta a URL de paginação para filmes/séries/animes
+function buildUrl(aba, pagina) {
+  if (aba === "filmes") {
+    return `${BASE}/discover/movie?api_key=${API_KEY}&sort_by=popularity.desc&language=pt-BR&page=${pagina}${FILTRO_SAFE}`;
+  } else if (aba === "series") {
+    return `${BASE}/discover/tv?api_key=${API_KEY}&sort_by=popularity.desc&language=pt-BR&page=${pagina}${FILTRO_SAFE}`;
+  }
+  return null;
+}
+
+// Carrega próxima página e adiciona ao grid
+async function carregarProximaPagina() {
+  if (carregandoPagina || paginaAtual >= totalPaginas) return;
+
+  carregandoPagina = true;
+  setSpinner(true);
+
+  const proxima = paginaAtual + 1;
+  const tipo    = scrollAbaAtual === "filmes" ? "movie" : "tv";
+  const url     = buildUrl(scrollAbaAtual, proxima);
+
+  if (!url) { carregandoPagina = false; setSpinner(false); return; }
+
+  const { results, total_pages } = await fetchPagina(url);
+  paginaAtual  = proxima;
+  totalPaginas = total_pages;
+
+  appendCards(results, tipo);
+  setSpinner(false);
+  carregandoPagina = false;
+
+  // Se ainda tem mais páginas, recria sentinela
+  if (paginaAtual < totalPaginas) {
+    criarSentinela(carregarProximaPagina);
+  } else {
+    destruirObserver();
+  }
+}
+
+// Inicializa o scroll para uma aba paginável
+async function iniciarScrollInfinito(aba) {
+  destruirObserver();
+  scrollAbaAtual   = aba;
+  paginaAtual      = 1;
+  totalPaginas     = 1;
+  carregandoPagina = false;
+
+  const tipo = aba === "filmes" ? "movie" : "tv";
+  const url  = buildUrl(aba, 1);
+
+  showLoading();
+
+  const { results, total_pages } = await fetchPagina(url);
+  totalPaginas = total_pages;
+
+  content.innerHTML = "";
+
+  if (!results.length) { showEmpty(); return; }
+
+  // Cria o grid principal
+  scrollGrid = document.createElement("div");
+  scrollGrid.className = "grid";
+  results.forEach(item => scrollGrid.appendChild(criarCard(item, tipo)));
+  content.appendChild(scrollGrid);
+
+  // Só ativa o observer se tiver mais páginas
+  if (totalPaginas > 1) {
+    criarSentinela(carregarProximaPagina);
+  }
+}
+
+// Infinite scroll para animes (duas seções: filmes animados + séries animadas)
+// Animes têm dois feeds independentes, então o scroll carrega ambos em sequência
+let animeEstado = null;
+
+async function iniciarScrollAnime() {
+  destruirObserver();
+  scrollAbaAtual   = "animes";
+  carregandoPagina = false;
+
+  showLoading();
+
+  // Busca primeira página dos dois feeds em paralelo
+  const [resM, resS] = await Promise.all([
+    fetchPagina(`${BASE}/discover/movie?api_key=${API_KEY}&with_genres=16&language=pt-BR&page=1${FILTRO_SAFE}`),
+    fetchPagina(`${BASE}/discover/tv?api_key=${API_KEY}&with_genres=16&language=pt-BR&page=1${FILTRO_SAFE}`)
+  ]);
+
+  animeEstado = {
+    paginaFilmes:  1, totalFilmes:  resM.total_pages,
+    paginaSeries:  1, totalSeries:  resS.total_pages,
+    gridFilmes: null, gridSeries: null
+  };
+
+  content.innerHTML = "";
+
+  if (resM.results.length) {
+    const sec = document.createElement("div");
+    const h   = document.createElement("div"); h.className = "section-label"; h.textContent = "Filmes Animados"; sec.appendChild(h);
+    animeEstado.gridFilmes = document.createElement("div"); animeEstado.gridFilmes.className = "grid";
+    resM.results.forEach(item => animeEstado.gridFilmes.appendChild(criarCard(item, "movie")));
+    sec.appendChild(animeEstado.gridFilmes);
+    content.appendChild(sec);
+  }
+
+  if (resS.results.length) {
+    const sec = document.createElement("div");
+    const h   = document.createElement("div"); h.className = "section-label"; h.textContent = "Séries Animadas"; sec.appendChild(h);
+    animeEstado.gridSeries = document.createElement("div"); animeEstado.gridSeries.className = "grid";
+    resS.results.forEach(item => animeEstado.gridSeries.appendChild(criarCard(item, "tv")));
+    sec.appendChild(animeEstado.gridSeries);
+    content.appendChild(sec);
+  }
+
+  if (!resM.results.length && !resS.results.length) { showEmpty("Nenhum anime encontrado."); return; }
+
+  const temMais = animeEstado.paginaFilmes < animeEstado.totalFilmes || animeEstado.paginaSeries < animeEstado.totalSeries;
+  if (temMais) criarSentinela(carregarProximaPaginaAnime);
+}
+
+async function carregarProximaPaginaAnime() {
+  if (!animeEstado || carregandoPagina) return;
+
+  const temMaisFilmes = animeEstado.paginaFilmes < animeEstado.totalFilmes;
+  const temMaisSeries = animeEstado.paginaSeries < animeEstado.totalSeries;
+  if (!temMaisFilmes && !temMaisSeries) { destruirObserver(); return; }
+
+  carregandoPagina = true;
+  setSpinner(true);
+
+  const proximas = [];
+  if (temMaisFilmes) proximas.push(
+    fetchPagina(`${BASE}/discover/movie?api_key=${API_KEY}&with_genres=16&language=pt-BR&page=${animeEstado.paginaFilmes + 1}${FILTRO_SAFE}`)
+      .then(r => { animeEstado.paginaFilmes++; animeEstado.totalFilmes = r.total_pages; r.results.forEach(item => animeEstado.gridFilmes?.appendChild(criarCard(item, "movie"))); })
+  );
+  if (temMaisSeries) proximas.push(
+    fetchPagina(`${BASE}/discover/tv?api_key=${API_KEY}&with_genres=16&language=pt-BR&page=${animeEstado.paginaSeries + 1}${FILTRO_SAFE}`)
+      .then(r => { animeEstado.paginaSeries++; animeEstado.totalSeries = r.total_pages; r.results.forEach(item => animeEstado.gridSeries?.appendChild(criarCard(item, "tv"))); })
+  );
+
+  await Promise.all(proximas);
+  setSpinner(false);
+  carregandoPagina = false;
+
+  const aindaTemMais = animeEstado.paginaFilmes < animeEstado.totalFilmes || animeEstado.paginaSeries < animeEstado.totalSeries;
+  if (aindaTemMais) criarSentinela(carregarProximaPaginaAnime);
+  else destruirObserver();
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -86,7 +303,6 @@ async function verificarConquistas() {
   if (!usuario || !token) return;
   try {
     const data = await api("POST", "/conquistas/verificar");
-    console.log("[CONQUISTAS RETORNO]", data); // debug — remover após confirmar
     if (data.novas && data.novas.length > 0) {
       mostrarPopupConquistas(data.novas);
     }
@@ -96,7 +312,6 @@ async function verificarConquistas() {
 }
 
 function mostrarPopupConquistas(novas) {
-  // Remove popup anterior se existir
   document.getElementById("conquista-popup")?.remove();
 
   const popup = document.createElement("div");
@@ -123,8 +338,6 @@ function mostrarPopupConquistas(novas) {
   `;
 
   document.body.appendChild(popup);
-
-  // Auto-fechar após 6 segundos
   setTimeout(() => popup?.remove(), 6000);
 }
 
@@ -328,7 +541,6 @@ async function inicializarFormAvaliacao(filmeId) {
   const avLink   = document.getElementById("av-link-login");
   const avComent = document.getElementById("av-comentario");
 
-  // ── FIX BUG 2: clona botões de estrela e botão de envio para limpar listeners antigos ──
   btns.forEach(btn => {
     const clone = btn.cloneNode(true);
     btn.parentNode.replaceChild(clone, btn);
@@ -376,7 +588,6 @@ async function inicializarFormAvaliacao(filmeId) {
     } catch(e) {}
   }
 
-  // ── FIX BUG 2: guard contra duplo submit ──
   let enviando = false;
 
   btnNovo.addEventListener("click", async () => {
@@ -399,12 +610,11 @@ async function inicializarFormAvaliacao(filmeId) {
           tipo:       modalTipo || "movie"
         });
         modoEdicao = true;
-        // ── FIX BUG 1: aguarda o render antes de verificar conquistas ──
         await renderAvaliacoes(filmeId);
         await verificarConquistas();
         hint.textContent    = AV_LABELS[avEstrelaAtual - 1];
         btnNovo.textContent = "Atualizar avaliação";
-        return; // já renderizou, sai cedo
+        return;
       }
 
       await renderAvaliacoes(filmeId);
@@ -764,19 +974,23 @@ async function mudarAba(aba) {
   pageTitle.textContent = TITULOS[aba];
   searchInput.value = "";
   document.querySelectorAll("nav button").forEach(b => b.classList.toggle("active", b.dataset.aba === aba));
+
+  // Abas com infinite scroll
+  if (aba === "filmes" || aba === "series") {
+    await iniciarScrollInfinito(aba);
+    return;
+  }
+
+  if (aba === "animes") {
+    await iniciarScrollAnime();
+    return;
+  }
+
+  // Abas sem scroll — destrói observer se houver
+  destruirObserver();
   showLoading();
 
-  if (aba === "filmes") {
-    const data = await fetchData(`${BASE}/discover/movie?api_key=${API_KEY}&sort_by=popularity.desc&language=pt-BR${FILTRO_SAFE}`);
-    content.innerHTML = ""; const sec = renderSecao(null, data, "movie");
-    sec ? content.appendChild(sec) : showEmpty("Nenhum filme encontrado.");
-
-  } else if (aba === "series") {
-    const data = await fetchData(`${BASE}/discover/tv?api_key=${API_KEY}&sort_by=popularity.desc&language=pt-BR${FILTRO_SAFE}`);
-    content.innerHTML = ""; const sec = renderSecao(null, data, "tv");
-    sec ? content.appendChild(sec) : showEmpty("Nenhuma série encontrada.");
-
-  } else if (aba === "jogos") {
+  if (aba === "jogos") {
     const jogos = await fetchJogos(null);
     content.innerHTML = "";
     if (!jogos.length) { showEmpty("Nenhum jogo encontrado 🎮"); return; }
@@ -784,18 +998,6 @@ async function mudarAba(aba) {
     grid.className = "grid";
     jogos.forEach(j => grid.appendChild(criarCardJogo(j)));
     content.appendChild(grid);
-
-  } else if (aba === "animes") {
-    const [movies, series] = await Promise.all([
-      fetchData(`${BASE}/discover/movie?api_key=${API_KEY}&with_genres=16&language=pt-BR${FILTRO_SAFE}`),
-      fetchData(`${BASE}/discover/tv?api_key=${API_KEY}&with_genres=16&language=pt-BR${FILTRO_SAFE}`)
-    ]);
-    content.innerHTML = "";
-    const secM = renderSecao("Filmes Animados", movies, "movie");
-    const secS = renderSecao("Séries Animadas", series, "tv");
-    if (secM) content.appendChild(secM);
-    if (secS) content.appendChild(secS);
-    if (!secM && !secS) showEmpty("Nenhum anime encontrado.");
 
   } else if (aba === "favoritos") {
     content.innerHTML = "";
@@ -825,7 +1027,12 @@ let searchTimer;
 searchInput.addEventListener("input", () => {
   clearTimeout(searchTimer);
   const query = searchInput.value.trim();
+
+  // Busca cancelada — volta à aba normal (com scroll)
   if (!query) { mudarAba(abaAtual); return; }
+
+  // Busca ativa — cancela o observer
+  destruirObserver();
 
   searchTimer = setTimeout(async () => {
     showLoading();
@@ -885,7 +1092,14 @@ document.querySelectorAll("nav button").forEach(btn => btn.addEventListener("cli
 // ── Init ──────────────────────────────────────────────────────────────────────
 renderLoginBox();
 
-// Lê aba da URL (ex: index.html#jogos)
 const hashAba = location.hash.replace('#', '');
 if (hashAba && TITULOS[hashAba]) mudarAba(hashAba);
 else mudarAba("filmes");
+ENDOFFILE
+echo "OK"
+Saída
+
+OK
+Concluído
+
+
