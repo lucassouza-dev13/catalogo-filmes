@@ -1096,10 +1096,6 @@ const hashAba = location.hash.replace('#', '');
 if (hashAba && TITULOS[hashAba]) mudarAba(hashAba);
 else mudarAba("filmes");
 ENDOFFILE
-echo "OK"
-Saída
 
-OK
-Concluído
 
 
