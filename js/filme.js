@@ -982,19 +982,15 @@ async function mudarAba(aba) {
   if (aba === "filmes" || aba === "series") {
     await iniciarScrollInfinito(aba);
     return;
-  }
+  
 
-  if (aba === "animes") {
+  } else if (aba === "animes") {
     await iniciarScrollAnime();
     return;
   }
 
-  // Abas sem scroll — destrói observer se houver
+ else if (aba === "jogos") {    
   destruirObserver();
-  showLoading();
-
-  if (aba === "jogos") {
-    destruirObserver();
     jogosPagina   = 1;
     jogosAcabaram = false;
     showLoading();
@@ -1026,9 +1022,8 @@ async function mudarAba(aba) {
     }
 
     criarSentinela(carregarMaisJogos);
-  }
-
   } else if (aba === "favoritos") {
+
     content.innerHTML = "";
     if (!favorites.length) { showEmpty("Você ainda não tem favoritos ❤️<br><small style='color:#555;font-size:0.8rem;'>Passe o mouse sobre um título e clique no ♥</small>"); return; }
     const secM = renderSecao("Filmes Favoritos",  favorites.filter(f => f._tipo === "movie"), "movie");
@@ -1046,7 +1041,8 @@ async function mudarAba(aba) {
     if (secM) content.appendChild(secM);
     if (secS) content.appendChild(secS);
     if (secG) content.appendChild(secG);
-  }
+ }
+
 
 
 
@@ -1128,4 +1124,4 @@ else mudarAba("filmes");
 ENDOFFILE
 
 
-
+}
