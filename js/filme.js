@@ -1124,4 +1124,4 @@ document.addEventListener("DOMContentLoaded", () => {
   else mudarAba("filmes");
 });
 
-}
+
