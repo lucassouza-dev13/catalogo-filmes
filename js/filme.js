@@ -985,13 +985,13 @@ async function mudarAba(aba) {
   } else if (aba === "animes") {
     await iniciarScrollAnime();
     return;
-  }
-
- else if (aba === "jogos") {    
+  } else if (aba === "jogos") {
   destruirObserver();
-    jogosPagina   = 1;
-    jogosAcabaram = false;
-    showLoading();
+  jogosPagina      = 1;
+  jogosAcabaram    = false;
+  carregandoPagina = false;
+  showLoading();
+ 
 
     const jogos = await fetchJogos(null, 1);
     content.innerHTML = "";
