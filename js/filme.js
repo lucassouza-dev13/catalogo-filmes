@@ -982,8 +982,6 @@ async function mudarAba(aba) {
   if (aba === "filmes" || aba === "series") {
     await iniciarScrollInfinito(aba);
     return;
-  
-
   } else if (aba === "animes") {
     await iniciarScrollAnime();
     return;
@@ -1042,6 +1040,7 @@ async function mudarAba(aba) {
     if (secS) content.appendChild(secS);
     if (secG) content.appendChild(secG);
  }
+}
 
 
 
