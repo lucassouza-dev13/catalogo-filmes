@@ -1118,11 +1118,10 @@ document.querySelectorAll("nav button").forEach(btn => btn.addEventListener("cli
 // ── Init ──────────────────────────────────────────────────────────────────────
 renderLoginBox();
 
-window.addEventListener("load", () => {
+document.addEventListener("DOMContentLoaded", () => {
   const hashAba = location.hash.replace('#', '');
   if (hashAba && TITULOS[hashAba]) mudarAba(hashAba);
   else mudarAba("filmes");
 });
-
 
 }
