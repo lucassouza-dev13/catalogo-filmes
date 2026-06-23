@@ -25,7 +25,8 @@ const searchInput = document.getElementById("search");
 
 const TITULOS = {
   filmes: "🎬 Filmes", series: "📺 Séries",
-  jogos: "🎮 Jogos", animes: "👾 Animações", favoritos: "❤️ Favoritos"
+  jogos: "🎮 Jogos", animes: "👾 Animações", favoritos: "❤️ Favoritos",
+  listas: "📋 Minhas Listas"
 };
 
 // ─── Estado do Infinite Scroll ────────────────────────────────────────────────
@@ -33,8 +34,8 @@ let paginaAtual     = 1;
 let totalPaginas    = 1;
 let carregandoPagina = false;
 let scrollObserver  = null;
-let scrollAbaAtual  = null;  // qual aba está com scroll ativo
-let scrollGrid      = null;  // referência ao grid que recebe novos cards
+let scrollAbaAtual  = null;
+let scrollGrid      = null;
 let jogosPagina     = 1;
 let jogosAcabaram   = false;
 let jogosGrid       = null;
@@ -78,7 +79,6 @@ async function fetchData(url) {
 }
 
 async function fetchPagina(url) {
-  // Retorna { results, total_pages }
   try {
     const r = await fetch(url);
     const d = await r.json();
@@ -100,7 +100,6 @@ function destruirObserver() {
     scrollObserver.disconnect();
     scrollObserver = null;
   }
-  // Remove sentinela anterior se existir
   const old = document.getElementById("scroll-sentinela");
   if (old) old.remove();
   const oldSpinner = document.getElementById("scroll-spinner");
@@ -124,7 +123,6 @@ function appendCards(items, tipo) {
 }
 
 function criarSentinela(onVisible) {
-  // Remove sentinela antiga
   const old = document.getElementById("scroll-sentinela");
   if (old) old.remove();
 
@@ -140,7 +138,6 @@ function criarSentinela(onVisible) {
   scrollObserver.observe(sentinela);
 }
 
-// Monta a URL de paginação para filmes/séries/animes
 function buildUrl(aba, pagina) {
   if (aba === "filmes") {
     return `${BASE}/discover/movie?api_key=${API_KEY}&sort_by=popularity.desc&language=pt-BR&page=${pagina}${FILTRO_SAFE}`;
@@ -150,7 +147,6 @@ function buildUrl(aba, pagina) {
   return null;
 }
 
-// Carrega próxima página e adiciona ao grid
 async function carregarProximaPagina() {
   if (carregandoPagina || paginaAtual >= totalPaginas) return;
 
@@ -171,7 +167,6 @@ async function carregarProximaPagina() {
   setSpinner(false);
   carregandoPagina = false;
 
-  // Se ainda tem mais páginas, recria sentinela
   if (paginaAtual < totalPaginas) {
     criarSentinela(carregarProximaPagina);
   } else {
@@ -179,7 +174,6 @@ async function carregarProximaPagina() {
   }
 }
 
-// Inicializa o scroll para uma aba paginável
 async function iniciarScrollInfinito(aba) {
   destruirObserver();
   scrollAbaAtual   = aba;
@@ -199,20 +193,16 @@ async function iniciarScrollInfinito(aba) {
 
   if (!results.length) { showEmpty(); return; }
 
-  // Cria o grid principal
   scrollGrid = document.createElement("div");
   scrollGrid.className = "grid";
   results.forEach(item => scrollGrid.appendChild(criarCard(item, tipo)));
   content.appendChild(scrollGrid);
 
-  // Só ativa o observer se tiver mais páginas
   if (totalPaginas > 1) {
     criarSentinela(carregarProximaPagina);
   }
 }
 
-// Infinite scroll para animes (duas seções: filmes animados + séries animadas)
-// Animes têm dois feeds independentes, então o scroll carrega ambos em sequência
 let animeEstado = null;
 
 async function iniciarScrollAnime() {
@@ -222,7 +212,6 @@ async function iniciarScrollAnime() {
 
   showLoading();
 
-  // Busca primeira página dos dois feeds em paralelo
   const [resM, resS] = await Promise.all([
     fetchPagina(`${BASE}/discover/movie?api_key=${API_KEY}&with_genres=16&language=pt-BR&page=1${FILTRO_SAFE}`),
     fetchPagina(`${BASE}/discover/tv?api_key=${API_KEY}&with_genres=16&language=pt-BR&page=1${FILTRO_SAFE}`)
@@ -345,7 +334,6 @@ async function inicializarStatusModal(tituloId, tipo) {
   const wrap = document.getElementById("status-wrap");
   if (!wrap) return;
 
-  // Remove listeners antigos clonando os botões
   const btnsAntigos = wrap.querySelectorAll(".status-btn");
   btnsAntigos.forEach(btn => {
     const clone = btn.cloneNode(true);
@@ -360,7 +348,6 @@ async function inicializarStatusModal(tituloId, tipo) {
       const clicado = btn.dataset.status;
 
       if (statusAtualModal === clicado) {
-        // Clicou no mesmo status ativo → remove
         await removerStatus(tituloId);
         renderStatusBotoes(null);
       } else {
@@ -370,6 +357,128 @@ async function inicializarStatusModal(tituloId, tipo) {
     });
   });
 }
+
+// ── Renderização da aba Listas ──────────────────────────────────
+let listaSubAtual = "quero_ver";
+let listasCache    = null;
+
+async function carregarListas() {
+  if (!usuario || !token) {
+    listasCache = { quero_ver: [], ja_vi: [], abandonei: [] };
+    return;
+  }
+  try {
+    listasCache = await api("GET", "/listas");
+  } catch (e) {
+    console.error("[LISTAS]", e.message);
+    listasCache = { quero_ver: [], ja_vi: [], abandonei: [] };
+  }
+}
+
+async function buscarDetalheItem(item) {
+  if (item.tipo === "game") {
+    const jId = item.titulo_id.replace("game-", "");
+    try {
+      const r = await fetch(`${BACKEND}/jogos/${jId}`);
+      const jogo = await r.json();
+      return {
+        id: item.titulo_id,
+        titulo: jogo?.name || "Jogo #" + jId,
+        poster: jogo?.cover?.url ? igdbCover(jogo.cover.url) : null,
+        tipo: "game",
+        _jogoOriginal: jogo
+      };
+    } catch {
+      return { id: item.titulo_id, titulo: "Jogo #" + jId, poster: null, tipo: "game" };
+    }
+  }
+
+  const endpoint = item.tipo === "tv" ? "tv" : "movie";
+  try {
+    const r = await fetchOne(`${BASE}/${endpoint}/${item.titulo_id}?api_key=${API_KEY}&language=pt-BR`);
+    if (r?.title || r?.name) {
+      return {
+        id: item.titulo_id,
+        titulo: r.title || r.name,
+        poster: r.poster_path ? IMG + r.poster_path : null,
+        tipo: item.tipo,
+        _tmdbOriginal: r
+      };
+    }
+  } catch {}
+  return { id: item.titulo_id, titulo: "Título #" + item.titulo_id, poster: null, tipo: item.tipo };
+}
+
+function criarCardLista(detalhe) {
+  const card = document.createElement("div");
+  card.className = "movie-card";
+  card.dataset.id = detalhe.id;
+
+  if (detalhe.poster) {
+    const img = document.createElement("img");
+    img.src = detalhe.poster; img.alt = detalhe.titulo; img.loading = "lazy";
+    card.appendChild(img);
+  } else {
+    const ph = document.createElement("div");
+    ph.className = "placeholder-img";
+    ph.textContent = detalhe.tipo === "game" ? "🎮" : "🎬";
+    card.appendChild(ph);
+  }
+
+  const overlay = document.createElement("div");
+  overlay.className = "card-overlay";
+  overlay.innerHTML = `<div class="card-title">${detalhe.titulo}</div>`;
+  card.appendChild(overlay);
+
+  card.addEventListener("click", () => {
+    if (detalhe.tipo === "game" && detalhe._jogoOriginal) {
+      abrirModalJogo(detalhe._jogoOriginal);
+    } else if (detalhe._tmdbOriginal) {
+      abrirModal(detalhe._tmdbOriginal, detalhe.tipo);
+    }
+  });
+
+  return card;
+}
+
+async function renderListaSub(status) {
+  listaSubAtual = status;
+  document.querySelectorAll(".lista-subtab").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.status === status);
+  });
+
+  showLoading();
+
+  if (!usuario || !token) {
+    showEmpty("Faça login para ver suas listas 📋");
+    return;
+  }
+
+  if (!listasCache) await carregarListas();
+
+  const itens = listasCache[status] || [];
+  if (!itens.length) {
+    const msgs = {
+      quero_ver: "Nada na lista \"Quero ver\" ainda 🔖",
+      ja_vi:     "Nada marcado como \"Já vi\" ainda ✅",
+      abandonei: "Nada na lista \"Abandonei\" ainda 🚫"
+    };
+    showEmpty(msgs[status]);
+    return;
+  }
+
+  const detalhes = await Promise.all(itens.map(buscarDetalheItem));
+
+  content.innerHTML = "";
+  const grid = document.createElement("div");
+  grid.className = "grid";
+  detalhes.forEach(d => grid.appendChild(criarCardLista(d)));
+  content.appendChild(grid);
+}
+
+document.querySelectorAll(".lista-subtab").forEach(btn => {
+  btn.addEventListener("click", () => renderListaSub(btn.dataset.status));
+});
 
 // ══════════════════════════════════════════════════════════════════════════════
 // CONQUISTAS
@@ -1048,11 +1157,11 @@ async function abrirModalJogo(jogo) {
 // ══════════════════════════════════════════════════════════════════════════════
 async function mudarAba(aba) {
   abaAtual = aba;
+  document.getElementById("listas-subtabs").style.display = aba === "listas" ? "flex" : "none";
   pageTitle.textContent = TITULOS[aba];
   searchInput.value = "";
   document.querySelectorAll("nav button").forEach(b => b.classList.toggle("active", b.dataset.aba === aba));
 
-  // Abas com infinite scroll
   if (aba === "filmes" || aba === "series") {
     await iniciarScrollInfinito(aba);
     return;
@@ -1060,12 +1169,11 @@ async function mudarAba(aba) {
     await iniciarScrollAnime();
     return;
   } else if (aba === "jogos") {
-  destruirObserver();
-  jogosPagina      = 1;
-  jogosAcabaram    = false;
-  carregandoPagina = false;
-  showLoading();
- 
+    destruirObserver();
+    jogosPagina      = 1;
+    jogosAcabaram    = false;
+    carregandoPagina = false;
+    showLoading();
 
     const jogos = await fetchJogos(null, 1);
     content.innerHTML = "";
@@ -1094,8 +1202,13 @@ async function mudarAba(aba) {
     }
 
     criarSentinela(carregarMaisJogos);
+  } else if (aba === "listas") {
+    destruirObserver();
+    listasCache = null;
+    await renderListaSub(listaSubAtual);
+    return;
   } else if (aba === "favoritos") {
-
+    destruirObserver();
     content.innerHTML = "";
     if (!favorites.length) { showEmpty("Você ainda não tem favoritos ❤️<br><small style='color:#555;font-size:0.8rem;'>Passe o mouse sobre um título e clique no ♥</small>"); return; }
     const secM = renderSecao("Filmes Favoritos",  favorites.filter(f => f._tipo === "movie"), "movie");
@@ -1113,11 +1226,8 @@ async function mudarAba(aba) {
     if (secM) content.appendChild(secM);
     if (secS) content.appendChild(secS);
     if (secG) content.appendChild(secG);
- }
+  }
 }
-
-
-
 
 // ══════════════════════════════════════════════════════════════════════════════
 // BUSCA
@@ -1127,10 +1237,8 @@ searchInput.addEventListener("input", () => {
   clearTimeout(searchTimer);
   const query = searchInput.value.trim();
 
-  // Busca cancelada — volta à aba normal (com scroll)
   if (!query) { mudarAba(abaAtual); return; }
 
-  // Busca ativa — cancela o observer
   destruirObserver();
 
   searchTimer = setTimeout(async () => {
@@ -1196,5 +1304,3 @@ document.addEventListener("DOMContentLoaded", () => {
   if (hashAba && TITULOS[hashAba]) mudarAba(hashAba);
   else mudarAba("filmes");
 });
-
-

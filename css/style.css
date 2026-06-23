@@ -1087,20 +1087,47 @@ i[data-lucide] {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 8px 10px;
+  gap: 5px;
+  padding: 8px 6px;
   background: #1a1a1a;
   border: 1.5px solid #2a2a2a;
   border-radius: 8px;
   color: #888;
   font-family: 'Inter', sans-serif;
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  white-space: nowrap;
 }
 .status-btn:hover { border-color: #444; color: #ccc; }
 .status-btn.ativo[data-status="quero_ver"] { background: rgba(59,130,246,0.15); border-color: #3b82f6; color: #60a5fa; }
 .status-btn.ativo[data-status="ja_vi"]     { background: rgba(74,222,128,0.15); border-color: #4ade80; color: #4ade80; }
 .status-btn.ativo[data-status="abandonei"] { background: rgba(239,68,68,0.15);  border-color: #ef4444; color: #f87171; }
 .status-btn i { width: 14px; height: 14px; }
+
+/* ── Sub-tabs da aba Listas ─────────────────────────────────────── */
+#listas-subtabs {
+  display: flex;
+  gap: 8px;
+  padding: 0 2rem 1rem;
+  flex-wrap: wrap;
+}
+.lista-subtab {
+  padding: 8px 18px;
+  background: none;
+  border: 1.5px solid #2a2a2a;
+  border-radius: 20px;
+  color: #888;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.lista-subtab:hover { border-color: #444; color: #ccc; }
+.lista-subtab.active {
+  background: #8b5cf6;
+  border-color: #8b5cf6;
+  color: #fff;
+}
