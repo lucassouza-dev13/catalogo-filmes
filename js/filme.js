@@ -300,6 +300,78 @@ function toggleFav(item, tipo) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
+// LISTAS PERSONALIZADAS (status: quero_ver / ja_vi / abandonei)
+// ══════════════════════════════════════════════════════════════════════════════
+let statusAtualModal = null;
+
+async function buscarStatus(tituloId) {
+  if (!usuario || !token) return null;
+  try {
+    const data = await api("GET", `/listas/${tituloId}`);
+    return data.status;
+  } catch (e) {
+    return null;
+  }
+}
+
+async function definirStatus(tituloId, tipo, status) {
+  if (!usuario || !token) { abrirLoginModal(); return null; }
+  try {
+    const data = await api("PUT", `/listas/${tituloId}`, { status, tipo });
+    return data.item.status;
+  } catch (e) {
+    console.error("[LISTAS]", e.message);
+    return null;
+  }
+}
+
+async function removerStatus(tituloId) {
+  if (!usuario || !token) return;
+  try {
+    await api("DELETE", `/listas/${tituloId}`);
+  } catch (e) {
+    console.error("[LISTAS]", e.message);
+  }
+}
+
+function renderStatusBotoes(statusAtivo) {
+  statusAtualModal = statusAtivo;
+  document.querySelectorAll(".status-btn").forEach(btn => {
+    btn.classList.toggle("ativo", btn.dataset.status === statusAtivo);
+  });
+}
+
+async function inicializarStatusModal(tituloId, tipo) {
+  const wrap = document.getElementById("status-wrap");
+  if (!wrap) return;
+
+  // Remove listeners antigos clonando os botões
+  const btnsAntigos = wrap.querySelectorAll(".status-btn");
+  btnsAntigos.forEach(btn => {
+    const clone = btn.cloneNode(true);
+    btn.parentNode.replaceChild(clone, btn);
+  });
+
+  const statusAtual = await buscarStatus(tituloId);
+  renderStatusBotoes(statusAtual);
+
+  wrap.querySelectorAll(".status-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const clicado = btn.dataset.status;
+
+      if (statusAtualModal === clicado) {
+        // Clicou no mesmo status ativo → remove
+        await removerStatus(tituloId);
+        renderStatusBotoes(null);
+      } else {
+        const novoStatus = await definirStatus(tituloId, tipo, clicado);
+        if (novoStatus) renderStatusBotoes(novoStatus);
+      }
+    });
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
 // CONQUISTAS
 // ══════════════════════════════════════════════════════════════════════════════
 async function verificarConquistas() {
@@ -714,6 +786,7 @@ async function abrirModal(item, tipo) {
 
   renderAvaliacoes(filmeId);
   inicializarFormAvaliacao(filmeId);
+  inicializarStatusModal(filmeId, tipo);
 
   const [details, videosPT, videosEN] = await Promise.all([
     fetchOne(`${BASE}/${tipo}/${item.id}?api_key=${API_KEY}&language=pt-BR`),
@@ -938,6 +1011,7 @@ async function abrirModalJogo(jogo) {
 
   renderAvaliacoes(id);
   inicializarFormAvaliacao(id);
+  inicializarStatusModal(id, "game");
 
   const detalhe = await fetchJogoDetalhe(jogo.id);
   if (detalhe) {

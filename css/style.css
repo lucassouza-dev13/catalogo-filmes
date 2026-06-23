@@ -1075,3 +1075,32 @@ i[data-lucide] {
   color: #888;
   margin-top: 2px;
 }
+
+/* ── Botões de status (Listas personalizadas) ──────────────────── */
+.status-wrap {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.status-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 10px;
+  background: #1a1a1a;
+  border: 1.5px solid #2a2a2a;
+  border-radius: 8px;
+  color: #888;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.status-btn:hover { border-color: #444; color: #ccc; }
+.status-btn.ativo[data-status="quero_ver"] { background: rgba(59,130,246,0.15); border-color: #3b82f6; color: #60a5fa; }
+.status-btn.ativo[data-status="ja_vi"]     { background: rgba(74,222,128,0.15); border-color: #4ade80; color: #4ade80; }
+.status-btn.ativo[data-status="abandonei"] { background: rgba(239,68,68,0.15);  border-color: #ef4444; color: #f87171; }
+.status-btn i { width: 14px; height: 14px; }
