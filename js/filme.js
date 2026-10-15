@@ -545,9 +545,7 @@ function renderLoginBox() {
         <button class="btn-sair" onclick="fazerLogout()">Sair</button>
       </div>`;
   } else {
-    loginBox.innerHTML = `<button class="btn-entrar" id="btn-abrir-login">Entrar</button>`;
-    document.getElementById("btn-abrir-login").addEventListener("click", abrirLoginModal);
-  }
+    loginBox.innerHTML = `<button class="btn-entrar" id="btn-abrir-login">Entrar</button>`;  }
   renderFormAvaliacao();
 }
 
@@ -1295,7 +1293,9 @@ searchInput.addEventListener("input", () => {
 });
 
 document.querySelectorAll("nav button").forEach(btn => btn.addEventListener("click", () => mudarAba(btn.dataset.aba)));
-
+document.addEventListener("click", e => {
+  if (e.target.closest("#btn-abrir-login")) abrirLoginModal();
+});
 // ── Init ──────────────────────────────────────────────────────────────────────
 renderLoginBox();
 
