@@ -545,11 +545,12 @@ function renderLoginBox() {
         <button class="btn-sair" onclick="fazerLogout()">Sair</button>
       </div>`;
   } else {
-    loginBox.innerHTML = `<button class="btn-entrar" id="btn-abrir-login">Entrar</button>`;  }
+    loginBox.innerHTML = `<button class="btn-entrar" id="btn-abrir-login" type="button" onclick="abrirLoginModal()">Entrar</button>`;  }
   renderFormAvaliacao();
 }
 
 function abrirLoginModal() {
+  console.log("[LOGIN]) abrirLoginModal chamado");
   loginModalOverlay.classList.add("open");
   lmNome.value = lmSenha.value = "";
   loginError.textContent = "";
