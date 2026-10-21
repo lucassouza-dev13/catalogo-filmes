@@ -550,14 +550,18 @@ function renderLoginBox() {
 }
 
 function abrirLoginModal() {
-  console.log("[LOGIN]) abrirLoginModal chamado");
   loginModalOverlay.classList.add("open");
+  console.log("[LOGIN] logo após abrir:", loginModalOverlay.className, getComputedStyle(loginModalOverlay).display);
+  setTimeout(() => {
+    console.log("[LOGIN] 300ms depois:", loginModalOverlay.className, getComputedStyle(loginModalOverlay).display);
+  }, 300);
   lmNome.value = lmSenha.value = "";
   loginError.textContent = "";
   setTimeout(() => lmNome.focus(), 50);
 }
 
 function fecharLoginModal() {
+  console.trace("[LOGIN] fecharLoginModal chamado");
   loginModalOverlay.classList.remove("open");
 }
 
