@@ -411,7 +411,7 @@ async function buscarDetalheItem(item) {
 
 function criarCardLista(detalhe) {
   const card = document.createElement("div");
-  card.className = "movie-card";
+  card.className = "movie-card game-card";
   card.dataset.id = detalhe.id;
 
   if (detalhe.poster) {

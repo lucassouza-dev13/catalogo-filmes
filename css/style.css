@@ -816,3 +816,50 @@ i[data-lucide] { width: 18px; height: 18px; stroke-width: 2; vertical-align: mid
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
+
+
+/* ===== CARDS DE JOGOS ===== */
+.game-card .card-poster {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  background: #111;
+}
+
+.game-card .card-poster img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+}
+
+
+/* ===== GRADE RESPONSIVA: FILMES, SÉRIES E JOGOS ===== */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 18px 14px;
+  width: 100%;
+  box-sizing: border-box;
+  align-items: start;
+}
+
+/* Tablets */
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px 12px;
+  }
+}
+
+/* Celulares */
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px 10px;
+  }
+}
