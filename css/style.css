@@ -1453,3 +1453,82 @@ nav a.nav-dashboard:hover {
   color: var(--text);
   border-color: var(--border);
 }
+
+/* ===== CORREÇÃO FINAL: DASHBOARD E COMUNIDADE ===== */
+
+#dashboard,
+#comunidade,
+#page-dashboard,
+#page-comunidade,
+.dashboard,
+.comunidade,
+.dashboard-page,
+.comunidade-page,
+.dashboard-container,
+.comunidade-container,
+main,
+.page-content {
+    background-color: var(--bg) !important;
+    color: var(--text) !important;
+}
+
+/* Cards e painéis */
+#dashboard .card,
+#comunidade .card,
+.dashboard .card,
+.comunidade .card,
+.dashboard-page .card,
+.comunidade-page .card,
+.dashboard-card,
+.comunidade-card,
+.stat-card,
+.stats-card,
+.post-card,
+.community-card,
+.feed-card {
+    background-color: var(--bg-card) !important;
+    color: var(--text) !important;
+    border-color: var(--border) !important;
+}
+
+/* Títulos e textos */
+#dashboard h1,
+#dashboard h2,
+#dashboard h3,
+#comunidade h1,
+#comunidade h2,
+#comunidade h3,
+.dashboard h1,
+.dashboard h2,
+.comunidade h1,
+.comunidade h2,
+.dashboard-page h1,
+.dashboard-page h2,
+.comunidade-page h1,
+.comunidade-page h2 {
+    color: var(--text) !important;
+}
+
+/* Campos de texto */
+#dashboard input,
+#dashboard textarea,
+#comunidade input,
+#comunidade textarea,
+.dashboard input,
+.comunidade input,
+.dashboard-page input,
+.comunidade-page input {
+    background-color: var(--bg-deep) !important;
+    color: var(--text) !important;
+    border-color: var(--border) !important;
+}
+
+/* Textos secundários */
+#dashboard p,
+#comunidade p,
+.dashboard p,
+.comunidade p,
+.dashboard-page p,
+.comunidade-page p {
+    color: var(--text-muted);
+}
