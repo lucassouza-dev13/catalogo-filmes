@@ -838,28 +838,38 @@ i[data-lucide] { width: 18px; height: 18px; stroke-width: 2; vertical-align: mid
 }
 
 
-/* ===== GRADE RESPONSIVA: FILMES, SÉRIES E JOGOS ===== */
+/* ===== CATÁLOGO EM LARGURA TOTAL ===== */
 .grid {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 18px 14px;
+  gap: 20px 16px;
   width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 12px 24px 40px;
   box-sizing: border-box;
   align-items: start;
 }
 
-/* Tablets */
+.movie-card {
+  width: 100%;
+  min-width: 0;
+}
+
 @media (max-width: 900px) {
   .grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 14px 12px;
+    padding-left: 16px;
+    padding-right: 16px;
   }
 }
 
-/* Celulares */
-@media (max-width: 480px) {
+@media (max-width: 600px) {
   .grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 14px 10px;
+    padding-left: 10px;
+    padding-right: 10px;
   }
 }
+
