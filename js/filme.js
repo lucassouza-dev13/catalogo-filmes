@@ -959,21 +959,31 @@ modalFavBtn.addEventListener("click", () => {
 // ══════════════════════════════════════════════════════════════════════════════
 // CARDS / RENDER
 // ══════════════════════════════════════════════════════════════════════════════
+
 function criarCard(item, tipo) {
   const titulo = tipo === "movie" ? item.title : item.name;
-  const card   = document.createElement("div");
-  card.className  = "movie-card";
+
+  const card = document.createElement("div");
+  card.className = "movie-card";
   card.dataset.id = item.id;
+
+  const poster = document.createElement("div");
+  poster.className = "card-poster";
 
   if (item.poster_path) {
     const img = document.createElement("img");
-    img.src = IMG + item.poster_path; img.alt = titulo; img.loading = "lazy";
-    card.appendChild(img);
+    img.src = IMG + item.poster_path;
+    img.alt = titulo;
+    img.loading = "lazy";
+    poster.appendChild(img);
   } else {
     const ph = document.createElement("div");
-    ph.className = "placeholder-img"; ph.textContent = "🎬";
-    card.appendChild(ph);
+    ph.className = "placeholder-img";
+    ph.textContent = "🎬";
+    poster.appendChild(ph);
   }
+
+  card.appendChild(poster);
 
   const overlay = document.createElement("div");
   overlay.className = "card-overlay";
@@ -982,14 +992,18 @@ function criarCard(item, tipo) {
 
   const btn = document.createElement("button");
   btn.className = "fav-btn" + (isFav(item.id) ? " active" : "");
-  btn.title = "Favoritar"; btn.textContent = "♥";
+  btn.title = "Favoritar";
+  btn.textContent = "♥";
+
   btn.addEventListener("click", e => {
     e.stopPropagation();
     toggleFav(item, tipo);
     btn.classList.toggle("active", isFav(item.id));
   });
+
   card.appendChild(btn);
   card.addEventListener("click", () => abrirModal(item, tipo));
+
   return card;
 }
 
@@ -1298,9 +1312,6 @@ searchInput.addEventListener("input", () => {
 });
 
 document.querySelectorAll("nav button").forEach(btn => btn.addEventListener("click", () => mudarAba(btn.dataset.aba)));
-document.addEventListener("click", e => {
-  if (e.target.closest("#btn-abrir-login")) abrirLoginModal();
-});
 // ── Init ──────────────────────────────────────────────────────────────────────
 renderLoginBox();
 
