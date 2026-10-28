@@ -1454,3 +1454,53 @@ nav a.nav-dashboard:hover {
   border-color: var(--border);
 }
 
+
+
+/* ===== ANIMAÇÕES GLOBAIS DOS CARDS — LusTV ===== */
+
+/* Transição suave para os cards */
+.movie-card,
+.game-card,
+.genre-card,
+.card,
+.av-form-card,
+.av-lista-card,
+.conquista-popup-inner,
+.notif-item,
+.lista-subtab {
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    background-color 0.25s ease;
+}
+
+/* Elevação ao passar o mouse */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .movie-card:hover,
+  .game-card:hover,
+  .genre-card:hover,
+  .card:hover,
+  .av-form-card:hover,
+  .av-lista-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+    box-shadow: 0 8px 20px rgba(152, 120, 255, 0.12);
+  }
+}
+
+/* Respeita quem prefere menos animações */
+@media (prefers-reduced-motion: reduce) {
+  .movie-card,
+  .game-card,
+  .genre-card,
+  .card,
+  .av-form-card,
+  .av-lista-card,
+  .conquista-popup-inner,
+  .notif-item,
+  .lista-subtab {
+    transition: none;
+  }
+}
+
