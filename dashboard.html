@@ -7,62 +7,864 @@
 <title>LusTV Ratings — Dashboard</title>
 <link rel="stylesheet" href="css/style.css">
 <style>
-.dash-content{max-width:1400px;margin:0 auto;padding:0 2rem 4rem}.tabs{display:flex;gap:4px;margin-bottom:32px;border-bottom:1px solid #222;padding-top:1.5rem}.tab-btn{padding:10px 18px;background:none;border:0;border-bottom:2px solid transparent;color:#aaa;font-family:Inter,sans-serif;font-size:.85rem;font-weight:500;cursor:pointer;transition:all .2s;margin-bottom:-1px;display:flex;align-items:center;gap:6px}.tab-btn:hover{color:#fff}.tab-btn.active{color:#fff;border-bottom-color:#8b5cf6}.tab-panel{display:none}.tab-panel.active{display:block}.sec-title{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:1px;display:flex;align-items:center;gap:10px;margin-bottom:20px;padding-top:8px}.movie-list{display:flex;flex-direction:column;gap:8px}.movie-row{display:flex;align-items:center;gap:16px;background:#1c1c1c;border:1px solid #2a2a2a;border-radius:8px;padding:12px 16px;transition:background .2s,border-color .2s;animation:fadeUp .4s ease both}.movie-row:hover{background:#222;border-color:#3a3a3a}@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}.rank{font-family:'Bebas Neue',sans-serif;font-size:28px;min-width:36px;text-align:center;color:#555}.rank.gold{color:#f5c518}.rank.silver{color:#c0c0c0}.rank.bronze{color:#cd7f32}.poster{width:46px;height:64px;border-radius:4px;background:#2a2a2a;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;color:#888}.poster img{width:100%;height:100%;object-fit:cover;border-radius:4px}.poster svg{width:22px;height:22px}.movie-info{flex:1;min-width:0}.movie-title{font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.movie-meta{font-size:13px;color:#888;margin-top:3px}.movie-bar{height:3px;background:#2a2a2a;border-radius:2px;margin-top:7px}.movie-bar-fill{height:100%;border-radius:2px;background:#8b5cf6;transition:width .6s ease}.badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px;flex-shrink:0}.badge-hot{background:rgba(139,92,246,.2);color:#ff6b6b;border:1px solid rgba(139,92,246,.3)}.badge-up{background:rgba(29,158,117,.2);color:#4ade80;border:1px solid rgba(29,158,117,.3)}.badge-new{background:rgba(59,130,246,.2);color:#60a5fa;border:1px solid rgba(59,130,246,.3)}.star{color:#f5c518;font-size:13px;margin-left:6px}.genre-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:28px}.genre-card{background:#1c1c1c;border:1px solid #2a2a2a;border-radius:8px;padding:18px 14px;cursor:pointer;transition:all .2s;text-align:center}.genre-card:hover,.genre-card.selected{background:#222;border-color:#8b5cf6}.genre-card .gicon{display:flex;align-items:center;justify-content:center;margin-bottom:10px;color:#a78bfa}.genre-card .gicon svg{width:28px;height:28px;stroke-width:1.8}.genre-card .gname{font-size:13px;font-weight:600}.profile-wrap{display:grid;grid-template-columns:280px 1fr;gap:20px}.profile-card{background:#1c1c1c;border:1px solid #2a2a2a;border-radius:12px;padding:28px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}.avatar-big{width:88px;height:88px;border-radius:50%;background:#8b5cf6;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:700;cursor:pointer;position:relative;border:3px solid #7c3aed;transition:transform .2s}.avatar-big:hover{transform:scale(1.05)}.avatar-big .edit-overlay{position:absolute;inset:0;border-radius:50%;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s}.avatar-big:hover .edit-overlay{opacity:1}.avatar-big .edit-overlay svg{width:20px;height:20px}.profile-name-big{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px}.profile-since{font-size:12px;color:#666}.edit-name-btn{background:none;border:1px solid #2a2a2a;color:#888;padding:6px 18px;border-radius:20px;font-family:Inter,sans-serif;font-size:12px;cursor:pointer;transition:all .2s}.edit-name-btn:hover{border-color:#8b5cf6;color:#fff}.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%}.stat-box{background:#141414;border-radius:8px;padding:14px}.stat-num{font-family:'Bebas Neue',sans-serif;font-size:28px;color:#8b5cf6}.stat-lbl{font-size:11px;color:#666;margin-top:2px}.profile-right{display:flex;flex-direction:column;gap:16px}.recentes-card{background:#1c1c1c;border:1px solid #2a2a2a;border-radius:12px;padding:22px}.recentes-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:1px;margin-bottom:16px;color:#888}.dash-loading{display:flex;align-items:center;justify-content:center;gap:10px;padding:40px;color:#666;font-size:14px}.dash-spinner{width:18px;height:18px;border:2px solid #2a2a2a;border-top-color:#8b5cf6;border-radius:50%;animation:spin .7s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.empty{text-align:center;padding:48px;color:#555;font-size:14px}.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}.modal-overlay.open{display:flex}.modal-box{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:28px;width:360px}.modal-box h3{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;margin-bottom:16px}.emoji-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:20px}.emoji-opt{font-size:24px;padding:8px;border-radius:8px;cursor:pointer;text-align:center;transition:background .15s;border:2px solid transparent}.emoji-opt:hover{background:#222}.emoji-opt.selected{border-color:#8b5cf6;background:#222}.modal-btns{display:flex;gap:10px;justify-content:flex-end}.btn-cancel{background:none;border:1px solid #2a2a2a;color:#888;padding:8px 18px;border-radius:6px;cursor:pointer;font-family:Inter,sans-serif;font-size:.85rem}.btn-save{background:#8b5cf6;border:0;color:#fff;padding:8px 18px;border-radius:6px;cursor:pointer;font-family:Inter,sans-serif;font-size:.85rem;font-weight:600}.btn-save:hover{background:#7c3aed}.notif-wrap{position:relative;display:flex;align-items:center}.btn-sino{background:none;border:0;cursor:pointer;color:#aaa;display:flex;align-items:center;justify-content:center;padding:6px;border-radius:50%;transition:color .2s,background .2s}.btn-sino:hover{color:#fff;background:#222}.notif-badge{position:absolute;top:0;right:0;background:#8b5cf6;color:#fff;font-size:10px;font-weight:700;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;pointer-events:none}.notif-dropdown{display:none;position:absolute;top:calc(100% + 10px);right:0;width:300px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.6);z-index:1100;overflow:hidden}.notif-dropdown.open{display:block}.notif-dropdown-head{padding:12px 16px;font-size:.8rem;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #222}.notif-item{display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid #1f1f1f;transition:background .15s}.notif-item:last-child{border-bottom:0}.notif-item:hover{background:#111}.notif-item.nao-lida{background:#1a1428}.notif-item.nao-lida:hover{background:#1e1a35}.notif-avatar{width:32px;height:32px;border-radius:50%;background:#8b5cf6;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}.notif-texto{flex:1;min-width:0;font-size:.8rem;color:#bbb;line-height:1.4}.notif-texto strong{color:#fff}.notif-tempo{font-size:.72rem;color:#555;flex-shrink:0}.notif-vazio{padding:2rem;text-align:center;font-size:.82rem;color:#555}.sec-title svg,.tab-btn svg{width:18px;height:18px;flex-shrink:0}.delete-review-btn{background:none;border:0;color:#777;display:flex;align-items:center;justify-content:center;padding:7px;border-radius:5px;cursor:pointer;transition:color .2s,background .2s}.delete-review-btn:hover{color:#ff6b6b;background:#2a1a1a}.confirm-icon svg{width:28px;height:28px}
-@media(max-width:800px){.dash-content{padding:0 1rem 3rem}.tabs{overflow-x:auto;white-space:nowrap;gap:2px;margin-bottom:24px}.tab-btn{padding:10px 12px;font-size:.8rem}.profile-wrap{grid-template-columns:1fr}}
-@media(max-width:520px){.dash-content{padding:0 .75rem 2rem}.tabs{padding-top:1rem}.tab-btn{padding:9px 10px;font-size:.76rem}.movie-row{gap:10px;padding:10px}.rank{min-width:24px;font-size:23px}.badge{font-size:9px;padding:3px 6px}.movie-title{font-size:13px}.movie-meta{font-size:11px}.genre-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.profile-card,.recentes-card{padding:18px}.stats-grid{gap:6px}.stat-box{padding:10px 6px}.stat-num{font-size:24px}.modal-box{width:calc(100% - 32px);padding:22px}}
+  /* ── estilos exclusivos do dashboard ─────────────────────────── */
+
+  /* LAYOUT */
+  .dash-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem 4rem;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 32px;
+    border-bottom: 1px solid #222;
+    padding-top: 1.5rem;
+  }
+  .tab-btn {
+    padding: 10px 18px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: #aaa;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: -1px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tab-btn:hover  { color: #fff; }
+  .tab-btn.active { color: #fff; border-bottom-color: #8b5cf6; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* SECTION TITLE */
+  .sec-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding-top: 8px;
+  }
+
+  /* MOVIE ROW */
+  .movie-list { display: flex; flex-direction: column; gap: 8px; }
+  .movie-row {
+    display: flex; align-items: center; gap: 16px;
+    background: #1c1c1c; border: 1px solid #2a2a2a;
+    border-radius: 8px; padding: 12px 16px;
+    transition: background 0.2s, border-color 0.2s;
+    animation: fadeUp 0.4s ease both;
+  }
+  .movie-row:hover { background: #222; border-color: #3a3a3a; }
+  @keyframes fadeUp { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+
+  .rank {
+    font-family: 'Bebas Neue', sans-serif; font-size: 28px;
+    min-width: 36px; text-align: center; color: #555;
+  }
+  .rank.gold   { color: #f5c518; }
+  .rank.silver { color: #c0c0c0; }
+  .rank.bronze { color: #cd7f32; }
+
+  .poster {
+    width: 46px; height: 64px; border-radius: 4px;
+    background: #2a2a2a; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 22px;
+    overflow: hidden;
+  }
+  .poster img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
+
+  .movie-info { flex: 1; min-width: 0; }
+  .movie-title { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .movie-meta  { font-size: 13px; color: #888; margin-top: 3px; }
+  .movie-bar   { height: 3px; background: #2a2a2a; border-radius: 2px; margin-top: 7px; }
+  .movie-bar-fill { height: 100%; border-radius: 2px; background: #8b5cf6; transition: width 0.6s ease; }
+
+  .badge {
+    font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px;
+    text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0;
+  }
+  .badge-hot { background: rgba(139,92,246,0.2); color: #ff6b6b; border: 1px solid rgba(139,92,246,0.3); }
+  .badge-up  { background: rgba(29,158,117,0.2); color: #4ade80; border: 1px solid rgba(29,158,117,0.3); }
+  .badge-new { background: rgba(59,130,246,0.2); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+  .star { color: #f5c518; font-size: 13px; margin-left: 6px; }
+
+  /* GENRE GRID */
+  .genre-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px; margin-bottom: 28px;
+  }
+  .genre-card {
+    background: #1c1c1c; border: 1px solid #2a2a2a; border-radius: 8px;
+    padding: 18px 14px; cursor: pointer; transition: all 0.2s; text-align: center;
+  }
+  .genre-card:hover, .genre-card.selected { background: #222; border-color: #8b5cf6; }
+  .genre-card .gicon  { font-size: 26px; margin-bottom: 8px; }
+  .genre-card .gname  { font-size: 13px; font-weight: 600; }
+
+  /* PERFIL */
+  .profile-wrap { display: grid; grid-template-columns: 280px 1fr; gap: 20px; }
+  .profile-card {
+    background: #1c1c1c; border: 1px solid #2a2a2a; border-radius: 12px; padding: 28px;
+    display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center;
+  }
+  .avatar-big {
+    width: 88px; height: 88px; border-radius: 50%; background: #8b5cf6;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px; font-weight: 700; cursor: pointer; position: relative;
+    border: 3px solid #7c3aed; transition: transform 0.2s;
+  }
+  .avatar-big:hover { transform: scale(1.05); }
+  .avatar-big .edit-overlay {
+    position: absolute; inset: 0; border-radius: 50%; background: rgba(0,0,0,0.6);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.2s; font-size: 20px;
+  }
+  .avatar-big:hover .edit-overlay { opacity: 1; }
+
+  .profile-name-big { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 1px; }
+  .profile-since    { font-size: 12px; color: #666; }
+
+  .edit-name-btn {
+    background: none; border: 1px solid #2a2a2a; color: #888;
+    padding: 6px 18px; border-radius: 20px; font-family: 'Inter', sans-serif;
+    font-size: 12px; cursor: pointer; transition: all 0.2s;
+  }
+  .edit-name-btn:hover { border-color: #8b5cf6; color: #fff; }
+
+  .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; }
+  .stat-box   { background: #141414; border-radius: 8px; padding: 14px; }
+  .stat-num   { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: #8b5cf6; }
+  .stat-lbl   { font-size: 11px; color: #666; margin-top: 2px; }
+
+  .profile-right { display: flex; flex-direction: column; gap: 16px; }
+  .recentes-card {
+    background: #1c1c1c; border: 1px solid #2a2a2a; border-radius: 12px; padding: 22px;
+  }
+  .recentes-title {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 1px;
+    margin-bottom: 16px; color: #888;
+  }
+
+  /* LOADING */
+  .dash-loading {
+    display: flex; align-items: center; justify-content: center;
+    gap: 10px; padding: 40px; color: #666; font-size: 14px;
+  }
+  .dash-spinner {
+    width: 18px; height: 18px; border: 2px solid #2a2a2a;
+    border-top-color: #8b5cf6; border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* EMPTY */
+  .empty { text-align: center; padding: 48px; color: #555; font-size: 14px; }
+
+  /* MODAL AVATAR */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 200;
+    display: none; align-items: center; justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-box {
+    background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px;
+    padding: 28px; width: 360px;
+  }
+  .modal-box h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; margin-bottom: 16px; }
+  .emoji-grid {
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 20px;
+  }
+  .emoji-opt {
+    font-size: 24px; padding: 8px; border-radius: 8px; cursor: pointer;
+    text-align: center; transition: background 0.15s; border: 2px solid transparent;
+  }
+  .emoji-opt:hover    { background: #222; }
+  .emoji-opt.selected { border-color: #8b5cf6; background: #222; }
+  .modal-btns { display: flex; gap: 10px; justify-content: flex-end; }
+  .btn-cancel {
+    background: none; border: 1px solid #2a2a2a; color: #888;
+    padding: 8px 18px; border-radius: 6px; cursor: pointer;
+    font-family: 'Inter', sans-serif; font-size: 0.85rem;
+  }
+  .btn-save {
+    background: #8b5cf6; border: none; color: #fff;
+    padding: 8px 18px; border-radius: 6px; cursor: pointer;
+    font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600;
+  }
+  .btn-save:hover { background: #7c3aed; }
+
+  /* ── Sino de notificações ───────────────────────────────────── */
+  .notif-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .btn-sino {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #aaa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    border-radius: 50%;
+    transition: color 0.2s, background 0.2s;
+  }
+  .btn-sino:hover { color: #fff; background: #222; }
+  .notif-badge {
+    position: absolute;
+    top: 0; right: 0;
+    background: #8b5cf6;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    pointer-events: none;
+  }
+  .notif-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 300px;
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    z-index: 1100;
+    overflow: hidden;
+  }
+  .notif-dropdown.open { display: block; }
+  .notif-dropdown-head {
+    padding: 12px 16px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #222;
+  }
+  .notif-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 16px;
+    border-bottom: 1px solid #1f1f1f;
+    transition: background 0.15s;
+  }
+  .notif-item:last-child { border-bottom: none; }
+  .notif-item:hover { background: #111; }
+  .notif-item.nao-lida { background: #1a1428; }
+  .notif-item.nao-lida:hover { background: #1e1a35; }
+  .notif-avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: #8b5cf6;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .notif-texto {
+    flex: 1; min-width: 0;
+    font-size: 0.8rem;
+    color: #bbb;
+    line-height: 1.4;
+  }
+  .notif-texto strong { color: #fff; }
+  .notif-tempo {
+    font-size: 0.72rem;
+    color: #555;
+    flex-shrink: 0;
+  }
+  .notif-vazio {
+    padding: 2rem;
+    text-align: center;
+    font-size: 0.82rem;
+    color: #555;
+  }
+
+/* Tema claro moderno roxo: ajustes de cor para estilos específicos da página */
+body { background-color: #f4f5fa; color: #25263a; }
 </style>
 </head>
 <body>
+
 <header>
-<div class="header-row1"><div class="logo"><i data-lucide="popcorn"></i> LusTV-Ratings</div><div class="header-actions">
-<div class="notif-wrap" id="notif-wrap" style="display:none"><button class="btn-sino" id="btn-sino" onclick="toggleNotifDropdown()" aria-label="Notificações"><i data-lucide="bell"></i></button><span class="notif-badge" id="notif-badge" style="display:none"></span><div class="notif-dropdown" id="notif-dropdown"><div class="notif-dropdown-head">Notificações</div><div id="notif-lista"></div></div></div><div id="login-box"></div></div></div>
-<div class="header-row2"><nav>
-<button onclick="window.location.href='index.html#filmes'"><i data-lucide="film"></i> Filmes</button><button onclick="window.location.href='index.html#series'"><i data-lucide="tv"></i> Séries</button><button onclick="window.location.href='index.html#jogos'"><i data-lucide="gamepad-2"></i> Jogos</button><button onclick="window.location.href='index.html#animacoes'"><i data-lucide="sparkles"></i> Animações</button><button onclick="window.location.href='index.html#favoritos'"><i data-lucide="heart"></i> Favoritos</button><a href="comunidade.html" class="nav-dashboard"><i data-lucide="users"></i> Comunidade</a><a href="dashboard.html" class="nav-dashboard" style="color:#fff;border-bottom:2px solid #8b5cf6;padding-bottom:2px"><i data-lucide="bar-chart-3"></i> Dashboard</a>
-</nav><div class="search-wrap search-desktop"><i data-lucide="search"></i><input type="text" placeholder="Buscar..." readonly style="cursor:pointer;opacity:.6" onclick="window.location.href='index.html'" title="Buscar no catálogo"></div></div>
+  <div class="header-row1">
+    <div class="logo">
+      <i data-lucide="popcorn"></i> LusTV-Ratings
+    </div>
+    <div class="header-actions">
+      <div class="notif-wrap" id="notif-wrap" style="display:none">
+        <button class="btn-sino" id="btn-sino" onclick="toggleNotifDropdown()">
+          <i data-lucide="bell"></i>
+        </button>
+        <span class="notif-badge" id="notif-badge" style="display:none"></span>
+        <div class="notif-dropdown" id="notif-dropdown">
+          <div class="notif-dropdown-head">Notificações</div>
+          <div id="notif-lista"></div>
+        </div>
+      </div>
+      <div id="login-box"></div>
+    </div>
+  </div>
+
+  <div class="header-row2">
+    <nav>
+      <button onclick="window.location.href='index.html#filmes'">
+        <i data-lucide="film"></i> Filmes
+      </button>
+      <button onclick="window.location.href='index.html#series'">
+        <i data-lucide="tv"></i> Séries
+      </button>
+      <button onclick="window.location.href='index.html#jogos'">
+  <i data-lucide="gamepad-2"></i> Jogos
+      </button>
+      <button onclick="window.location.href='index.html#animacoes'">
+        <i data-lucide="sparkles"></i> Animações
+      </button>
+      <button onclick="window.location.href='index.html#favoritos'">
+         
+        <i data-lucide="heart"></i> Favoritos
+      </button>
+      <a href="comunidade.html" class="nav-dashboard">
+        <i data-lucide="users"></i> Comunidade
+      </a>
+      <a href="dashboard.html" class="nav-dashboard" style="color:#fff; border-bottom: 2px solid #8b5cf6; padding-bottom:2px;">
+        <i data-lucide="bar-chart-3"></i> Dashboard
+      </a>
+    </nav>
+    <div class="search-wrap search-desktop">
+      <i data-lucide="search"></i>
+      <input type="text" placeholder="Buscar..." readonly style="cursor:pointer; opacity:0.6;" onclick="window.location.href='index.html'" title="Buscar no catálogo">
+    </div>
+  </div>
 </header>
 <div class="dash-content">
-<div class="tabs"><button class="tab-btn active" onclick="switchTab('semana')"><i data-lucide="flame"></i> Mais da semana</button><button class="tab-btn" onclick="switchTab('mundo')"><i data-lucide="trending-up"></i> Em alta no mundo</button><button class="tab-btn" onclick="switchTab('genero')"><i data-lucide="layout-grid"></i> Por gênero</button><button class="tab-btn" onclick="switchTab('perfil')"><i data-lucide="user-round"></i> Perfil</button></div>
-<div class="tab-panel active" id="tab-semana"><div class="sec-title"><i data-lucide="flame"></i> Mais avaliados esta semana</div><div class="movie-list" id="list-semana"><div class="dash-loading"><div class="dash-spinner"></div> Carregando...</div></div></div>
-<div class="tab-panel" id="tab-mundo"><div class="sec-title"><i data-lucide="trending-up"></i> Em alta no mundo</div><div class="movie-list" id="list-mundo"><div class="dash-loading"><div class="dash-spinner"></div> Carregando...</div></div></div>
-<div class="tab-panel" id="tab-genero"><div class="sec-title"><i data-lucide="layout-grid"></i> Explorar por gênero</div><div class="genre-grid" id="genre-grid"><div class="dash-loading"><div class="dash-spinner"></div> Carregando...</div></div><div id="genre-filmes"></div></div>
-<div class="tab-panel" id="tab-perfil"><div class="profile-wrap"><div class="profile-card"><div class="avatar-big" id="avatar-big" onclick="abrirModalAvatar()" title="Alterar avatar"><span id="avatar-conteudo">?</span><div class="edit-overlay"><i data-lucide="pencil"></i></div></div><div class="profile-name-big" id="perfil-nome">—</div><div class="profile-since" id="perfil-desde">Membro desde —</div><button class="edit-name-btn" onclick="editarNome()">Editar nome</button><div class="stats-grid"><div class="stat-box"><div class="stat-num" id="stat-total">—</div><div class="stat-lbl">Avaliações</div></div><div class="stat-box"><div class="stat-num" id="stat-media">—</div><div class="stat-lbl">Média <i data-lucide="star" style="width:11px;height:11px;display:inline;vertical-align:middle;color:#f5c518"></i></div></div><div class="stat-box"><div class="stat-num" id="stat-5">—</div><div class="stat-lbl">Notas 5★</div></div></div></div><div class="profile-right"><div class="recentes-card"><div class="recentes-title">Avaliações recentes</div><div class="movie-list" id="list-recentes"><div class="dash-loading"><div class="dash-spinner"></div> Carregando...</div></div></div></div></div></div>
-<div class="modal-overlay" id="modal-avatar"><div class="modal-box"><h3>Escolha seu avatar</h3><div class="emoji-grid" id="emoji-grid"></div><div class="modal-btns"><button class="btn-cancel" onclick="fecharModal()">Cancelar</button><button class="btn-save" onclick="salvarAvatar()">Salvar</button></div></div></div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('semana')">
+      <i data-lucide="flame"></i> Mais da semana
+    </button>
+    <button class="tab-btn" onclick="switchTab('mundo')">
+      <i data-lucide="trending-up"></i> Em alta no mundo
+    </button>
+    <button class="tab-btn" onclick="switchTab('genero')">
+      <i data-lucide="layout-grid"></i> Por gênero
+    </button>
+    <button class="tab-btn" onclick="switchTab('perfil')">
+      <i data-lucide="user"></i> Perfil
+    </button>
+  </div>
+  
+
+  <!-- SEMANA -->
+  <div class="tab-panel active" id="tab-semana">
+    <div class="sec-title"><i data-lucide="flame"></i> Mais avaliados esta semana</div>
+    <div class="movie-list" id="list-semana">
+      <div class="dash-loading"><div class="dash-spinner"></div> Carregando...</div>
+    </div>
+  </div>
+
+  <!-- MUNDO -->
+  <div class="tab-panel" id="tab-mundo">
+    <div class="sec-title"><i data-lucide="trending-up"></i> Em alta no mundo</div>
+    <div class="movie-list" id="list-mundo">
+      <div class="dash-loading"><div class="dash-spinner"></div> Carregando...</div>
+    </div>
+  </div>
+
+  <!-- GÊNERO -->
+  <div class="tab-panel" id="tab-genero">
+    <div class="sec-title"><i data-lucide="layout-grid"></i> Explorar por gênero</div>
+    <div class="genre-grid" id="genre-grid">
+      <div class="dash-loading"><div class="dash-spinner"></div> Carregando...</div>
+    </div>
+    <div id="genre-filmes"></div>
+  </div>
+
+  <!-- PERFIL -->
+  <div class="tab-panel" id="tab-perfil">
+    <div class="profile-wrap">
+      <div class="profile-card">
+        <div class="avatar-big" id="avatar-big" onclick="abrirModalAvatar()">
+          <span id="avatar-conteudo">?</span>
+          <div class="edit-overlay">✏️</div>
+        </div>
+        <div class="profile-name-big" id="perfil-nome">—</div>
+        <div class="profile-since" id="perfil-desde">Membro desde —</div>
+        <button class="edit-name-btn" onclick="editarNome()">Editar nome</button>
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-num" id="stat-total">—</div>
+            <div class="stat-lbl">Avaliações</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num" id="stat-media">—</div>
+            <div class="stat-lbl">Média ⭐</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num" id="stat-5">—</div>
+            <div class="stat-lbl">Notas 5★</div>
+          </div>
+        </div>
+      </div>
+      <div class="profile-right">
+        <div class="recentes-card">
+          <div class="recentes-title">Avaliações recentes</div>
+          <div class="movie-list" id="list-recentes">
+            <div class="dash-loading"><div class="dash-spinner"></div> Carregando...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL AVATAR -->
+<div class="modal-overlay" id="modal-avatar">
+  <div class="modal-box">
+    <h3>Escolha seu avatar</h3>
+    <div class="emoji-grid" id="emoji-grid"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="fecharModal()">Cancelar</button>
+      <button class="btn-save"   onclick="salvarAvatar()">Salvar</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://unpkg.com/lucide@latest"></script>
 <script>
-const API='https://backend-cat-logo.onrender.com',TMDB_KEY='8bcf3516840c71be090ce067d3464a1d',IMG_SM='https://image.tmdb.org/t/p/w92',TMDB_URL='https://api.themoviedb.org/3';
-const AVATARES=['🦊','🐻','🎭','🎬','🦁','🐼','🦸','🌟','🎮','🐯','🦋','🐉','🎸','🚀','🌙','👾','🦅','🐺','🎪','🔥','💎','🌊','🎯','🏆'];
-let token=localStorage.getItem('lustv_token'),usuario=JSON.parse(localStorage.getItem('lustv_usuario')||'null'),avatarSelecionado=null;
-function getToken(){return localStorage.getItem('lustv_token')}
-function iniciais(nome){return (nome||'?').trim().split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2)}
-function tempoAtras(ts){const diff=(Date.now()-new Date(ts))/1000;if(diff<60)return'agora mesmo';if(diff<3600)return Math.floor(diff/60)+'m atrás';if(diff<86400)return Math.floor(diff/3600)+'h atrás';if(diff<604800)return Math.floor(diff/86400)+'d atrás';return new Date(ts).toLocaleDateString('pt-BR')}
-function renderLoginBox(){const box=document.getElementById('login-box');if(usuario){const av=usuario.avatar||iniciais(usuario.nome);box.innerHTML=`<div class="user-chip"><div class="user-avatar-sm" style="font-size:${usuario.avatar?'14px':'11px'}">${av}</div><span class="user-chip-nome">${usuario.nome}</span><button class="btn-sair" onclick="fazerLogout()">Sair</button></div>`}else box.innerHTML=`<button class="btn-entrar" onclick="window.location.href='index.html'">Entrar</button>`}
-async function carregarNotificacoes(){const t=getToken();if(!t)return;try{const res=await fetch(API+'/social/notificacoes',{headers:{Authorization:'Bearer '+t}}),notifs=await res.json(),naoLidas=notifs.filter(n=>!n.lida).length,badge=document.getElementById('notif-badge');if(naoLidas>0){badge.textContent=naoLidas>9?'9+':naoLidas;badge.style.display='flex'}else badge.style.display='none';const lista=document.getElementById('notif-lista');if(!notifs.length){lista.innerHTML='<div class="notif-vazio">Nenhuma notificação ainda.</div>';return}lista.innerHTML='';notifs.forEach(n=>{const item=document.createElement('div');item.className='notif-item'+(!n.lida?' nao-lida':'');item.innerHTML=`<div class="notif-avatar">${iniciais(n.ator_nome)}</div><div class="notif-texto"><strong>${n.ator_nome}</strong> começou a te seguir</div><div class="notif-tempo">${tempoAtras(n.criado_em)}</div>`;lista.appendChild(item)})}catch(e){console.error('[NOTIF]',e.message)}}
-async function toggleNotifDropdown(){const dropdown=document.getElementById('notif-dropdown'),aberto=dropdown.classList.contains('open');dropdown.classList.toggle('open');if(!aberto){const badge=document.getElementById('notif-badge');if(badge.style.display!=='none')try{await fetch(API+'/social/notificacoes/lidas',{method:'PATCH',headers:{Authorization:'Bearer '+getToken()}});badge.style.display='none';document.querySelectorAll('.notif-item.nao-lida').forEach(el=>el.classList.remove('nao-lida'))}catch(e){console.error('[NOTIF LIDAS]',e.message)}}}
-document.addEventListener('click',e=>{const wrap=document.getElementById('notif-wrap');if(wrap&&!wrap.contains(e.target))document.getElementById('notif-dropdown').classList.remove('open')});
-function rankClass(i){return i===0?'gold':i===1?'silver':i===2?'bronze':''}
-function badgeHtml(i){if(i===0)return'<span class="badge badge-hot">Quente</span>';if(i<3)return'<span class="badge badge-up">Subindo</span>';return'<span class="badge badge-new">Novo</span>'}
-function posterHtml(url,icon='clapperboard'){return url?`<div class="poster"><img src="${url}" alt="" onerror="this.parentElement.innerHTML='<i data-lucide=&quot;${icon}&quot;></i>';lucide.createIcons()"></div>`:`<div class="poster"><i data-lucide="${icon}"></i></div>`}
-function delay(i){return`animation-delay:${i*.06}s`}
-const TAB_KEYS=['semana','mundo','genero','perfil'];
-function switchTab(id){document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',TAB_KEYS[i]===id));document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');if(id==='semana')carregarSemana();if(id==='mundo')carregarMundo();if(id==='genero')carregarGeneros();if(id==='perfil')carregarPerfil();lucide.createIcons()}
-async function carregarSemana(){const el=document.getElementById('list-semana');el.innerHTML='<div class="dash-loading"><div class="dash-spinner"></div> Carregando...</div>';try{const r=await fetch(`${API}/tendencias/semana`,{headers:{Authorization:'Bearer '+getToken()}}),data=await r.json();if(!data.filmes||!data.filmes.length){el.innerHTML='<div class="empty">Nenhuma avaliação esta semana ainda. Seja o primeiro! <i data-lucide="clapperboard"></i></div>';lucide.createIcons();return}const max=data.filmes[0].total_avaliacoes||1;el.innerHTML=data.filmes.map((f,i)=>`<div class="movie-row" style="${delay(i)}"><div class="rank ${rankClass(i)}">${i+1}</div>${posterHtml(f.poster)}<div class="movie-info"><div class="movie-title">${f.titulo||'Filme #'+f.id}</div><div class="movie-meta">${f.generos?.join(', ')||''} ${f.ano?'• '+f.ano:''} <span class="star">★ ${f.media_estrelas}</span> • ${f.total_avaliacoes} avaliações</div><div class="movie-bar"><div class="movie-bar-fill" style="width:${Math.round(f.total_avaliacoes/max*100)}%"></div></div></div>${badgeHtml(i)}</div>`).join('');lucide.createIcons()}catch(e){el.innerHTML='<div class="empty">Erro ao carregar. Verifique se está logado.</div>'}}
-async function carregarMundo(){const el=document.getElementById('list-mundo');el.innerHTML='<div class="dash-loading"><div class="dash-spinner"></div> Carregando...</div>';try{const r=await fetch(`${API}/tendencias/mundo`),data=await r.json(),filmes=data.filmes||[];if(!filmes.length){el.innerHTML='<div class="empty">Nenhuma tendência encontrada.</div>';return}const max=filmes[0]?.popularidade||1;el.innerHTML=filmes.slice(0,10).map((f,i)=>`<div class="movie-row" style="${delay(i)}"><div class="rank ${rankClass(i)}">${i+1}</div>${posterHtml(f.poster,'globe-2')}<div class="movie-info"><div class="movie-title">${f.titulo}</div><div class="movie-meta">${f.ano||''} <span class="star">★ ${f.nota_tmdb}</span></div><div class="movie-bar"><div class="movie-bar-fill" style="width:${Math.round(f.popularidade/max*100)}%"></div></div></div>${badgeHtml(i)}</div>`).join('');lucide.createIcons()}catch(e){el.innerHTML='<div class="empty">Erro ao carregar tendências globais.</div>'}}
-const GENRE_ICONS={28:'bomb',12:'map',16:'sparkles',35:'laugh',80:'shield-alert',99:'mic',18:'drama',10751:'users',14:'wand-sparkles',36:'scroll-text',27:'ghost',10402:'music',9648:'search',10749:'heart',878:'rocket',10770:'tv',53:'eye',10752:'swords',37:'hat-glasses'};
-async function carregarGeneros(){const el=document.getElementById('genre-grid');el.innerHTML='<div class="dash-loading"><div class="dash-spinner"></div> Carregando...</div>';try{const r=await fetch(`${API}/tendencias/generos`),data=await r.json();el.innerHTML=(data.generos||[]).map(g=>`<div class="genre-card" onclick="selecionarGenero(${g.id}, '${String(g.name).replace(/'/g,"\\'")}', this)"><div class="gicon"><i data-lucide="${GENRE_ICONS[g.id]||'clapperboard'}"></i></div><div class="gname">${g.name}</div></div>`).join('');lucide.createIcons()}catch(e){el.innerHTML='<div class="empty">Erro ao carregar gêneros.</div>'}}
-async function selecionarGenero(id,nome,el){document.querySelectorAll('.genre-card').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');const cont=document.getElementById('genre-filmes');cont.innerHTML=`<div class="sec-title" style="margin-top:24px"><i data-lucide="${GENRE_ICONS[id]||'clapperboard'}"></i> ${nome}</div><div class="movie-list" id="list-genero"><div class="dash-loading"><div class="dash-spinner"></div> Carregando...</div></div>`;lucide.createIcons();try{const r=await fetch(`${API}/tendencias/genero/${id}`),data=await r.json(),filmes=data.filmes||[];if(!filmes.length){document.getElementById('list-genero').innerHTML='<div class="empty">Nenhum filme encontrado para este gênero.</div>';return}document.getElementById('list-genero').innerHTML=filmes.slice(0,8).map((f,i)=>`<div class="movie-row" style="${delay(i)}"><div class="rank ${rankClass(i)}">${i+1}</div>${posterHtml(f.poster)}<div class="movie-info"><div class="movie-title">${f.titulo}</div><div class="movie-meta">${f.ano||''} <span class="star">★ ${f.nota_tmdb}</span></div><div class="movie-bar"><div class="movie-bar-fill" style="width:${Math.round(parseFloat(f.nota_tmdb)/10*100)}%"></div></div></div>${badgeHtml(i)}</div>`).join('');lucide.createIcons()}catch(e){document.getElementById('list-genero').innerHTML='<div class="empty">Erro ao carregar filmes do gênero.</div>'}}
-async function carregarPerfil(){try{const r=await fetch(`${API}/perfil`,{headers:{Authorization:'Bearer '+getToken()}}),data=await r.json();if(!r.ok||!data.usuario)throw new Error(data.erro||'Falha ao carregar perfil');const u=data.usuario,s=data.estatisticas||{};document.getElementById('perfil-nome').textContent=u.nome;document.getElementById('perfil-desde').textContent='Membro desde '+new Date(u.membro_desde).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});document.getElementById('stat-total').textContent=s.total_avaliacoes??0;document.getElementById('stat-media').textContent=s.media_estrelas||'—';document.getElementById('stat-5').textContent=s.notas_5??0;const av=u.avatar||(u.nome?.[0]||'?').toUpperCase(),avEl=document.getElementById('avatar-conteudo');avEl.textContent=av;avEl.style.fontSize=u.avatar?'40px':'36px';const listEl=document.getElementById('list-recentes');if(!data.recentes||!data.recentes.length){listEl.innerHTML='<div class="empty">Nenhuma avaliação ainda.</div>';return}const detalhes=await Promise.all(data.recentes.map(async a=>{if(a.tipo==='game'){const id=String(a.filme_id).replace('game-','');try{const rr=await fetch(`${API}/jogos/${id}`),j=await rr.json();return{titulo:j?.name||'Jogo #'+id,poster:j?.cover?.url?'https:'+j.cover.url.replace('t_thumb','t_cover_big'):null}}catch{return{titulo:'Jogo #'+id,poster:null}}}const endpoint=a.tipo==='tv'?'tv':'movie';try{const rr=await fetch(`${TMDB_URL}/${endpoint}/${a.filme_id}?api_key=${TMDB_KEY}&language=pt-BR`),d=await rr.json();if(d.title||d.name)return{titulo:d.title||d.name,poster:d.poster_path?IMG_SM+d.poster_path:null}}catch{}return{titulo:null,poster:null}}));listEl.innerHTML=data.recentes.map((a,i)=>{const d=detalhes[i],titulo=d.titulo||'Título #'+a.filme_id,poster=d.poster?`<div class="poster"><img src="${d.poster}" alt="" onerror="this.parentElement.innerHTML='<i data-lucide=&quot;clapperboard&quot;></i>';lucide.createIcons()"></div>`:posterHtml(null),stars=Math.max(0,Math.min(5,Number(a.estrelas)||0)),estrelas='★'.repeat(stars)+'☆'.repeat(5-stars),dataFmt=new Date(a.criado_em).toLocaleDateString('pt-BR'),comentario=a.comentario?`<div class="movie-meta" style="font-style:italic;margin-top:4px">"${a.comentario}"</div>`:'';return`<div class="movie-row" style="${delay(i)}" id="av-row-${a.id}">${poster}<div class="movie-info"><div class="movie-title">${titulo}</div><div class="movie-meta">${estrelas} • ${dataFmt}</div>${comentario}</div><button class="delete-review-btn" onclick="excluirAvaliacao(${a.id})" title="Excluir avaliação" aria-label="Excluir avaliação"><i data-lucide="trash-2"></i></button></div>`}).join('');lucide.createIcons()}catch(e){console.error('[PERFIL]',e);document.getElementById('list-recentes').innerHTML='<div class="empty">Erro ao carregar perfil.</div>'}}
-function confirmar(){return new Promise(resolve=>{const overlay=document.getElementById('confirm-overlay');overlay.classList.add('open');document.getElementById('confirm-ok').onclick=()=>{overlay.classList.remove('open');resolve(true)};document.getElementById('confirm-cancel').onclick=()=>{overlay.classList.remove('open');resolve(false)}})}
-async function excluirAvaliacao(id){if(!await confirmar())return;try{const r=await fetch(`${API}/avaliacoes/${id}`,{method:'DELETE',headers:{Authorization:'Bearer '+getToken()}});if(!r.ok)throw new Error();document.getElementById('av-row-'+id)?.remove()}catch{alert('Erro ao excluir avaliação.')}}
-function abrirModalAvatar(){document.getElementById('emoji-grid').innerHTML=AVATARES.map(e=>`<div class="emoji-opt" onclick="selecionarEmoji('${e}', this)">${e}</div>`).join('');document.getElementById('modal-avatar').classList.add('open')}
-function fecharModal(){document.getElementById('modal-avatar').classList.remove('open');avatarSelecionado=null}
-function selecionarEmoji(e,el){document.querySelectorAll('.emoji-opt').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');avatarSelecionado=e}
-async function salvarAvatar(){if(!avatarSelecionado)return;try{const r=await fetch(`${API}/perfil`,{method:'PUT',headers:{'Content-Type':'application/json',Authorization:'Bearer '+getToken()},body:JSON.stringify({avatar:avatarSelecionado})}),data=await r.json();if(data.usuario){const u=JSON.parse(localStorage.getItem('lustv_usuario')||'{}');u.avatar=avatarSelecionado;localStorage.setItem('lustv_usuario',JSON.stringify(u));usuario=u;renderLoginBox();fecharModal();carregarPerfil()}else alert(data.erro||'Erro ao salvar avatar.')}catch{alert('Erro ao salvar avatar.')}}
-function editarNome(){const novo=prompt('Novo nome de usuário:');if(!novo||novo.trim().length<2)return;fetch(`${API}/perfil`,{method:'PUT',headers:{'Content-Type':'application/json',Authorization:'Bearer '+getToken()},body:JSON.stringify({nome:novo.trim()})}).then(r=>r.json()).then(data=>{if(data.usuario){const u=JSON.parse(localStorage.getItem('lustv_usuario')||'{}');u.nome=data.usuario.nome;localStorage.setItem('lustv_usuario',JSON.stringify(u));usuario=u;renderLoginBox();carregarPerfil()}else alert(data.erro||'Erro ao atualizar nome.')}).catch(()=>alert('Erro ao atualizar nome.'))}
-function fazerLogout(){localStorage.removeItem('lustv_token');localStorage.removeItem('lustv_usuario');window.location.href='index.html'}
-token=localStorage.getItem('lustv_token');usuario=JSON.parse(localStorage.getItem('lustv_usuario')||'null');
-if(!token){window.location.href='index.html'}else{renderLoginBox();lucide.createIcons();carregarSemana();document.getElementById('notif-wrap').style.display='flex';carregarNotificacoes();setInterval(carregarNotificacoes,60000)}
+const API      = 'https://backend-cat-logo.onrender.com';
+const TMDB_KEY = '8bcf3516840c71be090ce067d3464a1d';
+const IMG_SM   = 'https://image.tmdb.org/t/p/w92';
+const TMDB_URL = 'https://api.themoviedb.org/3';
+const AVATARES = ['🦊','🐻','🎭','🎬','🦁','🐼','🦸','🌟','🎮','🐯','🦋','🐉','🎸','🚀','🌙','👾','🦅','🐺','🎪','🔥','💎','🌊','🎯','🏆'];
+
+let token            = localStorage.getItem('lustv_token');
+let usuario          = JSON.parse(localStorage.getItem('lustv_usuario') || 'null');
+let avatarSelecionado = null;
+
+function getToken() { return localStorage.getItem('lustv_token'); }
+function iniciais(nome) {
+  return nome.trim().split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+}
+
+function tempoAtras(ts) {
+  const diff = (Date.now() - new Date(ts)) / 1000;
+  if (diff < 60)     return 'agora mesmo';
+  if (diff < 3600)   return Math.floor(diff / 60) + 'm atrás';
+  if (diff < 86400)  return Math.floor(diff / 3600) + 'h atrás';
+  if (diff < 604800) return Math.floor(diff / 86400) + 'd atrás';
+  return new Date(ts).toLocaleDateString('pt-BR');
+}
+
+// ── Login box ──────────────────────────────────────────────────
+function renderLoginBox() {
+  const box = document.getElementById('login-box');
+  if (usuario) {
+    const av = usuario.avatar || iniciais(usuario.nome);
+    box.innerHTML = `
+      <div class="user-chip">
+        <div class="user-avatar-sm" style="font-size:${usuario.avatar ? '14px' : '11px'}">${av}</div>
+        <span class="user-chip-nome">${usuario.nome}</span>
+        <button class="btn-sair" onclick="fazerLogout()">Sair</button>
+      </div>`;
+  } else {
+    box.innerHTML = `<button class="btn-entrar" onclick="window.location.href='index.html'">Entrar</button>`;
+  }
+}
+
+// ── Notificações ───────────────────────────────────────────────
+async function carregarNotificacoes() {
+  const t = getToken();
+  if (!t) return;
+  try {
+    const res    = await fetch(API + '/social/notificacoes', { headers: { Authorization: 'Bearer ' + t } });
+    const notifs = await res.json();
+    const naoLidas = notifs.filter(n => !n.lida).length;
+
+    const badge = document.getElementById('notif-badge');
+    if (naoLidas > 0) {
+      badge.textContent   = naoLidas > 9 ? '9+' : naoLidas;
+      badge.style.display = 'flex';
+    } else {
+      badge.style.display = 'none';
+    }
+
+    const lista = document.getElementById('notif-lista');
+    if (!notifs.length) {
+      lista.innerHTML = '<div class="notif-vazio">Nenhuma notificação ainda.</div>';
+      return;
+    }
+    lista.innerHTML = '';
+    notifs.forEach(n => {
+      const item = document.createElement('div');
+      item.className = 'notif-item' + (!n.lida ? ' nao-lida' : '');
+      item.innerHTML = `
+        <div class="notif-avatar">${iniciais(n.ator_nome)}</div>
+        <div class="notif-texto"><strong>${n.ator_nome}</strong> começou a te seguir</div>
+        <div class="notif-tempo">${tempoAtras(n.criado_em)}</div>`;
+      lista.appendChild(item);
+    });
+  } catch(e) { console.error('[NOTIF]', e.message); }
+}
+
+async function toggleNotifDropdown() {
+  const dropdown = document.getElementById('notif-dropdown');
+  const aberto   = dropdown.classList.contains('open');
+  dropdown.classList.toggle('open');
+  if (!aberto) {
+    const badge = document.getElementById('notif-badge');
+    if (badge.style.display !== 'none') {
+      try {
+        await fetch(API + '/social/notificacoes/lidas', {
+          method: 'PATCH',
+          headers: { Authorization: 'Bearer ' + getToken() }
+        });
+        badge.style.display = 'none';
+        document.querySelectorAll('.notif-item.nao-lida')
+          .forEach(el => el.classList.remove('nao-lida'));
+      } catch(e) { console.error('[NOTIF LIDAS]', e.message); }
+    }
+  }
+}
+
+document.addEventListener('click', function(e) {
+  const wrap = document.getElementById('notif-wrap');
+  if (wrap && !wrap.contains(e.target)) {
+    document.getElementById('notif-dropdown').classList.remove('open');
+  }
+});
+
+// ── Utilitários ────────────────────────────────────────────────
+function rankClass(i) { return i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : ''; }
+function badgeHtml(i) {
+  if (i === 0) return '<span class="badge badge-hot">Quente</span>';
+  if (i < 3)   return '<span class="badge badge-up">Subindo</span>';
+  return '<span class="badge badge-new">Novo</span>';
+}
+function posterHtml(url, emoji = '🎬') {
+  if (url) return `<div class="poster"><img src="${url}" alt="" onerror="this.parentElement.innerHTML='${emoji}'"/></div>`;
+  return `<div class="poster">${emoji}</div>`;
+}
+function delay(i) { return `animation-delay:${i * 0.06}s`; }
+
+// ── Tabs ───────────────────────────────────────────────────────
+const TAB_KEYS = ['semana', 'mundo', 'genero', 'perfil'];
+function switchTab(id) {
+  document.querySelectorAll('.tab-btn').forEach((b, i) => {
+    b.classList.toggle('active', TAB_KEYS[i] === id);
+  });
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  if (id === 'semana') carregarSemana();
+  if (id === 'mundo')  carregarMundo();
+  if (id === 'genero') carregarGeneros();
+  if (id === 'perfil') carregarPerfil();
+  lucide.createIcons();
+}
+
+// ── SEMANA ─────────────────────────────────────────────────────
+async function carregarSemana() {
+  const el = document.getElementById('list-semana');
+  el.innerHTML = '<div class="dash-loading"><div class="dash-spinner"></div> Carregando...</div>';
+  try {
+    const r    = await fetch(`${API}/tendencias/semana`, { headers: { Authorization: 'Bearer ' + getToken() } });
+    const data = await r.json();
+    if (!data.filmes || !data.filmes.length) {
+      el.innerHTML = '<div class="empty">Nenhuma avaliação esta semana ainda. Seja o primeiro! 🎬</div>';
+      return;
+    }
+    const max = data.filmes[0].total_avaliacoes || 1;
+    el.innerHTML = data.filmes.map((f, i) => `
+      <div class="movie-row" style="${delay(i)}">
+        <div class="rank ${rankClass(i)}">${i + 1}</div>
+        ${posterHtml(f.poster)}
+        <div class="movie-info">
+          <div class="movie-title">${f.titulo || 'Filme #' + f.id}</div>
+          <div class="movie-meta">${f.generos?.join(', ') || ''} ${f.ano ? '• ' + f.ano : ''} <span class="star">★ ${f.media_estrelas}</span> • ${f.total_avaliacoes} avaliações</div>
+          <div class="movie-bar"><div class="movie-bar-fill" style="width:${Math.round(f.total_avaliacoes / max * 100)}%"></div></div>
+        </div>
+        ${badgeHtml(i)}
+      </div>`).join('');
+  } catch(e) {
+    el.innerHTML = '<div class="empty">Erro ao carregar. Verifique se está logado.</div>';
+  }
+}
+
+// ── MUNDO ──────────────────────────────────────────────────────
+async function carregarMundo() {
+  const el = document.getElementById('list-mundo');
+  el.innerHTML = '<div class="dash-loading"><div class="dash-spinner"></div> Carregando...</div>';
+  try {
+    const r    = await fetch(`${API}/tendencias/mundo`);
+    const data = await r.json();
+    const max  = data.filmes[0]?.popularidade || 1;
+    el.innerHTML = data.filmes.slice(0, 10).map((f, i) => `
+      <div class="movie-row" style="${delay(i)}">
+        <div class="rank ${rankClass(i)}">${i + 1}</div>
+        ${posterHtml(f.poster, '🌍')}
+        <div class="movie-info">
+          <div class="movie-title">${f.titulo}</div>
+          <div class="movie-meta">${f.ano || ''} <span class="star">★ ${f.nota_tmdb}</span></div>
+          <div class="movie-bar"><div class="movie-bar-fill" style="width:${Math.round(f.popularidade / max * 100)}%"></div></div>
+        </div>
+        ${badgeHtml(i)}
+      </div>`).join('');
+  } catch(e) {
+    el.innerHTML = '<div class="empty">Erro ao carregar tendências globais.</div>';
+  }
+}
+
+// ── GÊNEROS ────────────────────────────────────────────────────
+const GENRE_ICONS = { 28:'💥',12:'🗺️',16:'✨',35:'😂',80:'🔫',99:'🎙️',18:'🎭',10751:'👨‍👩‍👧',14:'🧙',36:'📜',27:'👻',10402:'🎵',9648:'🔍',10749:'❤️',878:'🚀',10770:'📺',53:'😰',10752:'⚔️',37:'🤠' };
+
+async function carregarGeneros() {
+  const el = document.getElementById('genre-grid');
+  el.innerHTML = '<div class="dash-loading"><div class="dash-spinner"></div> Carregando...</div>';
+  try {
+    const r    = await fetch(`${API}/tendencias/generos`);
+    const data = await r.json();
+    el.innerHTML = data.generos.map(g => `
+      <div class="genre-card" onclick="selecionarGenero(${g.id}, '${g.name}', this)">
+        <div class="gicon">${GENRE_ICONS[g.id] || '🎬'}</div>
+        <div class="gname">${g.name}</div>
+      </div>`).join('');
+  } catch(e) {
+    el.innerHTML = '<div class="empty">Erro ao carregar gêneros.</div>';
+  }
+}
+
+async function selecionarGenero(id, nome, el) {
+  document.querySelectorAll('.genre-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  const cont = document.getElementById('genre-filmes');
+  cont.innerHTML = `<div class="sec-title" style="margin-top:24px">${GENRE_ICONS[id] || '🎬'} ${nome}</div>
+    <div class="movie-list" id="list-genero">
+      <div class="dash-loading"><div class="dash-spinner"></div> Carregando...</div>
+    </div>`;
+  try {
+    const r    = await fetch(`${API}/tendencias/genero/${id}`);
+    const data = await r.json();
+    document.getElementById('list-genero').innerHTML = data.filmes.slice(0, 8).map((f, i) => `
+      <div class="movie-row" style="${delay(i)}">
+        <div class="rank ${rankClass(i)}">${i + 1}</div>
+        ${posterHtml(f.poster)}
+        <div class="movie-info">
+          <div class="movie-title">${f.titulo}</div>
+          <div class="movie-meta">${f.ano || ''} <span class="star">★ ${f.nota_tmdb}</span></div>
+          <div class="movie-bar"><div class="movie-bar-fill" style="width:${Math.round(parseFloat(f.nota_tmdb) / 10 * 100)}%"></div></div>
+        </div>
+        ${badgeHtml(i)}
+      </div>`).join('');
+  } catch(e) {
+    document.getElementById('list-genero').innerHTML = '<div class="empty">Erro ao carregar filmes do gênero.</div>';
+  }
+}
+
+// ── PERFIL ─────────────────────────────────────────────────────
+async function carregarPerfil() {
+  try {
+    const r    = await fetch(`${API}/perfil`, { headers: { Authorization: 'Bearer ' + getToken() } });
+    const data = await r.json();
+    const u = data.usuario;
+    const s = data.estatisticas;
+
+    document.getElementById('perfil-nome').textContent  = u.nome;
+    document.getElementById('perfil-desde').textContent = 'Membro desde ' + new Date(u.membro_desde).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+    document.getElementById('stat-total').textContent   = s.total_avaliacoes;
+    document.getElementById('stat-media').textContent   = s.media_estrelas || '—';
+    document.getElementById('stat-5').textContent       = s.notas_5;
+
+    const av   = u.avatar || u.nome[0].toUpperCase();
+    const avEl = document.getElementById('avatar-conteudo');
+    avEl.textContent    = av;
+    avEl.style.fontSize = u.avatar ? '40px' : '36px';
+
+    const listEl = document.getElementById('list-recentes');
+    if (!data.recentes || !data.recentes.length) {
+      listEl.innerHTML = '<div class="empty">Nenhuma avaliação ainda.</div>';
+      return;
+    }
+
+    const detalhes = await Promise.all(data.recentes.map(async av => {
+  if (av.tipo === 'game') {
+    const jogoId = av.filme_id.replace('game-', '');
+    try {
+      const r = await fetch(`${API}/jogos/${jogoId}`);
+      const jogo = await r.json();
+      return {
+        titulo: jogo?.name || 'Jogo #' + jogoId,
+        poster: jogo?.cover?.url ? 'https:' + jogo.cover.url.replace('t_thumb', 't_cover_big') : null
+      };
+    } catch {
+      return { titulo: 'Jogo #' + jogoId, poster: null };
+    }
+  }
+  const endpoint = av.tipo === 'tv' ? 'tv' : 'movie';
+  try {
+    const r = await fetch(`${TMDB_URL}/${endpoint}/${av.filme_id}?api_key=${TMDB_KEY}&language=pt-BR`);
+    const d = await r.json();
+    if (d.title || d.name) return { titulo: d.title || d.name, poster: d.poster_path ? IMG_SM + d.poster_path : null };
+  } catch {}
+  return { titulo: null, poster: null };
+}));
+
+    listEl.innerHTML = data.recentes.map((av, i) => {
+  const det    = detalhes[i];
+  const titulo = det.titulo || 'Filme #' + av.filme_id;
+  const poster = det.poster
+    ? `<div class="poster"><img src="${det.poster}" alt="${titulo}" style="width:100%;height:100%;object-fit:cover;border-radius:4px"/></div>`
+    : `<div class="poster">🎬</div>`;
+  const estrelas   = '★'.repeat(av.estrelas) + '☆'.repeat(5 - av.estrelas);
+  const dataFmt    = new Date(av.criado_em).toLocaleDateString('pt-BR');
+  const comentario = av.comentario ? `<div class="movie-meta" style="font-style:italic;margin-top:4px">"${av.comentario}"</div>` : '';
+  return `<div class="movie-row" style="${delay(i)}" id="av-row-${av.id}">${poster}
+    <div class="movie-info">
+      <div class="movie-title">${titulo}</div>
+      <div class="movie-meta">${estrelas} • ${dataFmt}</div>
+      ${comentario}
+    </div>
+    <button onclick="excluirAvaliacao(${av.id})" title="Excluir avaliação"
+      style="background:none;border:none;color:#555;font-size:16px;cursor:pointer;padding:4px 8px;border-radius:4px;transition:color 0.2s;"
+      onmouseover="this.style.color='#ff6b6b'" onmouseout="this.style.color='#555'">✕</button>
+  </div>`;
+}).join('');
+  } catch(e) {
+    document.getElementById('list-recentes').innerHTML = '<div class="empty">Erro ao carregar perfil.</div>';
+  }
+}
+
+// ── Excluir avaliação ─────────────────────────────────────────
+function confirmar() {
+  return new Promise(resolve => {
+    const overlay = document.getElementById('confirm-overlay');
+    overlay.classList.add('open');
+    document.getElementById('confirm-ok').onclick     = () => { overlay.classList.remove('open'); resolve(true);  };
+    document.getElementById('confirm-cancel').onclick = () => { overlay.classList.remove('open'); resolve(false); };
+  });
+}
+
+async function excluirAvaliacao(avId) {
+  const ok = await confirmar();
+  if (!ok) return;
+  try {
+    const r = await fetch(`${API}/avaliacoes/${avId}`, {
+      method: 'DELETE',
+      headers: { Authorization: 'Bearer ' + getToken() }
+    });
+    if (!r.ok) throw new Error();
+    document.getElementById('av-row-' + avId)?.remove();
+  } catch(e) {
+    alert('Erro ao excluir avaliação.');
+  }
+}
+
+// ── Modal avatar ───────────────────────────────────────────────
+function abrirModalAvatar() {
+  document.getElementById('emoji-grid').innerHTML = AVATARES.map(e =>
+    `<div class="emoji-opt" onclick="selecionarEmoji('${e}', this)">${e}</div>`).join('');
+  document.getElementById('modal-avatar').classList.add('open');
+}
+function fecharModal() {
+  document.getElementById('modal-avatar').classList.remove('open');
+  avatarSelecionado = null;
+}
+function selecionarEmoji(e, el) {
+  document.querySelectorAll('.emoji-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  avatarSelecionado = e;
+}
+async function salvarAvatar() {
+  if (!avatarSelecionado) return;
+  try {
+    const r    = await fetch(`${API}/perfil`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + getToken() },
+      body: JSON.stringify({ avatar: avatarSelecionado })
+    });
+    const data = await r.json();
+    if (data.usuario) {
+      const u = JSON.parse(localStorage.getItem('lustv_usuario') || '{}');
+      u.avatar = avatarSelecionado;
+      localStorage.setItem('lustv_usuario', JSON.stringify(u));
+      usuario = u;
+      renderLoginBox();
+      fecharModal();
+      carregarPerfil();
+    }
+  } catch { alert('Erro ao salvar avatar.'); }
+}
+function editarNome() {
+  const novo = prompt('Novo nome de usuário:');
+  if (!novo || novo.trim().length < 2) return;
+  fetch(`${API}/perfil`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + getToken() },
+    body: JSON.stringify({ nome: novo.trim() })
+  }).then(r => r.json()).then(data => {
+    if (data.usuario) {
+      const u = JSON.parse(localStorage.getItem('lustv_usuario') || '{}');
+      u.nome  = data.usuario.nome;
+      localStorage.setItem('lustv_usuario', JSON.stringify(u));
+      usuario = u;
+      renderLoginBox();
+      carregarPerfil();
+    } else { alert(data.erro || 'Erro ao atualizar nome.'); }
+  });
+}
+
+// ── Logout ─────────────────────────────────────────────────────
+function fazerLogout() {
+  localStorage.removeItem('lustv_token');
+  localStorage.removeItem('lustv_usuario');
+  window.location.href = 'index.html';
+}
+
+// ── Init ───────────────────────────────────────────────────────
+token   = localStorage.getItem('lustv_token');
+usuario = JSON.parse(localStorage.getItem('lustv_usuario') || 'null');
+
+if (!token) {
+  window.location.href = 'index.html';
+} else {
+  renderLoginBox();
+  lucide.createIcons();
+  carregarSemana();
+  document.getElementById('notif-wrap').style.display = 'flex';
+  carregarNotificacoes();
+  setInterval(carregarNotificacoes, 60000);
+}
 </script>
-<div id="confirm-overlay"><div id="confirm-box"><div class="confirm-icon"><i data-lucide="trash-2"></i></div><h3>Excluir avaliação?</h3><p>Esta ação não pode ser desfeita.</p><div class="confirm-btns"><button class="confirm-btn-cancel" id="confirm-cancel">Cancelar</button><button class="confirm-btn-delete" id="confirm-ok"><i data-lucide="trash-2"></i> Excluir</button></div></div></div>
-<script>lucide.createIcons();</script>
+
+<div id="confirm-overlay">
+  <div id="confirm-box">
+    <div class="confirm-icon">🗑️</div>
+    <h3>Excluir avaliação?</h3>
+    <p>Esta ação não pode ser desfeita.</p>
+    <div class="confirm-btns">
+      <button class="confirm-btn-cancel" id="confirm-cancel">Cancelar</button>
+      <button class="confirm-btn-delete" id="confirm-ok">Excluir</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
