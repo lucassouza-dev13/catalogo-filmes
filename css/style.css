@@ -5,21 +5,27 @@
 /* ====== TOKENS ====== */
 
 :root {
+  --sans: 'DM Sans', sans-serif;
+  --serif: 'DM Sans', sans-serif;
+  --gutter: 28px;
+
   --accent: #9878FF;
   --accent-hover: #8060EB;
   --accent-light: #B7A2FF;
-  --accent-soft: rgba(192, 255, 120, 0.16);
+  --accent-soft: rgba(152, 120, 255, 0.16);
   --accent-border: rgba(152, 120, 255, 0.34);
+
   --bg: #20202B;
   --bg-card: #292936;
   --bg-header: #191923;
   --bg-deep: #242430;
-  --border: #3A394B;
 
+  --border: #3A394B;
   --text: #F1EFF8;
   --text-muted: #C0BDD0;
   --text-dim: #9692AA;
 }
+
 
 
 body {
@@ -1309,73 +1315,141 @@ img, video, iframe {
 }
 
 
-/* ===== TEMA CLARO MODERNO ROXO ===== */
-body { background: var(--bg); color: var(--text); }
-header { background: var(--bg-header); box-shadow: 0 2px 12px rgba(35,30,70,.04); }
-.logo { color: var(--text); -webkit-text-fill-color: var(--text); }
-nav button:hover, nav a.nav-dashboard:hover { color: var(--accent); }
-nav button.active, nav a.active { color: var(--accent); }
-.search-wrap { background: #fff; box-shadow: 0 1px 2px rgba(35,30,70,.02); }
-.search-wrap input, .login-input-wrap input, .av-form-card textarea { color: var(--text); }
-#login-modal, #modal, #confirm-box, .notif-dropdown, .conquista-popup-inner { box-shadow: 0 16px 50px rgba(35,30,70,.12); }
-#login-modal-overlay, #modal-overlay, #confirm-overlay { background: rgba(31,28,52,.45); }
-.login-logo span, .login-titulo-principal, #page-title, #modal-title,
-.av-form-card h3, .av-lista-card h3, #confirm-box h3, .conquista-nome,
-.notif-texto strong { color: var(--text); }
-.login-tagline, .login-subtitulo, .login-field label, .login-link-btn,
-#modal-overview, .av-texto { color: var(--text-muted); }
-.login-input-wrap input, .av-form-card textarea { background: #fbfbfe; border-color: var(--border); }
-.login-input-wrap input:focus, .av-form-card textarea:focus { border-color: var(--accent); }
-.card-poster { background: #e9eaf2; }
-.card-poster::after { box-shadow: inset 0 0 0 1px rgba(40,35,80,.08); }
-.card-info { background: linear-gradient(to top, rgba(24,22,40,.88) 15%, transparent); }
-#modal-close, #login-modal-close { background: rgba(37,38,58,.75); color: #fff; }
-.av-form-card, .av-lista-card { background: #fff; }
-.av-estrelas button, .av-estrelas-mini { color: #d4d5df; }
-.av-texto { color: #55596e; }
-.confirm-btn-cancel { color: var(--text-muted); }
-.confirm-btn-cancel:hover { color: var(--text); }
-.conquista-popup-inner { background: #fff; }
-.conquista-nome { color: var(--text); }
-.notif-item:hover { background: #f5f3ff; }
-.notif-texto { color: var(--text-muted); }
-.plat-item img { box-shadow: 0 0 0 1px rgba(35,30,70,.10); }
-.status-btn { background: #fff; color: var(--text-muted); }
-.lista-subtab { color: var(--text-muted); }
-.lista-subtab:hover { color: var(--accent); }
+/*AJUSTES FINAIS: */
 
+/* Cabeçalho com espaçamento adequado */
+header {
+  padding-left: max(28px, calc((100vw - 1440px) / 2));
+  padding-right: max(28px, calc((100vw - 1440px) / 2));
+  gap: 20px;
+}
 
-/* ===== CORREÇÃO DAS ABAS DASHBOARD E COMUNIDADE ===== */
+.logo {
+  color: var(--text);
+  -webkit-text-fill-color: var(--text);
+  font-family: var(--sans);
+  flex-shrink: 0;
+}
 
-/* Fundo principal das páginas */
-#dashboard,
-#comunidade,
-.dashboard-page,
-.comunidade-page,
-#page-dashboard,
-#page-comunidade {
-  background-color: var(--bg) !important;
+nav button.active,
+nav a.active {
+  color: var(--accent-light);
+  border-bottom-color: var(--accent);
+}
+
+nav button:hover,
+nav a.nav-dashboard:hover {
+  color: var(--accent-light);
+}
+
+/* Busca e campos */
+.search-wrap {
+  background: var(--bg-card);
+  border-color: var(--border);
+}
+
+.search-wrap input {
   color: var(--text);
 }
 
-/* Cards, painéis e seções */
-#dashboard .card,
-#comunidade .card,
-.dashboard-page .card,
-.comunidade-page .card,
-.dashboard-card,
-.comunidade-card {
-  background-color: var(--bg-card);
+.login-input-wrap input,
+.av-form-card textarea {
+  background: var(--bg-deep);
   color: var(--text);
   border-color: var(--border);
 }
 
-/* Títulos e textos */
-#dashboard h1,
-#dashboard h2,
-#dashboard h3,
-#comunidade h1,
-#comunidade h2,
-#comunidade h3 {
+/* Painéis e componentes */
+.av-form-card,
+.av-lista-card,
+.conquista-popup-inner,
+.notif-dropdown,
+#login-modal,
+#modal,
+#confirm-box {
+  background: var(--bg-card);
   color: var(--text);
+  border-color: var(--border);
+}
+
+/* Textos e títulos */
+#page-title,
+#modal-title,
+.login-titulo-principal,
+.login-logo span,
+.av-form-card h3,
+.av-lista-card h3,
+#confirm-box h3,
+.conquista-nome {
+  color: var(--text);
+  font-family: var(--sans);
+}
+
+.section-label {
+  color: var(--text);
+  font-family: var(--sans);
+}
+
+.av-texto,
+#modal-overview {
+  color: var(--text-muted);
+}
+
+/* Botões e abas secundárias */
+.status-btn {
+  background: var(--bg-deep);
+  color: var(--text-muted);
+  border-color: var(--border);
+}
+
+.lista-subtab {
+  color: var(--text-muted);
+}
+
+.lista-subtab:hover {
+  color: var(--accent-light);
+  border-color: var(--accent);
+}
+
+/* Espaçamento dos títulos e conteúdo */
+#page-title,
+.section-label {
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
+}
+
+@media (max-width: 900px) {
+  header {
+    padding: 10px 16px 0;
+    gap: 0;
+  }
+
+  #page-title,
+  .section-label {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+/* Comunidade e Dashboard:
+   estiliza os contêineres reais quando usam estes seletores */
+#dashboard,
+#comunidade,
+#page-dashboard,
+#page-comunidade,
+.dashboard-page,
+.comunidade-page {
+  background-color: var(--bg) !important;
+  color: var(--text);
+}
+
+#dashboard .card,
+#comunidade .card,
+#page-dashboard .card,
+#page-comunidade .card,
+.dashboard-page .card,
+.comunidade-page .card {
+  background-color: var(--bg-card);
+  color: var(--text);
+  border-color: var(--border);
 }
