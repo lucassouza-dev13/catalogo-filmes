@@ -300,8 +300,90 @@
     color: #555;
   }
 
-/* Tema claro moderno roxo: ajustes de cor para estilos específicos da página */
-body { background-color: #f4f5fa; color: #25263a; }
+
+/* ===== TEMA ESCURO DO DASHBOARD ===== */
+
+body {
+  background: var(--bg, #20202B) !important;
+  color: var(--text, #F1EFF8) !important;
+}
+
+.dash-content {
+  background: transparent !important;
+  color: var(--text, #F1EFF8);
+}
+
+/* Abas */
+.tabs {
+  border-bottom-color: var(--border, #3A394B) !important;
+}
+
+.tab-btn {
+  color: var(--text-muted, #C0BDD0) !important;
+}
+
+.tab-btn:hover,
+.tab-btn.active {
+  color: var(--text, #F1EFF8) !important;
+}
+
+/* Cartões e listas */
+.movie-row,
+.genre-card,
+.profile-card,
+.recentes-card {
+  background: var(--bg-card, #292936) !important;
+  color: var(--text, #F1EFF8) !important;
+  border-color: var(--border, #3A394B) !important;
+}
+
+.movie-row:hover,
+.genre-card:hover,
+.genre-card.selected {
+  background: var(--bg-deep, #242430) !important;
+}
+
+/* Estatísticas */
+.stat-box {
+  background: var(--bg-deep, #242430) !important;
+  color: var(--text, #F1EFF8) !important;
+}
+
+/* Textos */
+.movie-title,
+.gname,
+.profile-name-big,
+.sec-title,
+.modal-box h3 {
+  color: var(--text, #F1EFF8);
+}
+
+.movie-meta,
+.profile-since,
+.stat-lbl,
+.recentes-title {
+  color: var(--text-muted, #C0BDD0);
+}
+
+/* Modal de avatar */
+.modal-box {
+  background: var(--bg-card, #292936) !important;
+  color: var(--text, #F1EFF8) !important;
+  border-color: var(--border, #3A394B) !important;
+}
+
+/* Elementos secundários */
+.movie-bar,
+.poster {
+  background-color: var(--bg-deep, #242430);
+}
+
+.empty,
+.dash-loading {
+  color: var(--text-muted, #C0BDD0);
+}
+
+
 </style>
 </head>
 <body>
