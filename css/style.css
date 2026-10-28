@@ -1309,3 +1309,225 @@ img, video, iframe {
     padding: 11px;
   }
 }
+
+
+/* =========================================================
+   LUSTV MOBILE — layout inspirado na experiência do TMDB
+   Regras finais consolidadas para telas pequenas.
+   ========================================================= */
+@media (max-width: 900px) {
+  html, body { max-width: 100%; overflow-x: clip; }
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    height: auto;
+    padding: 0;
+    background: var(--bg-header, #0f0f14);
+    border-bottom: 1px solid var(--border, #292933);
+  }
+  .header-row1 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+    min-height: 56px;
+    padding: 9px 14px;
+    box-sizing: border-box;
+    border-bottom: 1px solid rgba(255,255,255,.06);
+  }
+  .logo {
+    order: initial;
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
+    max-width: calc(100% - 110px);
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 1.15rem !important;
+    line-height: 1.2;
+  }
+  .logo svg { flex: 0 0 auto; }
+  .header-actions { order: initial; display: flex; align-items: center; gap: 8px; margin-left: auto; }
+  #login-box { min-width: 0; }
+  .user-chip-nome, .btn-sair { display: none !important; }
+  .btn-entrar { padding: 8px 11px; font-size: .82rem; white-space: nowrap; }
+  .header-row2 {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  nav {
+    display: flex;
+    align-items: stretch;
+    gap: 2px;
+    width: 100%;
+    margin: 0;
+    padding: 0 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  nav button, nav a.nav-dashboard {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    flex: 0 0 auto;
+    min-height: 46px;
+    padding: 0 11px !important;
+    border-radius: 0 !important;
+    border-bottom: 2px solid transparent;
+    font-size: .8rem !important;
+    white-space: nowrap;
+  }
+  nav button.active { border-bottom-color: var(--accent, #7c5cff) !important; }
+  nav button svg, nav a.nav-dashboard svg { width: 16px; height: 16px; }
+  header > .search-wrap, .search-desktop { display: none !important; }
+  .search-mobile {
+    display: block !important;
+    position: static;
+    top: auto;
+    width: 100%;
+    padding: 12px 14px 4px;
+    box-sizing: border-box;
+    background: transparent;
+    border: 0;
+  }
+  .search-mobile .search-wrap {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    min-height: 44px;
+    padding: 0 13px;
+    box-sizing: border-box;
+    border: 1px solid var(--border, #30303b);
+    border-radius: 9px;
+    background: var(--bg-card, #191920);
+  }
+  .search-mobile .search-wrap input {
+    width: 100%;
+    min-width: 0;
+    padding: 10px 0;
+    font-size: 16px;
+  }
+  #page-title {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    width: 100%;
+    margin: 0;
+    padding: 18px 14px 8px !important;
+    box-sizing: border-box;
+    font-size: 1.35rem !important;
+    line-height: 1.25;
+    text-align: left;
+  }
+  #page-title svg { width: 21px; height: 21px; flex: 0 0 auto; }
+  .section-label { padding: 20px 14px 10px; font-size: 1.05rem; text-align: left; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px 12px;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 10px 14px 28px !important;
+    box-sizing: border-box;
+  }
+  .grid .movie-card, .movie-card { width: 100% !important; min-width: 0; }
+  .card-poster { width: 100%; aspect-ratio: 2 / 3; border-radius: 7px; overflow: hidden; }
+  .card-poster img { width: 100%; height: 100%; object-fit: cover; }
+  .card-overlay {
+    display: block !important;
+    position: static !important;
+    inset: auto !important;
+    padding: 7px 1px 0 !important;
+    background: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    pointer-events: auto !important;
+  }
+  .card-overlay .card-title, .card-title {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    margin: 0;
+    color: var(--text, #f5f5f7) !important;
+    font-size: .78rem;
+    font-weight: 500;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+  .card-date { display: block; margin-top: 3px; font-size: .7rem; }
+  .fav-btn { top: 6px; right: 6px; width: 31px; height: 31px; opacity: 1; }
+  #listas-subtabs { display: flex; gap: 7px; padding: 0 14px 10px; overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; }
+  #listas-subtabs::-webkit-scrollbar { display: none; }
+  .lista-subtab { flex: 0 0 auto; min-height: 38px; }
+  #btn-carregar-mais-wrap { padding: 0 14px 28px; }
+  #modal-overlay { padding: 0 !important; align-items: flex-end !important; overflow: hidden; }
+  #modal {
+    width: 100%; max-width: 100% !important; max-height: 94dvh;
+    margin: 0; overflow-y: auto; overscroll-behavior: contain;
+    border-radius: 16px 16px 0 0 !important;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  #modal-trailer { aspect-ratio: 16 / 9; }
+  #modal-body { grid-template-columns: 88px minmax(0, 1fr); gap: 13px; padding: 15px; }
+  #modal-poster { width: 100%; min-width: 0; }
+  #modal-info { min-width: 0; }
+  #modal-title { font-size: 1.25rem; overflow-wrap: anywhere; }
+  #modal-meta { flex-wrap: wrap; gap: 6px; }
+  #modal-overview { font-size: .88rem; line-height: 1.55; }
+  #avaliacoes { grid-column: 1 / -1; min-width: 0; padding: 15px 0 0; border: 0; border-top: 1px solid var(--border, #292933); }
+  .av-form-card, .av-lista-card { padding: 14px; }
+  .status-wrap { display: flex; flex-wrap: wrap; gap: 7px; }
+  .status-btn { min-height: 40px; }
+  #login-modal-overlay { padding: 0 !important; align-items: flex-end !important; }
+  #login-modal { width: 100%; max-width: 100% !important; max-height: 92dvh; overflow-y: auto; border-radius: 16px 16px 0 0 !important; padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px)); }
+  .notif-dropdown { position: fixed; top: 60px; right: 10px; width: min(320px, calc(100vw - 20px)); max-height: 70dvh; overflow-y: auto; }
+}
+
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 12px;
+    padding: 10px 14px 28px !important;
+  }
+  #page-title { padding: 17px 14px 7px !important; font-size: 1.28rem !important; }
+  .section-label { padding: 20px 14px 9px; font-size: 1rem; }
+  .logo { font-size: 1.08rem !important; }
+  .grid .movie-card, .movie-card { width: 100% !important; }
+  .card-overlay { padding-top: 7px !important; }
+  .card-overlay .card-title, .card-title { font-size: .82rem; line-height: 1.35; }
+  .fav-btn { width: 32px; height: 32px; }
+  #modal { max-height: 95dvh; }
+  #modal-body { grid-template-columns: 76px minmax(0, 1fr); gap: 12px; padding: 13px; }
+  #modal-title { font-size: 1.16rem; }
+  #modal-overview { font-size: .84rem; }
+  .av-media { font-size: 32px; }
+}
+
+@media (max-width: 360px) {
+  .header-row1 { padding-right: 10px; padding-left: 10px; }
+  .logo { font-size: 1rem !important; }
+  nav button, nav a.nav-dashboard { padding-right: 9px !important; padding-left: 9px !important; }
+  .search-mobile { padding-right: 10px; padding-left: 10px; }
+  .grid { gap: 16px 9px; padding-right: 10px !important; padding-left: 10px !important; }
+  .card-overlay .card-title, .card-title { font-size: .76rem; }
+  #modal-body { grid-template-columns: 64px minmax(0, 1fr); gap: 10px; padding: 11px; }
+}
