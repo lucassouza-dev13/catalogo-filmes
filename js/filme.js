@@ -24,9 +24,12 @@ const pageTitle   = document.getElementById("page-title");
 const searchInput = document.getElementById("search");
 
 const TITULOS = {
-  filmes: "🎬 Filmes", series: "📺 Séries",
-  jogos: "🎮 Jogos", animes: "👾 Animações", favoritos: "❤️ Favoritos",
-  listas: "📋 Minhas Listas"
+  filmes: { texto: "Filmes", icone: "clapperboard" },
+  series: { texto: "Séries", icone: "tv" },
+  jogos: { texto: "Jogos", icone: "gamepad-2" },
+  animes: { texto: "Animações", icone: "film" },
+  favoritos: { texto: "Favoritos", icone: "heart" },
+  listas: { texto: "Minhas Listas", icone: "list-video" }
 };
 
 // ─── Estado do Infinite Scroll ────────────────────────────────────────────────
@@ -1180,7 +1183,14 @@ async function abrirModalJogo(jogo) {
 async function mudarAba(aba) {
   abaAtual = aba;
   document.getElementById("listas-subtabs").style.display = aba === "listas" ? "flex" : "none";
-  pageTitle.textContent = TITULOS[aba];
+  const titulo = TITULOS[aba];
+
+  pageTitle.innerHTML = `
+    <i data-lucide="${titulo.icone}"></i>
+    <span>${titulo.texto}</span>
+    `;
+
+    lucide.createIcons();
   searchInput.value = "";
   document.querySelectorAll("nav button").forEach(b => b.classList.toggle("active", b.dataset.aba === aba));
 
