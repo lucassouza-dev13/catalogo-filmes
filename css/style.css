@@ -3,26 +3,24 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 /* ====== TOKENS ====== */
+
 :root {
-  --accent: #7656e8;
-  --accent-hover: #6241d8;
-  --accent-light: #7656e8;
-  --accent-soft: rgba(118,86,232,0.10);
-  --accent-border: rgba(118,86,232,0.28);
-  --bg: #f4f5fa;
-  --bg-card: #ffffff;
-  --bg-header: #ffffff;
-  --bg-deep: #f8f8fc;
-  --border: #e4e5ef;
-  --text: #25263a;
-  --text-muted: #62667b;
-  --text-dim: #85899b;
-  --star: #f2a93b;
-  --serif: 'Source Serif 4', Georgia, serif;
-  --sans: 'DM Sans', system-ui, sans-serif;
-  --content: 1180px;
-  --gutter: max(1.25rem, calc((100% - var(--content)) / 2));
+  --accent: #9878FF;
+  --accent-hover: #8060EB;
+  --accent-light: #B7A2FF;
+  --accent-soft: rgba(192, 255, 120, 0.16);
+  --accent-border: rgba(152, 120, 255, 0.34);
+  --bg: #20202B;
+  --bg-card: #292936;
+  --bg-header: #191923;
+  --bg-deep: #242430;
+  --border: #3A394B;
+
+  --text: #F1EFF8;
+  --text-muted: #C0BDD0;
+  --text-dim: #9692AA;
 }
+
 
 body {
   background: var(--bg);
@@ -1345,3 +1343,4 @@ nav button.active, nav a.active { color: var(--accent); }
 .status-btn { background: #fff; color: var(--text-muted); }
 .lista-subtab { color: var(--text-muted); }
 .lista-subtab:hover { color: var(--accent); }
+
