@@ -1561,3 +1561,33 @@ img, video, iframe {
     line-height: 1.3 !important;
   }
 }
+
+
+/* ===== ANIMAÇÃO DOS CARDS NO DESKTOP ===== */
+@media (hover: hover) and (pointer: fine) {
+  .movie-card {
+    transition: transform 0.25s ease, filter 0.25s ease;
+    transform: translateY(0);
+  }
+
+  .movie-card:hover {
+    transform: translateY(-6px);
+    filter: brightness(1.08);
+    z-index: 2;
+  }
+
+  .movie-card .card-poster {
+    transition: box-shadow 0.25s ease;
+  }
+
+  .movie-card:hover .card-poster {
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .movie-card,
+  .movie-card .card-poster {
+    transition: none !important;
+  }
+}
