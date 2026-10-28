@@ -111,7 +111,27 @@
     padding: 18px 14px; cursor: pointer; transition: all 0.2s; text-align: center;
   }
   .genre-card:hover, .genre-card.selected { background: #222; border-color: #8b5cf6; }
-  .genre-card .gicon  { font-size: 26px; margin-bottom: 8px; }
+  .genre-card .gicon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  color: var(--accent, #9878FF);
+}
+
+.genre-card .gicon svg {
+  width: 26px;
+  height: 26px;
+  stroke-width: 1.8;
+}
+
+.genre-card {
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.genre-card:hover {
+  transform: translateY(-2px);
+}
   .genre-card .gname  { font-size: 13px; font-weight: 600; }
 
   /* PERFIL */
@@ -716,50 +736,125 @@ async function carregarMundo() {
 }
 
 // ── GÊNEROS ────────────────────────────────────────────────────
-const GENRE_ICONS = { 28:'💥',12:'🗺️',16:'✨',35:'😂',80:'🔫',99:'🎙️',18:'🎭',10751:'👨‍👩‍👧',14:'🧙',36:'📜',27:'👻',10402:'🎵',9648:'🔍',10749:'❤️',878:'🚀',10770:'📺',53:'😰',10752:'⚔️',37:'🤠' };
+
+const GENRE_ICONS = {
+  28: 'zap',             // Ação
+  12: 'compass',         // Aventura
+  16: 'clapperboard',    // Animação
+  35: 'laugh',           // Comédia
+  80: 'shield-alert',    // Crime
+  99: 'mic',             // Documentário
+  18: 'drama',            // Drama
+  10751: 'users',        // Família
+  14: 'wand-sparkles',   // Fantasia
+  36: 'landmark',        // História
+  27: 'ghost',           // Terror
+  10402: 'music',        // Música
+  9648: 'search',        // Mistério
+  10749: 'heart',        // Romance
+  878: 'orbit',          // Ficção científica
+  10770: 'tv',           // Cinema para TV
+  53: 'eye',             // Thriller
+  10752: 'swords',       // Guerra
+  37: 'sunset'           // Faroeste
+};
 
 async function carregarGeneros() {
   const el = document.getElementById('genre-grid');
-  el.innerHTML = '<div class="dash-loading"><div class="dash-spinner"></div> Carregando...</div>';
+
+  el.innerHTML = `
+    <div class="dash-loading">
+      <div class="dash-spinner"></div>
+      Carregando...
+    </div>
+  `;
+
   try {
-    const r    = await fetch(`${API}/tendencias/generos`);
+    const r = await fetch(`${API}/tendencias/generos`);
     const data = await r.json();
-    el.innerHTML = data.generos.map(g => `
-      <div class="genre-card" onclick="selecionarGenero(${g.id}, '${g.name}', this)">
-        <div class="gicon">${GENRE_ICONS[g.id] || '🎬'}</div>
-        <div class="gname">${g.name}</div>
-      </div>`).join('');
-  } catch(e) {
-    el.innerHTML = '<div class="empty">Erro ao carregar gêneros.</div>';
+
+    el.innerHTML = data.generos.map(g => {
+      const icone = GENRE_ICONS[g.id] || 'clapperboard';
+
+      return `
+        <div class="genre-card"
+             onclick="selecionarGenero(${g.id}, '${g.name}', this)">
+          <div class="gicon">
+            <i data-lucide="${icone}"></i>
+          </div>
+          <div class="gname">${g.name}</div>
+        </div>
+      `;
+    }).join('');
+
+    lucide.createIcons();
+
+  } catch (e) {
+    el.innerHTML = `
+      <div class="empty">Erro ao carregar gêneros.</div>
+    `;
   }
 }
 
+
 async function selecionarGenero(id, nome, el) {
-  document.querySelectorAll('.genre-card').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('.genre-card').forEach(c =>
+    c.classList.remove('selected')
+  );
+
   el.classList.add('selected');
+
   const cont = document.getElementById('genre-filmes');
-  cont.innerHTML = `<div class="sec-title" style="margin-top:24px">${GENRE_ICONS[id] || '🎬'} ${nome}</div>
+  const icone = GENRE_ICONS[id] || 'clapperboard';
+
+  cont.innerHTML = `
+    <div class="sec-title" style="margin-top:24px">
+      <i data-lucide="${icone}"></i>
+      ${nome}
+    </div>
+
     <div class="movie-list" id="list-genero">
-      <div class="dash-loading"><div class="dash-spinner"></div> Carregando...</div>
-    </div>`;
+      <div class="dash-loading">
+        <div class="dash-spinner"></div>
+        Carregando...
+      </div>
+    </div>
+  `;
+
+  // Renderiza o ícone profissional após inserir o HTML
+  lucide.createIcons();
+
   try {
-    const r    = await fetch(`${API}/tendencias/genero/${id}`);
+    const r = await fetch(`${API}/tendencias/genero/${id}`);
     const data = await r.json();
-    document.getElementById('list-genero').innerHTML = data.filmes.slice(0, 8).map((f, i) => `
-      <div class="movie-row" style="${delay(i)}">
-        <div class="rank ${rankClass(i)}">${i + 1}</div>
-        ${posterHtml(f.poster)}
-        <div class="movie-info">
-          <div class="movie-title">${f.titulo}</div>
-          <div class="movie-meta">${f.ano || ''} <span class="star">★ ${f.nota_tmdb}</span></div>
-          <div class="movie-bar"><div class="movie-bar-fill" style="width:${Math.round(parseFloat(f.nota_tmdb) / 10 * 100)}%"></div></div>
+
+    document.getElementById('list-genero').innerHTML =
+      data.filmes.slice(0, 8).map((f, i) => `
+        <div class="movie-row" style="${delay(i)}">
+          <div class="rank ${rankClass(i)}">${i + 1}</div>
+          ${posterHtml(f.poster)}
+          <div class="movie-info">
+            <div class="movie-title">${f.titulo}</div>
+            <div class="movie-meta">
+              ${f.ano || ''}
+              <span class="star">★ ${f.nota_tmdb}</span>
+            </div>
+            <div class="movie-bar">
+              <div class="movie-bar-fill"
+                   style="width:${Math.round(parseFloat(f.nota_tmdb) / 10 * 100)}%">
+              </div>
+            </div>
+          </div>
+          ${badgeHtml(i)}
         </div>
-        ${badgeHtml(i)}
-      </div>`).join('');
-  } catch(e) {
-    document.getElementById('list-genero').innerHTML = '<div class="empty">Erro ao carregar filmes do gênero.</div>';
+      `).join('');
+
+  } catch (e) {
+    document.getElementById('list-genero').innerHTML =
+      '<div class="empty">Erro ao carregar filmes do gênero.</div>';
   }
 }
+
 
 // ── PERFIL ─────────────────────────────────────────────────────
 async function carregarPerfil() {
