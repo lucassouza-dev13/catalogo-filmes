@@ -1344,3 +1344,38 @@ nav button.active, nav a.active { color: var(--accent); }
 .lista-subtab { color: var(--text-muted); }
 .lista-subtab:hover { color: var(--accent); }
 
+
+/* ===== CORREÇÃO DAS ABAS DASHBOARD E COMUNIDADE ===== */
+
+/* Fundo principal das páginas */
+#dashboard,
+#comunidade,
+.dashboard-page,
+.comunidade-page,
+#page-dashboard,
+#page-comunidade {
+  background-color: var(--bg) !important;
+  color: var(--text);
+}
+
+/* Cards, painéis e seções */
+#dashboard .card,
+#comunidade .card,
+.dashboard-page .card,
+.comunidade-page .card,
+.dashboard-card,
+.comunidade-card {
+  background-color: var(--bg-card);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+/* Títulos e textos */
+#dashboard h1,
+#dashboard h2,
+#dashboard h3,
+#comunidade h1,
+#comunidade h2,
+#comunidade h3 {
+  color: var(--text);
+}
