@@ -1064,18 +1064,23 @@ function criarCardJogo(jogo) {
   card.className  = "movie-card";
   card.dataset.id = id;
 
-  if (img) {
-    const el   = document.createElement("img");
-    el.src     = img;
-    el.alt     = titulo;
-    el.loading = "lazy";
-    card.appendChild(el);
-  } else {
-    const ph       = document.createElement("div");
-    ph.className   = "placeholder-img";
-    ph.textContent = "🎮";
-    card.appendChild(ph);
-  }
+  const poster = document.createElement("div");
+poster.className = "card-poster";
+
+if (img) {
+  const el = document.createElement("img");
+  el.src = img;
+  el.alt = titulo;
+  el.loading = "lazy";
+  poster.appendChild(el);
+} else {
+  const ph = document.createElement("div");
+  ph.className = "placeholder-img";
+  ph.textContent = "🎮";
+  poster.appendChild(ph);
+}
+
+card.appendChild(poster);
 
   const overlay     = document.createElement("div");
   overlay.className = "card-overlay";
